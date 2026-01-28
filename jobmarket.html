@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Statistical Market-Design Framework for the Academic Job Market for New Statisticians</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+    <div class="header-inner">
+        <h1>A Statistical Market-Design Framework for the Academic Job Market</h1>
+        <p class="subtitle">Improving Efficiency Through Centralized Preference Signaling</p>
+        <div class="authors">
+            <span>Ali Kaazempur-Mofrad</span><sup>1</sup>, 
+            <span>Xiaowu Dai</span><sup>1</sup>, 
+            <span>Xuming He</span><sup>2</sup>
+        </div>
+        <div class="affiliations">
+            <sup>1</sup>University of California, Los Angeles &nbsp;•&nbsp; 
+            <sup>2</sup>Washington University in St. Louis
+        </div>
+    </div>
+</header>
+
+<nav id="navbar">
+    <div class="nav-container">
+        <button class="nav-toggle" id="nav-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul class="nav-list">
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#problem">The Problem</a></li>
+            <li><a href="#mechanism">The Mechanism</a></li>
+            <li><a href="#results">Key Results</a></li>
+            <li><a href="#questionnaire">Questionnaire</a></li>
+            <li><a href="#paper">Paper</a></li>
+        </ul>
+    </div>
+</nav>
+
+<main>
+    <!-- Overview Section -->
+    <section id="overview" class="section">
+        <h2><i class="fas fa-lightbulb"></i> Overview</h2>
+        <p class="lead">
+            The academic job market for new statisticians faces substantial inefficiencies: departments struggle to identify genuinely interested candidates among large applicant pools, while candidates have limited ability to communicate preferences in a credible way. This paper develops a novel market-design framework that addresses these challenges through structured preference signaling.
+        </p>
+        
+        <div class="key-points">
+            <div class="point-card">
+                <i class="fas fa-chart-line"></i>
+                <h3>Welfare Gains</h3>
+                <p>Aggregate candidate welfare increases substantially under full participation</p>
+            </div>
+            <div class="point-card">
+                <i class="fas fa-users"></i>
+                <h3>More Hires</h3>
+                <p>Improved matching efficiency yields more candidates successfully hired and better fill rates for positions</p>
+            </div>
+            <div class="point-card">
+                <i class="fas fa-handshake"></i>
+                <h3>Better Matches</h3>
+                <p>Both candidates and departments benefit from preference-aligned hiring</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section id="problem" class="section alt-bg">
+        <h2><i class="fas fa-exclamation-triangle"></i> The Problem</h2>
+        
+        <div class="problem-stats">
+            <div class="stat-box">
+                <div class="stat-number">641</div>
+                <div class="stat-label">Statistics PhD graduates (2023-24)</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">~400</div>
+                <div class="stat-label">Seeking tenure-track positions</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">~150</div>
+                <div class="stat-label">Available openings</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">15</div>
+                <div class="stat-label">Median applications per candidate</div>
+            </div>
+        </div>
+
+        <div class="problem-description">
+            <h3>Market Inefficiencies</h3>
+            <ul class="feature-list">
+                <li><i class="fas fa-times-circle"></i> <strong>Congestion:</strong> A small subset of candidates receives multiple offers while many departments fail to hire</li>
+                <li><i class="fas fa-times-circle"></i> <strong>Information asymmetry:</strong> Departments cannot distinguish genuine interest from strategic applications</li>
+                <li><i class="fas fa-times-circle"></i> <strong>Coordination failure:</strong> Well-suited candidates and departments fail to match</li>
+                <li><i class="fas fa-times-circle"></i> <strong>Wasted resources:</strong> Interview slots allocated to candidates unlikely to accept offers</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Mechanism Section -->
+    <section id="mechanism" class="section">
+        <h2><i class="fas fa-cogs"></i> The Proposed Mechanism</h2>
+        
+        <div class="mechanism-overview">
+            <p>
+                We propose a three-stage framework that introduces a centralized signaling mechanism through a standardized questionnaire. This enables candidates to communicate structured preferences over job characteristics while maintaining credibility through scarcity.
+            </p>
+        </div>
+
+        <div class="mechanism-diagram">
+            <img src="fig/procedure.png" alt="Market Design Framework Overview" />
+            <p class="figure-caption"><strong>Figure 1:</strong> Overview of the academic job market design with signaling. Candidates submit a standardized questionnaire in the signaling stage, departments use it in the interview selection stage (Algorithm 1).</p>
+        </div>
+
+        <div class="stages">
+            <div class="stage-card">
+                <div class="stage-number">1</div>
+                <h3>Signaling Stage</h3>
+                <p>Candidates complete a <strong>single</strong> standardized questionnaire expressing preferences over:</p>
+                <ul>
+                    <li>Geographic location and setting</li>
+                    <li>Compensation and resources</li>
+                    <li>Teaching load and mentoring</li>
+                    <li>Research environment</li>
+                </ul>
+                <p class="note">Candidates choose which departments receive their questionnaire alongside traditional application materials.</p>
+            </div>
+
+            <div class="stage-card">
+                <div class="stage-number">2</div>
+                <h3>Interview Stage</h3>
+                <p>Departments use a <strong>confidence-calibrated selection procedure</strong> that:</p>
+                <ul>
+                    <li>Combines questionnaire signals with traditional materials</li>
+                    <li>Estimates candidate-specific acceptance probabilities</li>
+                    <li>Accounts for estimation uncertainty using pairwise comparisons</li>
+                    <li>Provides joint ranking guarantees</li>
+                </ul>
+            </div>
+
+            <div class="stage-card">
+                <div class="stage-number">3</div>
+                <h3>Matching Stage</h3>
+                <p>Standard academic hiring practices:</p>
+                <ul>
+                    <li>Departments extend offers to selected candidates</li>
+                    <li>Candidates choose among available offers</li>
+                    <li>Converges to stable matching as information improves</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="technical-innovation">
+            <h3><i class="fas fa-star"></i> Technical Innovation</h3>
+            <p>
+                The confidence-calibrated interview selection procedure addresses ranking under uncertainty by using simultaneous pairwise comparisons. Unlike point-sorting (which ignores uncertainty) or marginal confidence bounds (which lack joint guarantees), our approach ensures that the interview set contains all truly top-k candidates with high probability.
+            </p>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="section alt-bg">
+        <h2><i class="fas fa-chart-bar"></i> Key Results</h2>
+
+        <div class="results-grid">
+            <div class="result-card">
+                <h3>Theoretical Guarantees</h3>
+                <ul class="check-list">
+                    <li><i class="fas fa-check"></i> <strong>Incentive compatibility:</strong> Truthful reporting is optimal for candidates</li>
+                    <li><i class="fas fa-check"></i> <strong>Participation robustness:</strong> Sharing the questionnaire maximizes worst-case utility</li>
+                    <li><i class="fas fa-check"></i> <strong>Welfare gains:</strong> Both sides benefit from preference information</li>
+                    <li><i class="fas fa-check"></i> <strong>Stability:</strong> Converges to stable matching as information improves</li>
+                </ul>
+            </div>
+
+            <div class="result-card">
+                <h3>Simulation Results</h3>
+                <p>We construct a dataset by integrating the 2022 U.S. News rankings of graduate programs in Statistics (peer assessment scores and geographic locations for 101 departments) with the College Scorecard (institutional attributes including locale type, size, and control). Together, these sources yield structured information about each department—geographic setting, program reputation, and institutional characteristics—that captures the essential features shaping hiring decisions and candidate preferences in the academic statistics job market.</p>
+                
+                <p style="margin-top: 1rem;"><strong>Simulation Design:</strong></p>
+                <p>Using this integrated dataset as an empirical scaffold, we simulate a multi-year academic job market with 400 candidates per year over a 10-year horizon, with departments partitioned into four prestige tiers based on their U.S. News rankings: Tier 1 (top 10), Tier 2 (11–25), Tier 3 (26–50), and Tier 4 (51–101).</p>
+                
+                <p style="margin-top: 1rem;"><strong>Key Findings:</strong></p>
+                <ul class="check-list">
+                    <li><i class="fas fa-arrow-up"></i> Substantial increase in aggregate candidate welfare</li>
+                    <li><i class="fas fa-arrow-up"></i> Increased number of successful hires across the market</li>
+                    <li><i class="fas fa-arrow-up"></i> Match quality improves across all candidate tiers</li>
+                    <li><i class="fas fa-arrow-up"></i> Lower-prestige departments benefit disproportionately</li>
+                    <li><i class="fas fa-arrow-up"></i> Substantial improvements in position fill rates across all department tiers</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="simulation-figures">
+            <h3>Simulation Key Results: </h3>
+            
+            <div class="figure-container">
+                <img src="fig/fig_candidate_by_participation.png" alt="Candidate Welfare Gains" />
+                <p class="figure-caption"><strong>Figure 2:</strong> Candidate benefits from questionnaire mechanism across participation rates. <em>Left:</em>  Mean candidate welfare stratified by participation status. <em>Right:</em> Matching rates by participation status. Dashed gray lines denote baseline (ρ=0%).</p>
+            </div>
+
+
+            <div class="figure-container">
+                <div class="two-panel-figure">
+                    <div class="panel">
+                        <img src="fig/fig_candidate_welfare_by_tier.png" alt="Candidate Match Quality by Tier" />
+                    </div>
+                    <div class="panel">
+                        <img src="fig/fig_department_welfare.png" alt="Department Welfare by Tier" />
+                    </div>
+                </div>
+                <p class="figure-caption"><strong>Figure 3:</strong> Welfare gains stratified by tier. <em>Left panel:</em> Matched candidate utility increases across all candidate tiers with participation. <em>Right panel:</em> Department welfare per hiring position increases for all department tiers, with lower-tier departments experiencing larger gains.</p>
+            </div>
+
+
+
+            <div class="figure-container">
+                <img src="fig/fig_dept_hiring_heatmap.png" alt="Hiring Distribution Heatmap" />
+                <p class="figure-caption"><strong>Figure 4:</strong> Hiring distribution stratified by department and candidate quality tiers. Cell shading indicates mean department utility from hires; cell values show hire counts (bold) with mean utility below. Department tiers on y-axis show total hiring quota across simulation years; candidate tiers on x-axis show total market size. <em>Left:</em> Baseline (ρ=0%). <em>Right:</em> Questionnaire (ρ=100%).</p>
+            </div>
+        </div>
+<!--
+        <div class="welfare-details">
+            <h3>Distribution of Benefits</h3>
+            <div class="benefit-grid">
+                <div class="benefit-item">
+                    <h4>Candidate Perspective</h4>
+                    <p><strong>Match Utility Gains (relative to baseline):</strong></p>
+                    <ul>
+                        <li>Tier 1: +45% (Δ = 0.174)</li>
+                        <li>Tier 2: +55% (Δ = 0.146)</li>
+                        <li>Tier 3: +49% (Δ = 0.102)</li>
+                        <li>Tier 4: +31% (Δ = 0.053)</li>
+                    </ul>
+                </div>
+                <div class="benefit-item">
+                    <h4>Department Perspective</h4>
+                    <p><strong>Welfare Gains (relative to baseline):</strong></p>
+                    <ul>
+                        <li>Tier 1: +6% (52.1 → 84.9)</li>
+                        <li>Tier 2: +17% (38.1 → 54.4)</li>
+                        <li>Tier 3: +43% (30.0 → 35.2)</li>
+                        <li>Tier 4: +63% (33.7 → 35.8)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+-->
+    </section>
+
+    <!-- Questionnaire Section -->
+    <section id="questionnaire" class="section">
+        <h2><i class="fas fa-file-alt"></i> The Standardized Questionnaire</h2>
+        
+        <p>
+            The questionnaire consists of 15 questions organized into four categories. Each question is designed to elicit interpretable preference information that can be matched against department characteristics.
+        </p>
+
+        <div class="questionnaire-categories">
+            <div class="category-card">
+                <h3><i class="fas fa-map-marker-alt"></i> Geographic & Location</h3>
+                <ul>
+                    <li>Preferred geographic setting (urban/suburban/rural)</li>
+                    <li>Regional preferences (Northeast, Southeast, etc.)</li>
+                    <li>Airport proximity importance</li>
+                    <li>Cost of living considerations</li>
+                    <li>Partner/spouse hiring assistance needs</li>
+                </ul>
+            </div>
+
+            <div class="category-card">
+                <h3><i class="fas fa-dollar-sign"></i> Compensation & Resources</h3>
+                <ul>
+                    <li>Minimum salary expectations</li>
+                    <li>Research startup funding needs</li>
+                    <li>Summer salary support preferences</li>
+                </ul>
+            </div>
+
+            <div class="category-card">
+                <h3><i class="fas fa-chalkboard-teacher"></i> Teaching & Mentoring</h3>
+                <ul>
+                    <li>Preferred teaching load</li>
+                    <li>Course type preferences (graduate/undergraduate)</li>
+                    <li>Faculty mentoring program importance</li>
+                </ul>
+            </div>
+
+            <div class="category-card">
+                <h3><i class="fas fa-flask"></i> Research Environment</h3>
+                <ul>
+                    <li>Departmental research culture preferences</li>
+                    <li>Publication venue alignment</li>
+                    <li>PhD-to-faculty ratio preferences</li>
+                    <li>Medical school proximity importance</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="questionnaire-note">
+            <p><strong>Design Principles:</strong></p>
+            <ul class="feature-list">
+                <li><i class="fas fa-lock"></i> <strong>Single submission constraint</strong> preserves credibility</li>
+                <li><i class="fas fa-balance-scale"></i> <strong>Standardized format</strong> enables comparable evaluation across departments</li>
+                <li><i class="fas fa-chart-line"></i> <strong>Continuous alignment scores</strong> for every department simultaneously</li>
+                <li><i class="fas fa-shield-alt"></i> <strong>No department-specific tailoring</strong> prevents strategic gaming</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Paper Section -->
+    <section id="paper" class="section alt-bg">
+        <h2><i class="fas fa-file-pdf"></i> Paper & Resources</h2>
+        
+        <div class="paper-links">
+            <a href="#" class="btn btn-primary">
+                <i class="fas fa-download"></i> Download Paper (PDF)
+            </a>
+            <a href="#" class="btn btn-secondary">
+                <i class="fab fa-github"></i> Code Repository
+            </a>
+            <a href="#" class="btn btn-secondary">
+                <i class="fas fa-database"></i> Supplementary Materials
+            </a>
+        </div>
+
+        <div class="citation-box">
+            <h3>Citation</h3>
+            <pre><code>@article{jobmarket2026,
+  title={A Statistical Market-Design Framework for the Academic Job Market for New Statisticians},
+  author={Kaazempur-Mofrad, Ali and Dai, Xiaowu and He, Xuming},
+  year={2026},
+  journal={Manuscript in preparation}
+}</code></pre>
+        </div>
+
+        <div class="references">
+            <h3>Key References</h3>
+            <ul>
+                <li></li>
+                <!-- <li>Gale, D., & Shapley, L. S. (1962). College admissions and the stability of marriage. <em>The American Mathematical Monthly</em>, 69(1), 9-15.</li> -->
+                <!-- <li>Coles, P., Cawley, J., Levine, P. B., Niederle, M., Roth, A. E., & Siegfried, J. J. (2010). The job market for new economists: A market design perspective. <em>Journal of Economic Perspectives</em>, 24(4), 187-206.</li> -->
+                <!-- <li>Roth, A. E., & Sotomayor, M. A. O. (1992). <em>Two-sided matching: A study in game-theoretic modeling and analysis</em>. Cambridge University Press.</li> -->
+            </ul>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <!--
+    <section id="contact" class="section">
+        <h2><i class="fas fa-envelope"></i> Contact</h2>
+        <p>
+            For questions or feedback about this work, please contact:
+        </p>
+        <div class="contact-info">
+            <p><strong>Ali Kaazempur-Mofrad</strong><br>
+            PhD Student, Department of Statistics<br>
+            University of California, Los Angeles<br>
+            Email: <a href="mailto:amofrad@ucla.edu">amofrad@ucla.edu</a></p>
+        </div>
+    </section>
+    -->
+</main>
+
+<footer>
+    <p>&copy; 2026 Ali Kaazempur-Mofrad, Xiaowu Dai, Xuming He. All rights reserved.</p>
+    <p>Last updated: January 2026</p>
+</footer>
+
+<script>
+    // Mobile navigation toggle
+    const navToggle = document.getElementById('nav-toggle');
+    const navList = document.querySelector('.nav-list');
+
+    navToggle.addEventListener('click', () => {
+        navList.classList.toggle('active');
+    });
+
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                // Close mobile menu if open
+                navList.classList.remove('active');
+            }
+        });
+    });
+
+    // Sticky navigation on scroll
+    window.addEventListener('scroll', () => {
+        const navbar = document.getElementById('navbar');
+        if (window.scrollY > 100) {
+            navbar.classList.add('sticky');
+        } else {
+            navbar.classList.remove('sticky');
+        }
+    });
+</script>
+</body>
+</html>
