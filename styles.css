@@ -125,6 +125,17 @@ nav.sticky {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Platform Link Styling */
+.platform-link {
+    background: rgba(66, 153, 225, 0.15) !important;
+    border-radius: 6px;
+    margin: 0 0.5rem;
+}
+
+.platform-link:hover {
+    background: rgba(66, 153, 225, 0.3) !important;
+}
+
 /* Main Content */
 main {
     max-width: 1200px;
@@ -491,7 +502,28 @@ main {
     border-radius: 4px;
 }
 
+/* Two Panel Figure Layout */
+.two-panel-figure {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.two-panel-figure .panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.two-panel-figure .panel img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
 /* Benefit Grid */
+.benefit-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
@@ -516,33 +548,6 @@ main {
 
 .benefit-item li {
     margin: 0.4rem 0;
-}
-
-
-/* Two Panel Figure Layout */
-.two-panel-figure {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.two-panel-figure .panel {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.two-panel-figure .panel img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 4px;
-}
-
-@media (max-width: 768px) {
-    .two-panel-figure {
-        grid-template-columns: 1fr;
-    }
 }
 
 /* Questionnaire Categories */
@@ -738,6 +743,117 @@ footer p {
     opacity: 0.9;
 }
 
+footer a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Platform-specific styles */
+.platform-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.option-card {
+    background: white;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.option-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border-color: var(--accent-color);
+}
+
+.option-card i {
+    font-size: 4rem;
+    color: var(--accent-color);
+    margin-bottom: 1.5rem;
+}
+
+.option-card h3 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.option-card p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+/* Coming Soon Modal */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 3rem;
+    max-width: 420px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #999;
+    cursor: pointer;
+}
+
+.modal-close:hover {
+    color: var(--text-color);
+}
+
+.modal-icon {
+    font-size: 3rem;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+}
+
+.modal-content h3 {
+    font-family: 'Roboto Slab', serif;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 0.75rem;
+}
+
+.modal-content p {
+    color: #666;
+    line-height: 1.6;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     header h1 {
@@ -788,6 +904,10 @@ footer p {
 
     .stat-number {
         font-size: 2rem;
+    }
+
+    .two-panel-figure {
+        grid-template-columns: 1fr;
     }
 }
 

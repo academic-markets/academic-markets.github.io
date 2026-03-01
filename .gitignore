@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+
+# Backend and frontend (under development)
+backend/
+frontend/
+
+# Environment files
+.env
+.env.local
+
+# Node
+node_modules/
+
+# Documentation (development only)
+QUICK_START.md
+BACKEND_FILES.md
+.env.example
