@@ -3,386 +3,700 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Statistical Market-Design Framework for the Academic Job Market for New Statisticians</title>
+    <meta name="description" content="Research website for a statistical market-design framework that improves academic job-market matching through centralized preference signaling.">
+    <title>A Statistical Market-Design Framework for the Academic Job Market</title>
 
-    <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-    <!-- Custom Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.85rem;
+            border: 1px solid var(--line-strong);
+            border-radius: 999px;
+            background: rgba(255,255,255,0.7);
+            color: var(--ink-700);
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        .copy-btn:hover { background: rgba(255,255,255,0.95); }
+        .copy-btn.copied { color: var(--teal); border-color: var(--teal); }
+        .bibtex-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.6rem;
+        }
+        .bibtex-pre {
+            margin: 0;
+            padding: 1rem 1.1rem;
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            background: var(--ink-950);
+            color: #ecf2f4;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-size: 0.93rem;
+            line-height: 1.6;
+        }
+        h1, h2, h3, .metric-value, .friction-number, .stage-number {
+            font-family: "Lora", serif;
+        }
+        .fig-zoomable { cursor: zoom-in; }
+        .lightbox-overlay {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            background: rgba(20, 35, 49, 0.9);
+            z-index: 120;
+            cursor: zoom-out;
+        }
+        .lightbox-overlay.active { display: flex; }
+        .lightbox-overlay img {
+            max-width: min(92vw, 1200px);
+            max-height: 90vh;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 32px 80px rgba(0,0,0,0.55);
+            object-fit: contain;
+            cursor: default;
+        }
+        .lightbox-close {
+            position: fixed;
+            top: 1.1rem;
+            right: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.8rem;
+            height: 2.8rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 999px;
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .lightbox-close:hover { background: rgba(255,255,255,0.24); }
+    </style>
 </head>
-<body>
-<header>
-    <div class="header-inner">
-        <h1>A Statistical Market-Design Framework for the Academic Job Market</h1>
-        <p class="subtitle">Improving Efficiency Through Centralized Preference Signaling</p>
-        <div class="authors">
-            <span>Ali Kaazempur-Mofrad</span><sup>1</sup>,
-            <span>Xiaowu Dai</span><sup>1</sup>,
-            <span>Xuming He</span><sup>2</sup>
+<body id="top">
+<header class="site-header">
+    <div class="hero-shell">
+        <div class="hero-copy reveal">
+            <p class="eyebrow"> market design for academic hiring</p>
+            <p class="paper-label">A Statistical Market-Design Framework for the Academic Job Market</p>
+            <h1>Preference signaling built for the academic job market.</h1>
+            <p class="hero-summary">
+                A centralized questionnaire turns scarce candidate signals into structured information departments can use&mdash;improving interview selection, matching efficiency, and welfare across the market.
+            </p>
+
+            <div class="hero-meta">
+                <p class="authors">Ali Kaazempur-Mofrad<sup>1</sup>, Xiaowu Dai<sup>1</sup>, Xuming He<sup>2</sup></p>
+                <p class="affiliations"><sup>1</sup>University of California, Los Angeles &nbsp;&bull;&nbsp; <sup>2</sup>Washington University in St. Louis</p>
+            </div>
+
+            <div class="hero-actions">
+                <a href="#results" class="btn btn-primary">Explore findings</a>
+                <a href="#" class="btn btn-ghost" data-modal-trigger="coming-soon">Platform</a>
+            </div>
+
         </div>
-        <div class="affiliations">
-            <sup>1</sup>University of California, Los Angeles &nbsp;•&nbsp;
-            <sup>2</sup>Washington University in St. Louis
+
+        <div class="hero-panel reveal">
+            <article class="signal-card signal-card-primary">
+                <p class="card-kicker">Market pulse</p>
+                <h2>The current market is noisy, congested, and hard to coordinate.</h2>
+                <p>
+                    Departments cannot tell who is seriously interested. Candidates cannot credibly communicate fit.
+                    Interviews get allocated with too little information and too much uncertainty.
+                </p>
+                <ul class="bullet-matrix">
+                    <li><i class="fas fa-times"></i> Multiple offers concentrate on a small subset of candidates</li>
+                    <li><i class="fas fa-times"></i> Departments waste shortlist capacity on low-probability matches</li>
+                    <li><i class="fas fa-times"></i> Strong candidate&ndash;department pairs can fail to connect at all</li>
+                </ul>
+            </article>
+
         </div>
     </div>
 </header>
 
-<nav id="navbar">
-    <div class="nav-container">
-        <button class="nav-toggle" id="nav-toggle">
+<nav id="navbar" class="site-nav">
+    <div class="nav-inner">
+        <a href="#top" class="nav-brand">AJM Design</a>
+        <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-list" aria-label="Toggle navigation">
             <i class="fas fa-bars"></i>
         </button>
-        <ul class="nav-list">
+        <ul class="nav-list" id="nav-list">
+            <li><a href="#problem">Market Frictions</a></li>
             <li><a href="#overview">Overview</a></li>
-            <li><a href="#problem">The Problem</a></li>
-            <li><a href="#mechanism">The Mechanism</a></li>
-            <li><a href="#results">Key Results</a></li>
+            <li><a href="#mechanism">Mechanism</a></li>
+            <li><a href="#results">Results</a></li>
             <li><a href="#questionnaire">Questionnaire</a></li>
-            <li><a href="#paper">Paper</a></li>
-            <li><a href="#" class="platform-link" onclick="showComingSoon(event)"><i class="fas fa-rocket"></i> Try Platform</a></li>
+            <li><a href="#paper">Resources</a></li>
+            <li><a href="#" class="nav-cta" data-modal-trigger="coming-soon">Platform</a></li>
         </ul>
     </div>
 </nav>
 
-<main>
-    <!-- Overview Section -->
-    <section id="overview" class="section">
-        <h2><i class="fas fa-lightbulb"></i> Overview</h2>
-        <p class="lead">
-            The academic job market for new statisticians faces substantial inefficiencies: departments struggle to identify genuinely interested candidates among large applicant pools, while candidates have limited ability to communicate preferences in a credible way. This paper develops a novel market-design framework that addresses these challenges through structured preference signaling.
-        </p>
-
-        <div class="key-points">
-            <div class="point-card">
-                <i class="fas fa-chart-line"></i>
-                <h3>Welfare Gains</h3>
-                <p>Aggregate candidate welfare increases substantially under full participation</p>
-            </div>
-            <div class="point-card">
-                <i class="fas fa-users"></i>
-                <h3>More Hires</h3>
-                <p>Improved matching efficiency yields more candidates successfully hired and better fill rates for positions</p>
-            </div>
-            <div class="point-card">
-                <i class="fas fa-handshake"></i>
-                <h3>Better Matches</h3>
-                <p>Both candidates and departments benefit from preference-aligned hiring</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Problem Section -->
-    <section id="problem" class="section alt-bg">
-        <h2><i class="fas fa-exclamation-triangle"></i> The Problem</h2>
-
-        <div class="problem-description">
-            <h3>Market Inefficiencies</h3>
-            <ul class="feature-list">
-                <li><i class="fas fa-times-circle"></i> <strong>Congestion:</strong> A small subset of candidates receives multiple offers while many departments fail to hire</li>
-                <li><i class="fas fa-times-circle"></i> <strong>Information asymmetry:</strong> Departments cannot distinguish genuine interest from strategic applications</li>
-                <li><i class="fas fa-times-circle"></i> <strong>Coordination failure:</strong> Well-suited candidates and departments fail to match</li>
-                <li><i class="fas fa-times-circle"></i> <strong>Wasted resources:</strong> Interview slots allocated to candidates unlikely to accept offers</li>
-            </ul>
-        </div>
-    </section>
-
-    <!-- Mechanism Section -->
-    <section id="mechanism" class="section">
-        <h2><i class="fas fa-cogs"></i> The Proposed Mechanism</h2>
-
-        <div class="mechanism-overview">
+<main id="content">
+    <section id="problem" class="section section-problem">
+        <div class="section-header section-header-light reveal">
+            <p class="section-kicker">Market frictions</p>
+            <h2>Why the system fails</h2>
             <p>
-                We propose a three-stage framework that introduces a centralized signaling mechanism through a standardized questionnaire. This enables candidates to communicate structured preferences over job characteristics while maintaining credibility through scarcity.
+                Congestion, information asymmetry, and weak coordination create lost opportunities for both candidates and departments.
             </p>
         </div>
 
-        <div class="mechanism-diagram">
-            <img src="fig/procedure.png" alt="Market Design Framework Overview" />
-            <p class="figure-caption"><strong>Figure 1:</strong> Overview of the academic job market design with signaling. Candidates submit a standardized questionnaire in the signaling stage, departments use it in the interview selection stage (Algorithm 1).</p>
+        <div class="friction-grid">
+            <article class="friction-card reveal">
+                <span class="friction-number">01</span>
+                <h3>Congestion</h3>
+                <p>A small set of candidates accumulates multiple offers while open lines remain unfilled elsewhere.</p>
+            </article>
+            <article class="friction-card reveal">
+                <span class="friction-number">02</span>
+                <h3>Noisy interest</h3>
+                <p>Departments cannot reliably separate sincere preference from broad, low-commitment application behavior.</p>
+            </article>
+            <article class="friction-card reveal">
+                <span class="friction-number">03</span>
+                <h3>Coordination failure</h3>
+                <p>Candidate&ndash;department pairs that would prefer each other can still fail to meet at the shortlist stage.</p>
+            </article>
+            <article class="friction-card reveal">
+                <span class="friction-number">04</span>
+                <h3>Resource waste</h3>
+                <p>Interview slots, faculty time, and candidate attention get spent where acceptance is unlikely.</p>
+            </article>
         </div>
+    </section>
 
-        <div class="stages">
-            <div class="stage-card">
-                <div class="stage-number">1</div>
-                <h3>Signaling Stage</h3>
-                <p>Candidates complete a <strong>single</strong> standardized questionnaire expressing preferences over:</p>
-                <ul>
-                    <li>Geographic location and setting</li>
-                    <li>Compensation and resources</li>
-                    <li>Teaching load and mentoring</li>
-                    <li>Research environment</li>
-                </ul>
-                <p class="note">Candidates choose which departments receive their questionnaire alongside traditional application materials.</p>
-            </div>
-
-            <div class="stage-card">
-                <div class="stage-number">2</div>
-                <h3>Interview Stage</h3>
-                <p>Departments use a <strong>confidence-calibrated selection procedure</strong> that:</p>
-                <ul>
-                    <li>Combines questionnaire signals with traditional materials</li>
-                    <li>Estimates candidate-specific acceptance probabilities</li>
-                    <li>Accounts for estimation uncertainty using pairwise comparisons</li>
-                    <li>Provides joint ranking guarantees</li>
-                </ul>
-            </div>
-
-            <div class="stage-card">
-                <div class="stage-number">3</div>
-                <h3>Matching Stage</h3>
-                <p>Standard academic hiring practices:</p>
-                <ul>
-                    <li>Departments extend offers to selected candidates</li>
-                    <li>Candidates choose among available offers</li>
-                    <li>Converges to stable matching as information improves</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="technical-innovation">
-            <h3><i class="fas fa-star"></i> Technical Innovation</h3>
+    <section id="overview" class="section section-overview">
+        <div class="section-header reveal">
+            <p class="section-kicker"></p>
+            <h2>Overview</h2>
             <p>
-                The confidence-calibrated interview selection procedure addresses ranking under uncertainty by using simultaneous pairwise comparisons. Unlike point-sorting (which ignores uncertainty) or marginal confidence bounds (which lack joint guarantees), our approach ensures that the interview set contains all truly top-k candidates with high probability.
+                A centralized preference-signaling layer for academic hiring that preserves scarcity,
+                keeps disclosure credible, and gives departments more defensible interview decisions.
             </p>
         </div>
-    </section>
 
-    <!-- Results Section -->
-    <section id="results" class="section alt-bg">
-        <h2><i class="fas fa-chart-bar"></i> Key Results</h2>
+        <div class="overview-grid">
+            <article class="editorial-card reveal">
+                <h3>From vague interest to measurable alignment</h3>
+                <p>
+                    Instead of department-specific signaling or noisy cover-letter interpretation, candidates complete a single
+                    questionnaire covering geography, compensation, teaching, and research environment. Departments then evaluate
+                    candidate fit with a common structured signal rather than guesswork.
+                </p>
+            </article>
 
-        <div class="results-grid">
-            <div class="result-card">
-                <h3>Theoretical Guarantees</h3>
-                <ul class="check-list">
-                    <li><i class="fas fa-check"></i> <strong>Disclosure dominance:</strong> Universal disclosure is a dominant strategy&mdash;each candidate maximizes expected payoff by sharing the questionnaire with all departments, regardless of other candidates' actions</li>
-                    <li><i class="fas fa-check"></i> <strong>Approximate incentive compatibility:</strong> The gain from misreporting vanishes under market competition, so truthful participation is approximately optimal</li>
-                    <li><i class="fas fa-check"></i> <strong>Welfare gains:</strong> Aggregate candidate welfare is nondecreasing in the participation rate; departments benefit from more informative questionnaires</li>
-                    <li><i class="fas fa-check"></i> <strong>Stability:</strong> As the questionnaire becomes sufficiently informative, the induced matching converges to a stable outcome with no blocking pairs</li>
+            <article class="editorial-card editorial-card-accent reveal">
+                <h3>Why the signal remains credible</h3>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check"></i> One submission format makes signals comparable across all departments</li>
+                    <li><i class="fas fa-check"></i> Scarcity prevents costless department-by-department customization</li>
+                    <li><i class="fas fa-check"></i> Continuous alignment scores support market-wide inference</li>
                 </ul>
-            </div>
+            </article>
 
-            <div class="result-card">
-                <h3>Simulation Results</h3>
-                <p>We construct a dataset by integrating the 2022 U.S. News rankings of graduate programs in Statistics (peer assessment scores and geographic locations for 101 departments) with the College Scorecard (institutional attributes including locale type, size, and control). Together, these sources yield structured information about each department&mdash;geographic setting, program reputation, and institutional characteristics&mdash;that captures the essential features shaping hiring decisions and candidate preferences in the academic statistics job market.</p>
-
-                <p style="margin-top: 1rem;"><strong>Simulation Design:</strong></p>
-                <p>Using this integrated dataset as an empirical scaffold, we simulate a multi-year academic job market with 300 candidates per year over a 10-year horizon, with departments partitioned into four prestige tiers based on their U.S. News rankings: Tier 1 (top 10), Tier 2 (11&ndash;25), Tier 3 (26&ndash;50), and Tier 4 (51&ndash;101).</p>
-
-                <p style="margin-top: 1rem;"><strong>Key Findings:</strong></p>
-                <ul class="check-list">
-                    <li><i class="fas fa-arrow-up"></i> Substantial increase in aggregate candidate welfare</li>
-                    <li><i class="fas fa-arrow-up"></i> Increased number of successful hires across the market</li>
-                    <li><i class="fas fa-arrow-up"></i> Match quality improves across all candidate tiers</li>
-                    <li><i class="fas fa-arrow-up"></i> Lower-prestige departments benefit disproportionately</li>
-                    <li><i class="fas fa-arrow-up"></i> Substantial improvements in position fill rates across all department tiers</li>
-                </ul>
-            </div>
+            <article class="stat-ribbon reveal">
+                <div>
+                    <span class="ribbon-label">What changes</span>
+                    <p>Candidates express structured preferences once via a single standardized questionnaire, then disclose the same signal to any department they choose.</p>
+                </div>
+                <div>
+                    <span class="ribbon-label">Selection rule</span>
+                    <p>Departments combine questionnaire signals with traditional materials for uncertainty-aware shortlist construction using confidence-calibrated ranking.</p>
+                </div>
+                <div>
+                    <span class="ribbon-label">Market-level effect</span>
+                    <p>Welfare and fill rates improve as participation rises; universal disclosure is a dominant strategy for candidates.</p>
+                </div>
+            </article>
         </div>
 
-        <div class="simulation-figures">
-            <h3>Simulation Results</h3>
+        <div class="compare-board">
+            <article class="compare-card reveal">
+                <p class="card-kicker">Without signaling</p>
+                <h3>Application volume overwhelms information quality</h3>
+                <ul class="feature-list">
+                    <li><i class="fas fa-arrow-right"></i> Genuine interest is difficult to distinguish from strategic applications</li>
+                    <li><i class="fas fa-arrow-right"></i> Interview slots get consumed by mismatched or low-probability candidates</li>
+                    <li><i class="fas fa-arrow-right"></i> Offer concentration leaves some departments unable to hire</li>
+                </ul>
+            </article>
 
-            <div class="figure-container">
-                <img src="fig/fig_candidate_by_participation.png" alt="Candidate Outcomes by Participation Status" />
-                <p class="figure-caption"><strong>Figure 2:</strong> Candidate outcomes by participation status. <em>Left:</em> Mean welfare. <em>Right:</em> Matching rate. Dashed gray lines denote the baseline (&rho;=0%).</p>
-            </div>
-
-            <div class="figure-container">
-                <div class="two-panel-figure">
-                    <div class="panel">
-                        <img src="fig/fig_candidate_welfare.png" alt="Aggregate Candidate Welfare" />
-                    </div>
-                    <div class="panel">
-                        <img src="fig/fig_candidate_welfare_unconditional.png" alt="Candidate Welfare by Tier" />
-                    </div>
-                </div>
-                <p class="figure-caption"><strong>Figure 3:</strong> Mean candidate welfare across all candidates, by participation rate &rho;. <em>(a)</em> Aggregate. <em>(b)</em> Stratified by candidate quality tier.</p>
-            </div>
-
-            <div class="figure-container">
-                <div class="two-panel-figure">
-                    <div class="panel">
-                        <img src="fig/fig_candidate_utility_by_tier.png" alt="Mean Candidate Utility by Tier" />
-                    </div>
-                    <div class="panel">
-                        <img src="fig/fig_department_welfare.png" alt="Department Welfare by Tier" />
-                    </div>
-                </div>
-                <p class="figure-caption"><strong>Figure 4:</strong> Market outcomes by tier and participation rate &rho;. <em>(a)</em> Mean candidate utility among matched candidates, by quality tier. <em>(b)</em> Department welfare per hiring position, by prestige tier.</p>
-            </div>
-
-            <div class="figure-container heatmap-pair">
-                <div class="two-panel-figure">
-                    <div class="panel">
-                        <img src="fig/fig_dept_interview_heatmap.png" alt="Interview Allocation Heatmap" />
-                        <p class="figure-caption"><strong>Figure 5:</strong> Interview allocation by department and candidate tier. Cell shading and values show mean department utility and interview counts. <em>Left:</em> Baseline (&rho;=0%). <em>Right:</em> Questionnaire (&rho;=100%).</p>
-                    </div>
-                    <div class="panel">
-                        <img src="fig/fig_dept_hiring_heatmap.png" alt="Hiring Distribution Heatmap" />
-                        <p class="figure-caption"><strong>Figure 6:</strong> Hiring distribution by department and candidate tier. Cell shading and values show mean department utility and hire counts. <em>Left:</em> Baseline (&rho;=0%). <em>Right:</em> Questionnaire (&rho;=100%).</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="figure-container">
-                <img src="fig/fig_blocking_pairs.png" alt="Blocking Pair Rate" class="figure-narrow" />
-                <p class="figure-caption"><strong>Figure 7:</strong> Blocking pair rate by participation rate &rho;, measured as the number of blocking pairs divided by the total number of shortlist-eligible candidate&ndash;department pairs.</p>
-            </div>
+            <article class="compare-card compare-card-solution reveal">
+                <p class="card-kicker">With signaling</p>
+                <h3>Departments see a usable preference layer before interviews</h3>
+                <ul class="feature-list">
+                    <li><i class="fas fa-arrow-right"></i> Candidates communicate fit in a standardized, market-wide format</li>
+                    <li><i class="fas fa-arrow-right"></i> Interview choice incorporates estimated acceptance probabilities</li>
+                    <li><i class="fas fa-arrow-right"></i> Better shortlist construction raises match quality and fill rates</li>
+                </ul>
+            </article>
         </div>
     </section>
 
-    <!-- Questionnaire Section -->
-    <section id="questionnaire" class="section">
-        <h2><i class="fas fa-file-alt"></i> The Standardized Questionnaire</h2>
+    <section id="mechanism" class="section section-mechanism">
+        <div class="section-header reveal">
+            <p class="section-kicker">Mechanism</p>
+            <h2>A three-stage design for better interviews and better matching</h2>
+            <p>
+                The framework adds structured disclosure before interviews, then uses uncertainty-aware ranking to decide who gets seen.
+            </p>
+        </div>
 
-        <p>
-            The standardized questionnaire elicits interpretable preference information that can be matched against department characteristics. Questions may span the following categories:
-        </p>
+        <div class="mechanism-layout">
+            <div class="timeline">
+                <article class="stage-card reveal">
+                    <span class="stage-number">1</span>
+                    <div>
+                        <p class="card-kicker">Signaling stage</p>
+                        <h3>Candidates complete one questionnaire</h3>
+                        <p>
+                            The questionnaire captures preferences over geography, compensation, teaching expectations,
+                            mentoring, and research environment in a common 15-attribute format. Candidates choose which
+                            departments receive it alongside traditional application materials.
+                        </p>
+                    </div>
+                </article>
 
-        <div class="questionnaire-categories">
-            <div class="category-card">
-                <h3><i class="fas fa-map-marker-alt"></i> Geographic & Location</h3>
-                <ul>
-                    <li>Preferred geographic setting (urban/suburban/rural)</li>
-                    <li>Regional preferences (Northeast, Southeast, etc.)</li>
-                    <li>Airport proximity importance</li>
-                    <li>Cost of living considerations</li>
-                    <li>Partner/spouse hiring assistance needs</li>
-                </ul>
+                <article class="stage-card reveal">
+                    <span class="stage-number">2</span>
+                    <div>
+                        <p class="card-kicker">Interview stage</p>
+                        <h3>Departments rank with calibrated confidence</h3>
+                        <p>
+                            Questionnaire signals are combined with traditional materials to estimate acceptance
+                            probabilities and construct shortlists with joint ranking guarantees via simultaneous
+                            pairwise comparisons.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="stage-card reveal">
+                    <span class="stage-number">3</span>
+                    <div>
+                        <p class="card-kicker">Matching stage</p>
+                        <h3>Standard offers, stronger information</h3>
+                        <p>
+                            Departments extend offers as usual, but the market operates on sharper information and moves
+                            closer to stable outcomes as the questionnaire becomes more informative.
+                        </p>
+                    </div>
+                </article>
             </div>
 
-            <div class="category-card">
-                <h3><i class="fas fa-dollar-sign"></i> Compensation & Resources</h3>
-                <ul>
-                    <li>Minimum salary expectations</li>
-                    <li>Research startup funding needs</li>
-                    <li>Summer salary support preferences</li>
-                </ul>
-            </div>
+            <figure class="process-figure reveal">
+                <div class="figure-shell">
+                    <img src="fig/procedure.png" alt="Overview of the signaling, interview, and matching stages in the proposed market-design framework.">
+                </div>
+                <figcaption>
+                    <span class="figure-tag">Process map</span>
+                    <strong>Figure 1.</strong> The centralized questionnaire enters the pipeline before interview selection and feeds the confidence-calibrated ranking procedure used by departments.
+                </figcaption>
+            </figure>
+        </div>
 
-            <div class="category-card">
-                <h3><i class="fas fa-chalkboard-teacher"></i> Teaching & Mentoring</h3>
-                <ul>
+        <article class="innovation-banner reveal">
+            <div>
+                <p class="section-kicker">Technical innovation</p>
+                <h3>Joint uncertainty control for shortlist selection</h3>
+            </div>
+            <p>
+                The interview rule avoids naive point sorting. Simultaneous pairwise comparisons ensure the selected
+                shortlist contains the truly top candidates with high probability&mdash;not just the candidates with
+                the most optimistic point estimates.
+            </p>
+        </article>
+    </section>
+
+    <section id="results" class="section section-results">
+        <div class="section-header reveal">
+            <p class="section-kicker">Results</p>
+            <h2>Incentive guarantees and simulation evidence</h2>
+            <p>
+                The paper combines mechanism-design guarantees with simulations grounded in department-level data on rankings,
+                institutional characteristics, and geography from 101 U.S. statistics departments.
+            </p>
+        </div>
+
+        <div class="results-top">
+            <article class="results-card reveal">
+                <p class="card-kicker">Theoretical guarantees</p>
+                <h3>Why truthful, broad participation makes sense</h3>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check"></i> Universal disclosure is a dominant strategy for candidates in the modeled environment</li>
+                    <li><i class="fas fa-check"></i> Incentives to misreport vanish as market competition disciplines strategic deviations</li>
+                    <li><i class="fas fa-check"></i> Aggregate candidate welfare is nondecreasing in the participation rate</li>
+                    <li><i class="fas fa-check"></i> Better information pushes the market toward stable matching outcomes with no blocking pairs</li>
+                </ul>
+            </article>
+
+            <article class="results-card reveal">
+                <p class="card-kicker">Simulation design</p>
+                <h3>An empirical scaffold tied to real departments</h3>
+                <p>
+                    The simulations merge 2022 U.S. News graduate-program rankings in Statistics with College Scorecard
+                    institutional data, producing a market representation that captures reputation, geography, size, locale,
+                    and control across 101 departments partitioned into four prestige tiers.
+                </p>
+                <p>
+                    300 candidates per year over a 10-year horizon with 200 replications. Participation rates
+                    &rho;&nbsp;&isin;&nbsp;{0%, 5%, 20%, 50%, 90%, 100%} are tested, where &rho;&nbsp;=&nbsp;0% is the
+                    quality-only baseline.
+                </p>
+            </article>
+        </div>
+
+        <div class="highlight-band reveal">
+            <span>61% increase in aggregate candidate welfare</span>
+            <span>132 additional matches under full participation</span>
+            <span>Overall fill rates rise from 40.7% to 62.2%</span>
+            <span>Blocking pair rate falls from 80.8% to 69.2%</span>
+        </div>
+
+        <div class="gallery-grid">
+            <figure class="figure-card figure-card-wide reveal">
+                <div class="figure-shell">
+                    <img src="fig/fig_candidate_by_participation.png" alt="Candidate welfare and matching rate by participation status.">
+                </div>
+                <figcaption>
+                    <span class="figure-tag">Participation effects</span>
+                    <strong>Figure 2.</strong> Candidate outcomes by participation status. <em>Left:</em> Mean welfare. <em>Right:</em> Matching rate. Dashed gray lines denote the baseline (&rho;&nbsp;=&nbsp;0%). At &rho;&nbsp;=&nbsp;5%, early participants achieve welfare 12&times; that of non-participants.
+                </figcaption>
+            </figure>
+
+            <figure class="figure-card reveal">
+                <div class="paired-figure">
+                    <img src="fig/fig_candidate_welfare.png" alt="Aggregate candidate welfare across participation rates.">
+                    <img src="fig/fig_candidate_welfare_unconditional.png" alt="Candidate welfare by quality tier across participation rates.">
+                </div>
+                <figcaption>
+                    <span class="figure-tag">Candidate-side gains</span>
+                    <strong>Figure 3.</strong> Mean candidate welfare by participation rate &rho;. <em>(a)</em> Aggregate&mdash;welfare rises 61% under full participation. <em>(b)</em> Stratified by candidate quality tier&mdash;gains persist across all tiers.
+                </figcaption>
+            </figure>
+
+            <figure class="figure-card reveal">
+                <div class="paired-figure">
+                    <img src="fig/fig_candidate_utility_by_tier.png" alt="Matched candidate utility by quality tier and participation rate.">
+                    <img src="fig/fig_department_welfare.png" alt="Department welfare per hiring position by prestige tier and participation rate.">
+                </div>
+                <figcaption>
+                    <span class="figure-tag">Distributional effects</span>
+                    <strong>Figure 4.</strong> Market outcomes by tier and participation rate &rho;. <em>(a)</em> Mean candidate utility among matched candidates, by quality tier. <em>(b)</em> Department welfare per hiring position, by prestige tier&mdash;lower-tier departments gain 77&ndash;82%.
+                </figcaption>
+            </figure>
+
+            <figure class="figure-card reveal">
+                <div class="paired-figure">
+                    <img src="fig/fig_dept_interview_heatmap.png" alt="Interview allocation heatmap by department and candidate tier.">
+                    <img src="fig/fig_dept_hiring_heatmap.png" alt="Hiring distribution heatmap by department and candidate tier.">
+                </div>
+                <figcaption>
+                    <span class="figure-tag">Allocation shift</span>
+                    <strong>Figures 5 &amp; 6.</strong> Interview and hiring allocations rebalance when departments act on structured preference information. Total hires increase from 250 to 382 under full participation; mean utility per hire rises in every tier cell.
+                </figcaption>
+            </figure>
+
+            <figure class="figure-card reveal">
+                <div class="figure-shell figure-shell-narrow">
+                    <img src="fig/fig_blocking_pairs.png" alt="Blocking pair rate by participation rate.">
+                </div>
+                <figcaption>
+                    <span class="figure-tag">Stability</span>
+                    <strong>Figure 7.</strong> Blocking pair rate by participation rate &rho;, measured as blocking pairs divided by shortlist-eligible candidate&ndash;department pairs. The rate falls monotonically from 80.8% to 69.2% as signaling becomes more widespread.
+                </figcaption>
+            </figure>
+        </div>
+    </section>
+
+    <section id="questionnaire" class="section section-questionnaire">
+        <div class="section-header reveal">
+            <p class="section-kicker">Questionnaire</p>
+            <h2>A signal departments can compare across the whole market</h2>
+            <p>
+                The questionnaire covers the dimensions that matter most in academic job decisions. The items below are examples of the kinds of questions it can include.
+            </p>
+        </div>
+
+        <div class="questionnaire-grid">
+            <article class="question-card reveal">
+                <div class="question-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <h3>Geography and place</h3>
+                <ul class="token-list">
+                    <li>Urban or rural preference</li>
+                    <li>Regional priorities</li>
+                    <li>Airport proximity</li>
+                    <li>Cost-of-living sensitivity</li>
+                    <li>Partner placement support</li>
+                </ul>
+            </article>
+
+            <article class="question-card reveal">
+                <div class="question-icon"><i class="fas fa-dollar-sign"></i></div>
+                <h3>Compensation and resources</h3>
+                <ul class="token-list">
+                    <li>Salary floor expectations</li>
+                    <li>Research startup needs</li>
+                    <li>Summer salary support</li>
+                    <li>Research budget priorities</li>
+                </ul>
+            </article>
+
+            <article class="question-card reveal">
+                <div class="question-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                <h3>Teaching and mentoring</h3>
+                <ul class="token-list">
                     <li>Preferred teaching load</li>
-                    <li>Course type preferences (graduate/undergraduate)</li>
-                    <li>Faculty mentoring program importance</li>
+                    <li>Graduate or undergraduate emphasis</li>
+                    <li>Mentoring structure</li>
+                    <li>Faculty development support</li>
                 </ul>
-            </div>
+            </article>
 
-            <div class="category-card">
-                <h3><i class="fas fa-flask"></i> Research Environment</h3>
-                <ul>
-                    <li>Departmental research culture preferences</li>
-                    <li>Publication venue alignment</li>
-                    <li>PhD-to-faculty ratio preferences</li>
-                    <li>Medical school proximity importance</li>
+            <article class="question-card reveal">
+                <div class="question-icon"><i class="fas fa-flask"></i></div>
+                <h3>Research environment</h3>
+                <ul class="token-list">
+                    <li>Departmental research culture</li>
+                    <li>Publication ecosystem</li>
+                    <li>PhD pipeline strength</li>
+                    <li>Medical-school proximity</li>
+                    <li>Collaboration expectations</li>
                 </ul>
-            </div>
+            </article>
         </div>
 
-        <div class="questionnaire-note">
-            <p><strong>Design Principles:</strong></p>
-            <ul class="feature-list">
-                <li><i class="fas fa-lock"></i> <strong>Single submission constraint</strong> preserves credibility</li>
-                <li><i class="fas fa-balance-scale"></i> <strong>Standardized format</strong> enables comparable evaluation across departments</li>
-                <li><i class="fas fa-chart-line"></i> <strong>Continuous alignment scores</strong> for every department simultaneously</li>
-                <li><i class="fas fa-shield-alt"></i> <strong>No department-specific tailoring</strong> prevents strategic gaming</li>
-            </ul>
-        </div>
+        <article class="principles-panel reveal">
+            <div class="principles-copy">
+                <p class="card-kicker">Design principles</p>
+                <h3>Scarcity, comparability, and anti-gaming</h3>
+                <p>
+                    The questionnaire is useful because it is standardized enough to compare candidates fairly while
+                    still broad enough to reveal meaningful preference structure.
+                </p>
+            </div>
+
+            <div class="principles-list">
+                <div class="principle-item">
+                    <i class="fas fa-lock"></i>
+                    <span>Single submission preserves credibility</span>
+                </div>
+                <div class="principle-item">
+                    <i class="fas fa-balance-scale"></i>
+                    <span>Every department evaluates candidates against the same structured dimensions</span>
+                </div>
+                <div class="principle-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Continuous alignment scores support market-wide ranking</span>
+                </div>
+                <div class="principle-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>No tailored department-specific messaging</span>
+                </div>
+            </div>
+        </article>
     </section>
 
-    <!-- Paper Section -->
-    <section id="paper" class="section alt-bg">
-        <h2><i class="fas fa-file-pdf"></i> Paper & Resources</h2>
+    <section id="paper" class="section section-resources">
+        <div class="section-header reveal">
+            <p class="section-kicker">Paper and repository</p>
 
-        <div class="paper-links">
-            <a href="#" class="btn btn-primary" onclick="event.preventDefault()">
-                <i class="fas fa-download"></i> Download Paper (PDF)
-            </a>
-            <a href="https://github.com/amofrad/Academic-Job-Market" class="btn btn-secondary" target="_blank">
-                <i class="fab fa-github"></i> Code Repository
-            </a>
         </div>
 
-        <div class="citation-box">
-            <h3>Citation</h3>
-            <pre><code>@article{academicmarket2026,
-  title={A Statistical Market-Design Framework for the Academic Job Market},
-  author={Kaazempur-Mofrad, Ali and Dai, Xiaowu and He, Xuming},
+        <article class="resource-card reveal" style="max-width: 42rem; margin-inline: auto;">
+            <div class="resource-actions">
+                <a href="#" class="btn btn-primary" data-modal-trigger="coming-soon">Paper</a>
+                <a href="https://github.com/amofrad/Academic-Job-Market" class="btn btn-secondary" target="_blank" rel="noreferrer">
+                    <i class="fab fa-github"></i> Code repository
+                </a>
+            </div>
+            <div style="margin-top: 1.5rem;">
+                <div class="bibtex-header">
+                    <span class="card-kicker">BibTeX</span>
+                    <button class="copy-btn" id="copy-bibtex" aria-label="Copy BibTeX to clipboard">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+                <pre class="bibtex-pre" id="bibtex-content">@article{academicmarket2026,
+  title={A Statistical Market-Design Framework
+         for the Academic Job Market},
+  author={Kaazempur-Mofrad, Ali and
+          Dai, Xiaowu and He, Xuming},
   year={2026}
-}</code></pre>
-        </div>
+}</pre>
+            </div>
+        </article>
     </section>
 </main>
 
-<footer>
-    <p>&copy; 2026 Ali Kaazempur-Mofrad, Xiaowu Dai, Xuming He. All rights reserved.</p>
+<footer class="site-footer">
+    <p>&copy; 2026 Ali Kaazempur-Mofrad, Xiaowu Dai, Xuming He.</p>
+    <p class="footer-note">Research website for the academic job-market signaling framework.</p>
 </footer>
 
-<!-- Coming Soon Modal -->
-<div id="coming-soon-modal" class="modal-overlay" onclick="hideComingSoon(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <button class="modal-close" onclick="hideComingSoon(event)">&times;</button>
-        <i class="fas fa-rocket modal-icon"></i>
-        <h3>Coming Soon</h3>
-        <p>The interactive platform is currently under development. Check back soon for updates.</p>
+<div id="lightbox" class="lightbox-overlay" role="presentation">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Close image">&times;</button>
+    <img id="lightbox-img" src="" alt="">
+</div>
+
+<div id="coming-soon-modal" class="modal-overlay" role="presentation">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="coming-soon-title">
+        <button class="modal-close" id="modal-close" aria-label="Close modal">&times;</button>
+        <div class="modal-badge"><i class="fas fa-rocket"></i></div>
+        <h3 id="coming-soon-title">Coming soon</h3>
+        <p>
+            The platform is under development. Check back soon for updates.        </p>
     </div>
 </div>
 
 <script>
-    // Mobile navigation toggle
-    const navToggle = document.getElementById('nav-toggle');
-    const navList = document.querySelector('.nav-list');
+    const navToggle = document.getElementById("nav-toggle");
+    const navList = document.getElementById("nav-list");
+    const navbar = document.getElementById("navbar");
+    const navLinks = Array.from(document.querySelectorAll(".nav-list a[href^='#']:not([data-modal-trigger])"));
+    const sections = Array.from(document.querySelectorAll("main section[id]"));
+    const modal = document.getElementById("coming-soon-modal");
+    const modalClose = document.getElementById("modal-close");
+    const modalTriggers = document.querySelectorAll("[data-modal-trigger='coming-soon']");
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    navToggle.addEventListener('click', () => {
-        navList.classList.toggle('active');
+    function setNavState(isOpen) {
+        navList.classList.toggle("open", isOpen);
+        navToggle.setAttribute("aria-expanded", String(isOpen));
+    }
+
+    function showComingSoon(event) {
+        if (event) event.preventDefault();
+        modal.classList.add("active");
+        document.body.classList.add("modal-open");
+    }
+
+    function hideComingSoon(event) {
+        if (event) event.preventDefault();
+        modal.classList.remove("active");
+        document.body.classList.remove("modal-open");
+    }
+
+    navToggle.addEventListener("click", () => {
+        setNavState(!navList.classList.contains("open"));
     });
 
-    // Smooth scrolling for navigation links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            const href = this.getAttribute('href');
-            if (href === '#') return; // skip placeholder links
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-                navList.classList.remove('active');
-            }
+    navLinks.forEach((link) => {
+        link.addEventListener("click", (event) => {
+            const target = document.querySelector(link.getAttribute("href"));
+            if (!target) return;
+            event.preventDefault();
+            target.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
+            setNavState(false);
         });
     });
 
-    // Sticky navigation on scroll
-    window.addEventListener('scroll', () => {
-        const navbar = document.getElementById('navbar');
-        if (window.scrollY > 100) {
-            navbar.classList.add('sticky');
-        } else {
-            navbar.classList.remove('sticky');
+    modalTriggers.forEach((trigger) => {
+        trigger.addEventListener("click", (event) => {
+            setNavState(false);
+            showComingSoon(event);
+        });
+    });
+
+    modalClose.addEventListener("click", hideComingSoon);
+    modal.addEventListener("click", (event) => {
+        if (event.target === modal) hideComingSoon(event);
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            if (lightbox.classList.contains("active")) closeLightbox();
+            else if (modal.classList.contains("active")) hideComingSoon();
         }
     });
 
-    // Coming Soon modal
-    function showComingSoon(e) {
-        e.preventDefault();
-        document.getElementById('coming-soon-modal').classList.add('active');
+    window.addEventListener("scroll", () => {
+        navbar.classList.toggle("sticky", window.scrollY > 24);
+    }, { passive: true });
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const targetId = entry.target.getAttribute("id");
+            navLinks.forEach((link) => {
+                link.classList.toggle("active", link.getAttribute("href") === "#" + targetId);
+            });
+        });
+    }, { rootMargin: "-35% 0px -45% 0px", threshold: 0.01 });
+
+    sections.forEach((section) => sectionObserver.observe(section));
+
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.12 });
+
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const lightboxClose = document.getElementById("lightbox-close");
+
+    function openLightbox(src, alt) {
+        lightboxImg.src = src;
+        lightboxImg.alt = alt;
+        lightbox.classList.add("active");
+        document.body.classList.add("modal-open");
     }
 
-    function hideComingSoon(e) {
-        e.preventDefault();
-        document.getElementById('coming-soon-modal').classList.remove('active');
+    function closeLightbox() {
+        lightbox.classList.remove("active");
+        document.body.classList.remove("modal-open");
     }
+
+    // All figures: figure-shell covers Figs 1, 2, 7; paired-figure covers Figs 3–6
+    document.querySelectorAll(".figure-shell img, .paired-figure img").forEach((img) => {
+        img.classList.add("fig-zoomable");
+        img.addEventListener("click", () => openLightbox(img.src, img.alt));
+    });
+
+    lightboxClose.addEventListener("click", closeLightbox);
+    lightbox.addEventListener("click", (e) => { if (e.target === lightbox) closeLightbox(); });
+
+    document.getElementById("copy-bibtex").addEventListener("click", () => {
+        const text = document.getElementById("bibtex-content").textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.getElementById("copy-bibtex");
+            btn.classList.add("copied");
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied';
+            setTimeout(() => {
+                btn.classList.remove("copied");
+                btn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+            }, 2000);
+        });
+    });
+
+    document.querySelectorAll(".reveal").forEach((element, index) => {
+        element.style.setProperty("--delay", ((index % 5) * 70) + "ms");
+        if (prefersReducedMotion) {
+            element.classList.add("is-visible");
+            return;
+        }
+        revealObserver.observe(element);
+    });
 </script>
 </body>
 </html>
