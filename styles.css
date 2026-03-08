@@ -314,7 +314,7 @@ main {
 }
 
 .mechanism-diagram img {
-    max-width: 100%;
+    max-width: 70%;
     height: auto;
     border: 1px solid var(--border-color);
     border-radius: 4px;
@@ -485,6 +485,7 @@ main {
     border-bottom: 3px solid var(--accent-color);
 }
 
+
 .figure-container {
     background: white;
     padding: 2rem;
@@ -512,14 +513,31 @@ main {
 
 .two-panel-figure .panel {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .two-panel-figure .panel img {
     max-width: 100%;
     height: auto;
     border-radius: 4px;
+}
+
+/* Heatmap pair: each panel gets its own caption */
+.heatmap-pair .two-panel-figure {
+    gap: 2rem;
+    margin-bottom: 0;
+}
+
+.heatmap-pair .two-panel-figure .panel .figure-caption {
+    margin-top: 0.75rem;
+    text-align: left;
+}
+
+/* Narrow figures (e.g. single line charts) */
+.figure-narrow {
+    max-width: 60% !important;
 }
 
 /* Benefit Grid */
@@ -635,6 +653,7 @@ main {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
 
 .btn-secondary {
     background-color: white;
@@ -908,6 +927,14 @@ footer a:hover {
 
     .two-panel-figure {
         grid-template-columns: 1fr;
+    }
+
+    .mechanism-diagram img {
+        max-width: 100%;
+    }
+
+    .figure-narrow {
+        max-width: 100% !important;
     }
 }
 

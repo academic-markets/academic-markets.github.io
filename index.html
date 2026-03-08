@@ -188,28 +188,53 @@
         </div>
 
         <div class="simulation-figures">
-            <h3>Simulation Key Results</h3>
+            <h3>Simulation Results</h3>
 
             <div class="figure-container">
-                <img src="fig/fig_candidate_by_participation.png" alt="Candidate Welfare Gains" />
-                <p class="figure-caption"><strong>Figure 2:</strong> Candidate benefits from questionnaire mechanism across participation rates. <em>Left:</em> Mean candidate welfare stratified by participation status. <em>Right:</em> Matching rates by participation status. Dashed gray lines denote baseline (&rho;=0%).</p>
+                <img src="fig/fig_candidate_by_participation.png" alt="Candidate Outcomes by Participation Status" />
+                <p class="figure-caption"><strong>Figure 2:</strong> Candidate outcomes by participation status. <em>Left:</em> Mean welfare. <em>Right:</em> Matching rate. Dashed gray lines denote the baseline (&rho;=0%).</p>
             </div>
 
             <div class="figure-container">
                 <div class="two-panel-figure">
                     <div class="panel">
-                        <img src="fig/fig_candidate_welfare_by_tier.png" alt="Candidate Match Quality by Tier" />
+                        <img src="fig/fig_candidate_welfare.png" alt="Aggregate Candidate Welfare" />
+                    </div>
+                    <div class="panel">
+                        <img src="fig/fig_candidate_welfare_unconditional.png" alt="Candidate Welfare by Tier" />
+                    </div>
+                </div>
+                <p class="figure-caption"><strong>Figure 3:</strong> Mean candidate welfare across all candidates, by participation rate &rho;. <em>(a)</em> Aggregate. <em>(b)</em> Stratified by candidate quality tier.</p>
+            </div>
+
+            <div class="figure-container">
+                <div class="two-panel-figure">
+                    <div class="panel">
+                        <img src="fig/fig_candidate_utility_by_tier.png" alt="Mean Candidate Utility by Tier" />
                     </div>
                     <div class="panel">
                         <img src="fig/fig_department_welfare.png" alt="Department Welfare by Tier" />
                     </div>
                 </div>
-                <p class="figure-caption"><strong>Figure 3:</strong> Welfare gains stratified by tier. <em>Left panel:</em> Matched candidate utility increases across all candidate tiers with participation. <em>Right panel:</em> Department welfare per hiring position increases for all department tiers, with lower-tier departments experiencing larger gains.</p>
+                <p class="figure-caption"><strong>Figure 4:</strong> Market outcomes by tier and participation rate &rho;. <em>(a)</em> Mean candidate utility among matched candidates, by quality tier. <em>(b)</em> Department welfare per hiring position, by prestige tier.</p>
+            </div>
+
+            <div class="figure-container heatmap-pair">
+                <div class="two-panel-figure">
+                    <div class="panel">
+                        <img src="fig/fig_dept_interview_heatmap.png" alt="Interview Allocation Heatmap" />
+                        <p class="figure-caption"><strong>Figure 5:</strong> Interview allocation by department and candidate tier. Cell shading and values show mean department utility and interview counts. <em>Left:</em> Baseline (&rho;=0%). <em>Right:</em> Questionnaire (&rho;=100%).</p>
+                    </div>
+                    <div class="panel">
+                        <img src="fig/fig_dept_hiring_heatmap.png" alt="Hiring Distribution Heatmap" />
+                        <p class="figure-caption"><strong>Figure 6:</strong> Hiring distribution by department and candidate tier. Cell shading and values show mean department utility and hire counts. <em>Left:</em> Baseline (&rho;=0%). <em>Right:</em> Questionnaire (&rho;=100%).</p>
+                    </div>
+                </div>
             </div>
 
             <div class="figure-container">
-                <img src="fig/fig_dept_hiring_heatmap.png" alt="Hiring Distribution Heatmap" />
-                <p class="figure-caption"><strong>Figure 4:</strong> Hiring distribution stratified by department and candidate quality tiers. Cell shading indicates mean department utility from hires; cell values show hire counts (bold) with mean utility below. Department tiers on y-axis show total hiring quota across simulation years; candidate tiers on x-axis show total market size. <em>Left:</em> Baseline (&rho;=0%). <em>Right:</em> Questionnaire (&rho;=100%).</p>
+                <img src="fig/fig_blocking_pairs.png" alt="Blocking Pair Rate" class="figure-narrow" />
+                <p class="figure-caption"><strong>Figure 7:</strong> Blocking pair rate by participation rate &rho;, measured as the number of blocking pairs divided by the total number of shortlist-eligible candidate&ndash;department pairs.</p>
             </div>
         </div>
     </section>
@@ -279,7 +304,7 @@
         <h2><i class="fas fa-file-pdf"></i> Paper & Resources</h2>
 
         <div class="paper-links">
-            <a href="#" class="btn btn-primary" onclick="showComingSoon(event)">
+            <a href="#" class="btn btn-primary" onclick="event.preventDefault()">
                 <i class="fas fa-download"></i> Download Paper (PDF)
             </a>
             <a href="https://github.com/amofrad/Academic-Job-Market" class="btn btn-secondary" target="_blank">
@@ -289,9 +314,8 @@
 
         <div class="citation-box">
             <h3>Citation</h3>
-            <pre><code>@article{kaazempur2026market,
-  title={A Statistical Market-Design Framework for the Academic
-         Job Market for New Statisticians},
+            <pre><code>@article{academicmarket2026,
+  title={A Statistical Market-Design Framework for the Academic Job Market},
   author={Kaazempur-Mofrad, Ali and Dai, Xiaowu and He, Xuming},
   year={2026}
 }</code></pre>
