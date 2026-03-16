@@ -1068,23 +1068,6 @@ main {
     .figure-shell-narrow {
         max-width: 100%;
     }
-}
-
-@media (max-width: 760px) {
-    .site-header {
-        padding-top: 1rem;
-    }
-
-    .hero-copy,
-    .section,
-    .signal-card,
-    .mini-dashboard,
-    .resource-card,
-    .citation-card,
-    .question-card {
-        padding-left: 1.1rem;
-        padding-right: 1.1rem;
-    }
 
     .nav-inner {
         position: relative;
@@ -1112,6 +1095,23 @@ main {
     .nav-list a {
         width: 100%;
         justify-content: center;
+    }
+}
+
+@media (max-width: 760px) {
+    .site-header {
+        padding-top: 1rem;
+    }
+
+    .hero-copy,
+    .section,
+    .signal-card,
+    .mini-dashboard,
+    .resource-card,
+    .citation-card,
+    .question-card {
+        padding-left: 1.1rem;
+        padding-right: 1.1rem;
     }
 
     .hero-copy h1 {
