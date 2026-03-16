@@ -87,6 +87,25 @@
             transition: background-color 0.2s ease;
         }
         .lightbox-close:hover { background: rgba(255,255,255,0.24); }
+
+        .questionnaire-pdf-btn {
+            position: absolute;
+            top: clamp(1.5rem, 3vw, 2.5rem);
+            right: clamp(1.5rem, 3vw, 2.5rem);
+            z-index: 2;
+            font-size: clamp(0.78rem, 1.8vw, 0.95rem);
+            padding: 0.6rem 1rem;
+            min-height: auto;
+            white-space: nowrap;
+        }
+        @media (max-width: 640px) {
+            .questionnaire-pdf-btn {
+                position: static;
+                margin-bottom: 1rem;
+                width: 100%;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body id="top">
@@ -411,8 +430,8 @@
     </section>
 
     <section id="questionnaire" class="section section-questionnaire" style="position: relative;">
-        <a href="fig/Example_Questionnaire.pdf" target="_blank" class="btn btn-secondary" style="position: absolute; top: clamp(1.5rem, 3vw, 2.5rem); right: clamp(1.5rem, 3vw, 2.5rem); z-index: 2;">
-            <i class="fas fa-file-pdf" style="margin-right: 0.5rem;"></i> Example questionnaire
+        <a href="fig/Example_Questionnaire.pdf" target="_blank" class="btn btn-secondary questionnaire-pdf-btn">
+            <i class="fas fa-file-pdf" style="margin-right: 0.4rem;"></i> Example questionnaire
         </a>
         <div class="section-header reveal">
             <p class="section-kicker">Questionnaire</p>
