@@ -255,9 +255,18 @@ button {
     padding: 1rem 1.1rem;
     background: rgba(255, 255, 255, 0.72);
     border: 1px solid rgba(20, 35, 49, 0.08);
+    border-top: 5px solid var(--teal);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
     backdrop-filter: blur(14px);
+}
+
+.metric-tile--dept {
+    border-top-color: var(--ink-700);
+}
+
+.hero-metrics--stats {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .metric-value {
@@ -1040,9 +1049,16 @@ main {
     .friction-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .hero-metrics--stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 900px) {
+    .hero-metrics--stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
     .overview-grid,
     .compare-board,
     .results-top,
@@ -1125,8 +1141,18 @@ main {
         grid-template-columns: 1fr;
     }
 
+    .hero-metrics--stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
     .stage-card {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-metrics--stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
