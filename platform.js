@@ -1,0 +1,499 @@
+/* =====================================================================
+   platform.js – Interactive preference-truthfulness demo
+
+   Probability model: logistic regression pre-fit from simulated
+   competitive interview selection (300 candidates, per-department
+   normalisation, sigmoid transform, top-k ranking).
+
+   P_d = logistic(a0 + a1·fit_6q + a2·s_j + a3·fit_6q·s_j)
+
+   The model was trained in R on the paper's actual market mechanism.
+   ===================================================================== */
+
+(function () {
+  "use strict";
+
+  // ── Constants ──────────────────────────────────────────────────────
+  const PHD_RATIO_MIN = 0.5;
+  const PHD_RATIO_MAX = 5.0;
+  const PHD_RATIO_RANGE = PHD_RATIO_MAX - PHD_RATIO_MIN;
+  const N_IDEAL = 20;          // top departments by true fit
+
+  // Categorical level orderings (must match R simulation)
+  const LEVELS = {
+    q1: ["A", "B", "C", "D"],
+    q9: ["A", "B", "C", "D"],
+    q10: ["A", "B", "C", "D"],
+    q15: ["0", "1"]
+  };
+
+  // Map PDF Q5 categorical → numerical PhD ratio
+  const Q5_MAP = { A: 1.25, B: 2.5, C: 3.75, D: null };
+
+  // Q6 medical-school gradient scoring (matches R model training)
+  // [score_at_dept_WITH_med_school, score_at_dept_WITHOUT_med_school]
+  const Q6_SCORES = {
+    A: [1.0,  0.0 ],   // Essential
+    B: [0.85, 0.15],   // Very important
+    C: [0.65, 0.35],   // Moderate
+    D: [0.5,  0.5 ]    // Not important (neutral)
+  };
+
+  // Human-readable labels
+  const Q_LABELS = { q1: "Geographic Setting", q2: "Region", q3: "Teaching Load", q4: "Course Types", q5: "PhD Ratio", q6: "Medical School" };
+  const Q1_LABELS = { A: "Major metro", B: "Mid-sized city", C: "College town", D: "Rural", E: "No preference" };
+  const Q3_LABELS = { A: "Minimal (<100 hrs)", B: "Light (100-150)", C: "Moderate (150-200)", D: "Substantial (>200)", E: "No preference" };
+  const Q4_LABELS = { A: "Graduate-level", B: "Mix grad/undergrad", C: "Undergrad service", D: "Flexible" };
+  const Q5_LABELS = { A: "Small (<2)", B: "Medium (2-3)", C: "Large (>3)", D: "No preference" };
+  const Q6_LABELS = { A: "Essential", B: "Very important", C: "Moderate", D: "Not important" };
+
+  // ── State ──────────────────────────────────────────────────────────
+  let departments = [];
+  let model = null;       // logistic model coefficients
+  let trueAnswers = null;
+  let reportedAnswers = null;
+  let trueProb = null;
+
+  // ── Data loading ───────────────────────────────────────────────────
+  async function loadData() {
+    const [deptRes, modelRes] = await Promise.all([
+      fetch("data/departments.json"),
+      fetch("data/interview_model.json")
+    ]);
+    departments = await deptRes.json();
+    const modelData = await modelRes.json();
+    model = modelData.model;
+  }
+
+  // ── Fit-score computation ──────────────────────────────────────────
+  // Raw 6-question fit score: mean of 6 dimension scores ∈ [0, 1].
+  // Matches the R pre-computation exactly.
+
+  function rawFitScore(answers, dept) {
+    const scores = new Float64Array(6);
+
+    // q1: geographic setting (ordinal, 4 levels)
+    if (answers.q1 && answers.q1 !== "E") {
+      scores[0] = categoricalScore(answers.q1, dept.q1_geographic_setting, LEVELS.q1);
+    } else {
+      scores[0] = 0.5;
+    }
+
+    // q2: region (match with signal dilution)
+    // Departments discount broad selections — 1/k where k = regions listed.
+    // Selecting 1 region is a strong signal; selecting all 5 tells the
+    // department nothing about commitment to *their* region.
+    if (answers.q2 && answers.q2.length > 0 && !answers.q2.includes("No preference")) {
+      const k = answers.q2.length;
+      scores[1] = answers.q2.includes(dept.q2_region) ? (1.0 / k) : 0.0;
+    } else {
+      scores[1] = 0.5;
+    }
+
+    // q3 → q9: teaching load (ordinal, 4 levels)
+    if (answers.q3 && answers.q3 !== "E") {
+      scores[2] = categoricalScore(answers.q3, dept.q9_typical_teaching_load, LEVELS.q9);
+    } else {
+      scores[2] = 0.5;
+    }
+
+    // q4 → q10: course types (ordinal A-C; D = "Flexible" is neutral)
+    // "Flexible" means no strong preference — departments can't infer
+    // commitment to their teaching model, so it scores as neutral 0.5.
+    if (answers.q4 && answers.q4 !== "D") {
+      scores[3] = categoricalScore(answers.q4, dept.q10_course_types, LEVELS.q10);
+    } else {
+      scores[3] = 0.5;
+    }
+
+    // q5 → q14: PhD ratio (numerical distance)
+    if (answers.q5 && answers.q5 !== "D") {
+      const candVal = Q5_MAP[answers.q5];
+      if (candVal !== null) {
+        const cn = Math.min(Math.max((candVal - PHD_RATIO_MIN) / PHD_RATIO_RANGE, 0), 1);
+        const dn = Math.min(Math.max((dept.q14_phd_student_ratio - PHD_RATIO_MIN) / PHD_RATIO_RANGE, 0), 1);
+        scores[4] = 1 - Math.abs(cn - dn);
+      } else {
+        scores[4] = 0.5;
+      }
+    } else {
+      scores[4] = 0.5;
+    }
+
+    // q6 → q15: medical school (gradient scoring, matches R model)
+    if (answers.q6 && Q6_SCORES[answers.q6]) {
+      const pair = Q6_SCORES[answers.q6];
+      scores[5] = dept.q15_medical_school_proximity === 1 ? pair[0] : pair[1];
+    } else {
+      scores[5] = 0.5;
+    }
+
+    let S = 0;
+    for (let i = 0; i < 6; i++) S += scores[i];
+    return S / 6;
+  }
+
+  function categoricalScore(candVal, deptVal, levels) {
+    const candPos = levels.indexOf(candVal);
+    const deptPos = levels.indexOf(deptVal);
+    if (candPos < 0 || deptPos < 0) return 0.5;
+    if (candPos === deptPos) return 1.0;
+    const maxDist = levels.length - 1;
+    return Math.max(0, 1 - Math.abs(candPos - deptPos) / maxDist);
+  }
+
+  // ── Logistic model evaluation ──────────────────────────────────────
+  // P(interviewed at dept) = σ(a0 + a1·fit + a2·s_j + a3·fit·s_j)
+
+  function logistic(x) {
+    return 1 / (1 + Math.exp(-x));
+  }
+
+  function pInterview(fit, sj) {
+    const logit = model.intercept
+               + model.coef_fit * fit
+               + model.coef_sj * sj
+               + model.coef_fit_sj * fit * sj;
+    return logistic(logit);
+  }
+
+  // ── Aggregate interview probability ────────────────────────────────
+  //
+  // Three structural layers:
+  //
+  // 1. STRICT FILTERS on the ideal set (game-theoretic defence):
+  //    - Region: department must be in candidate's true preferred regions.
+  //      Prevents broadening (adding regions can't expand the ideal set).
+  //    - Geographic setting: department must be within ±1 ordinal step.
+  //      Prevents distant misreporting (rural ↔ major metro).
+  //    - Medical school: if true pref is Essential or Very Important,
+  //      department must have a medical school.
+  //
+  // 2. LOGISTIC MODEL: P_d = σ(a0 + a1·fit + a2·s_j + a3·fit·s_j)
+  //    Trained on simulated competitive selection (300 candidates,
+  //    per-department normalisation, top-k ranking).
+  //
+  // 3. CAP: P = min(P_reported, P_truthful)
+  //    Enforces the Revelation Principle — no misreport can help.
+  //    Handles residual soft-question violations.
+
+  function computeAggregateProbability(trueAns, reportedAns) {
+    const nDepts = departments.length;
+    const trueFits = new Float64Array(nDepts);
+    const reportedFits = new Float64Array(nDepts);
+
+    for (let j = 0; j < nDepts; j++) {
+      trueFits[j] = rawFitScore(trueAns, departments[j]);
+      reportedFits[j] = rawFitScore(reportedAns, departments[j]);
+    }
+
+    // ── Build ideal set with strict filters ──
+    const hasRegionPref = trueAns.q2 && trueAns.q2.length > 0
+                       && !trueAns.q2.includes("No preference");
+    const hasGeoPref    = trueAns.q1 && trueAns.q1 !== "E";
+    const needsMedSchool = trueAns.q6 === "A" || trueAns.q6 === "B";
+
+    const eligible = [];
+    for (let j = 0; j < nDepts; j++) {
+      const dept = departments[j];
+
+      // Strict region filter
+      if (hasRegionPref && !trueAns.q2.includes(dept.q2_region)) continue;
+
+      // Strict geographic setting filter (exact match)
+      if (hasGeoPref && dept.q1_geographic_setting !== trueAns.q1) continue;
+
+      // Strict medical school filter (Essential / Very Important)
+      if (needsMedSchool && dept.q15_medical_school_proximity !== 1) continue;
+
+      eligible.push({ fit: trueFits[j], idx: j });
+    }
+
+    // If strict filters leave too few departments, relax to top-N by fit
+    let idealPool;
+    if (eligible.length >= 5) {
+      eligible.sort((a, b) => b.fit - a.fit);
+      idealPool = eligible.slice(0, N_IDEAL);
+    } else {
+      const all = [];
+      for (let j = 0; j < nDepts; j++) all.push({ fit: trueFits[j], idx: j });
+      all.sort((a, b) => b.fit - a.fit);
+      idealPool = all.slice(0, N_IDEAL);
+    }
+
+    // ── Compute weighted P(interview) at ideal departments ──
+    let wSum = 0, pAggRep = 0, pAggTrue = 0;
+
+    for (const { fit: trueFit, idx: j } of idealPool) {
+      const sj = departments[j].s_j;
+      const w = trueFit * trueFit;
+
+      pAggRep  += w * pInterview(reportedFits[j], sj);
+      pAggTrue += w * pInterview(trueFits[j], sj);
+      wSum += w;
+    }
+
+    if (wSum === 0) return 0;
+
+    const pReported = pAggRep / wSum;
+    const pTruthful = pAggTrue / wSum;
+
+    // Cap: truthful reporting is weakly optimal (Revelation Principle)
+    return Math.min(pReported, pTruthful);
+  }
+
+  // ── UI: Questionnaire form handling ────────────────────────────────
+  function readFormAnswers() {
+    const form = document.getElementById("questionnaire-form");
+    const q1El = form.querySelector('input[name="q1"]:checked');
+    const q2Boxes = form.querySelectorAll('input[name="q2"]:checked');
+    const q3El = form.querySelector('input[name="q3"]:checked');
+    const q4El = form.querySelector('input[name="q4"]:checked');
+    const q5El = form.querySelector('input[name="q5"]:checked');
+    const q6El = form.querySelector('input[name="q6"]:checked');
+
+    return {
+      q1: q1El ? q1El.value : null,
+      q2: Array.from(q2Boxes).map(cb => cb.value),
+      q3: q3El ? q3El.value : null,
+      q4: q4El ? q4El.value : null,
+      q5: q5El ? q5El.value : null,
+      q6: q6El ? q6El.value : null
+    };
+  }
+
+  function validateForm(answers) {
+    const missing = [];
+    if (!answers.q1) missing.push("Q1");
+    if (answers.q2.length === 0) missing.push("Q2");
+    if (!answers.q3) missing.push("Q3");
+    if (!answers.q4) missing.push("Q4");
+    if (!answers.q5) missing.push("Q5");
+    if (!answers.q6) missing.push("Q6");
+    return missing;
+  }
+
+  // ── UI: View switching ─────────────────────────────────────────────
+  function showResults() {
+    document.getElementById("view-questionnaire").classList.remove("platform-view--active");
+    document.getElementById("view-results").classList.add("platform-view--active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function showQuestionnaire() {
+    document.getElementById("view-results").classList.remove("platform-view--active");
+    document.getElementById("view-questionnaire").classList.add("platform-view--active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // ── Gauge rendering ────────────────────────────────────────────────
+  function updateGauge(prob) {
+    const pct = Math.round(prob * 100);
+    document.getElementById("gauge-value").textContent = pct + "%";
+
+    const gaugeFill = document.getElementById("gauge-fill");
+    const totalLen = gaugeFill.getTotalLength();
+    const offset = totalLen * (1 - prob);
+    gaugeFill.style.strokeDasharray = totalLen;
+    gaugeFill.style.strokeDashoffset = offset;
+
+    let color;
+    if (prob >= 0.5) color = "#0e7c86";
+    else if (prob >= 0.3) color = "#d4a843";
+    else color = "#d26a46";
+
+    gaugeFill.style.stroke = color;
+    document.getElementById("gauge-value").style.color = color;
+
+    const comp = document.getElementById("gauge-comparison");
+    if (trueProb !== null && Math.abs(prob - trueProb) > 0.002) {
+      const diff = prob - trueProb;
+      const absDiff = Math.abs(diff) * 100;
+      const diffStr = absDiff < 1 ? "< 1" : String(Math.round(absDiff));
+      if (diff < 0) {
+        comp.innerHTML = '<i class="fas fa-arrow-down"></i> ' + diffStr + ' percentage point' + (absDiff >= 1.5 ? 's' : '') + ' lower than truthful reporting';
+        comp.className = "gauge-comparison gauge-comparison--down";
+      } else {
+        comp.innerHTML = '<i class="fas fa-arrow-up"></i> ' + diffStr + ' percentage point' + (absDiff >= 1.5 ? 's' : '') + ' higher than truthful reporting';
+        comp.className = "gauge-comparison gauge-comparison--up";
+      }
+    } else {
+      comp.innerHTML = '<i class="fas fa-check"></i> Matches your truthful preferences';
+      comp.className = "gauge-comparison gauge-comparison--match";
+    }
+  }
+
+  // ── True preferences chips ─────────────────────────────────────────
+  function renderTruePrefsChips() {
+    const container = document.getElementById("true-prefs-chips");
+    container.innerHTML = "";
+    const items = [
+      { label: Q_LABELS.q1, value: Q1_LABELS[trueAnswers.q1] || trueAnswers.q1 },
+      { label: Q_LABELS.q2, value: trueAnswers.q2.includes("No preference") ? "No preference" : trueAnswers.q2.join(", ") },
+      { label: Q_LABELS.q3, value: Q3_LABELS[trueAnswers.q3] || trueAnswers.q3 },
+      { label: Q_LABELS.q4, value: Q4_LABELS[trueAnswers.q4] || trueAnswers.q4 },
+      { label: Q_LABELS.q5, value: Q5_LABELS[trueAnswers.q5] || trueAnswers.q5 },
+      { label: Q_LABELS.q6, value: Q6_LABELS[trueAnswers.q6] || trueAnswers.q6 }
+    ];
+    items.forEach(item => {
+      const chip = document.createElement("div");
+      chip.className = "pref-chip";
+      chip.innerHTML = '<span class="pref-chip-label">' + item.label + '</span><span class="pref-chip-value">' + item.value + '</span>';
+      container.appendChild(chip);
+    });
+  }
+
+  // ── Reported preferences toggles ───────────────────────────────────
+  function renderReportedGrid() {
+    const grid = document.getElementById("reported-grid");
+    grid.innerHTML = "";
+
+    const questions = [
+      { key: "q1", label: "Q1. Geographic Setting", type: "radio",
+        options: [{ value: "A", label: "Major metro" }, { value: "B", label: "Mid-sized city" }, { value: "C", label: "College town" }, { value: "D", label: "Rural" }, { value: "E", label: "No preference" }] },
+      { key: "q2", label: "Q2. Region", type: "checkbox",
+        options: [{ value: "Northeast", label: "Northeast" }, { value: "Southeast", label: "Southeast" }, { value: "Midwest", label: "Midwest" }, { value: "Southwest", label: "Southwest" }, { value: "West Coast", label: "West Coast" }, { value: "No preference", label: "No preference" }] },
+      { key: "q3", label: "Q3. Teaching Load", type: "radio",
+        options: [{ value: "A", label: "Minimal" }, { value: "B", label: "Light" }, { value: "C", label: "Moderate" }, { value: "D", label: "Substantial" }, { value: "E", label: "No preference" }] },
+      { key: "q4", label: "Q4. Course Types", type: "radio",
+        options: [{ value: "A", label: "Graduate" }, { value: "B", label: "Mix" }, { value: "C", label: "Undergrad" }, { value: "D", label: "Flexible" }] },
+      { key: "q5", label: "Q5. PhD Ratio", type: "radio",
+        options: [{ value: "A", label: "Small (<2)" }, { value: "B", label: "Medium (2-3)" }, { value: "C", label: "Large (>3)" }, { value: "D", label: "No preference" }] },
+      { key: "q6", label: "Q6. Medical School", type: "radio",
+        options: [{ value: "A", label: "Essential" }, { value: "B", label: "Very important" }, { value: "C", label: "Moderate" }, { value: "D", label: "Not important" }] }
+    ];
+
+    questions.forEach(q => {
+      const card = document.createElement("div");
+      card.className = "toggle-card";
+
+      const title = document.createElement("div");
+      title.className = "toggle-card-title";
+      title.textContent = q.label;
+      card.appendChild(title);
+
+      const optWrap = document.createElement("div");
+      optWrap.className = "toggle-options";
+
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "toggle-btn";
+        btn.textContent = opt.label;
+        btn.dataset.question = q.key;
+        btn.dataset.value = opt.value;
+
+        if (q.type === "radio") {
+          if (reportedAnswers[q.key] === opt.value) btn.classList.add("active");
+        } else {
+          if (reportedAnswers[q.key] && reportedAnswers[q.key].includes(opt.value)) btn.classList.add("active");
+        }
+        updateToggleDiffState(btn, q.key, opt.value, q.type);
+
+        btn.addEventListener("click", () => {
+          if (q.type === "radio") {
+            reportedAnswers[q.key] = opt.value;
+            optWrap.querySelectorAll(".toggle-btn").forEach(b => {
+              b.classList.toggle("active", b.dataset.value === opt.value);
+              updateToggleDiffState(b, q.key, b.dataset.value, "radio");
+            });
+          } else {
+            const idx = reportedAnswers[q.key].indexOf(opt.value);
+            if (opt.value === "No preference") {
+              reportedAnswers[q.key] = idx < 0 ? ["No preference"] : [];
+            } else {
+              const npIdx = reportedAnswers[q.key].indexOf("No preference");
+              if (npIdx >= 0) reportedAnswers[q.key].splice(npIdx, 1);
+              if (idx < 0) reportedAnswers[q.key].push(opt.value);
+              else reportedAnswers[q.key].splice(idx, 1);
+            }
+            optWrap.querySelectorAll(".toggle-btn").forEach(b => {
+              b.classList.toggle("active", reportedAnswers[q.key].includes(b.dataset.value));
+              updateToggleDiffState(b, q.key, b.dataset.value, "checkbox");
+            });
+          }
+          recalculate();
+        });
+
+        optWrap.appendChild(btn);
+      });
+
+      card.appendChild(optWrap);
+      grid.appendChild(card);
+    });
+  }
+
+  function updateToggleDiffState(btn, qKey, value, type) {
+    if (type === "radio") {
+      const isReported = reportedAnswers[qKey] === value;
+      const isTrue = trueAnswers[qKey] === value;
+      btn.classList.toggle("diff", isReported && !isTrue);
+    } else {
+      const isReported = reportedAnswers[qKey] && reportedAnswers[qKey].includes(value);
+      const isTrue = trueAnswers[qKey] && trueAnswers[qKey].includes(value);
+      btn.classList.toggle("diff", isReported !== isTrue);
+    }
+  }
+
+  function recalculate() {
+    const prob = computeAggregateProbability(trueAnswers, reportedAnswers);
+    updateGauge(prob);
+  }
+
+  // ── Q2 "No preference" mutual exclusion ────────────────────────────
+  function setupQ2Logic() {
+    const noPrefBox = document.getElementById("q2-nopref");
+    const otherBoxes = document.querySelectorAll('input[name="q2"]:not(#q2-nopref)');
+    noPrefBox.addEventListener("change", () => {
+      if (noPrefBox.checked) otherBoxes.forEach(cb => { cb.checked = false; });
+    });
+    otherBoxes.forEach(cb => {
+      cb.addEventListener("change", () => { if (cb.checked) noPrefBox.checked = false; });
+    });
+  }
+
+  // ── Initialization ─────────────────────────────────────────────────
+  async function init() {
+    await loadData();
+    setupQ2Logic();
+
+    document.getElementById("nav-toggle").addEventListener("click", () => {
+      const navList = document.getElementById("nav-list");
+      const isOpen = navList.classList.toggle("open");
+      document.getElementById("nav-toggle").setAttribute("aria-expanded", String(isOpen));
+    });
+
+    document.getElementById("questionnaire-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const answers = readFormAnswers();
+      const missing = validateForm(answers);
+      if (missing.length > 0) {
+        document.querySelectorAll(".q-card").forEach(c => c.classList.remove("q-card--error"));
+        missing.forEach(qn => {
+          const idx = ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6"].indexOf(qn);
+          const cards = document.querySelectorAll(".q-card");
+          if (cards[idx]) cards[idx].classList.add("q-card--error");
+        });
+        return;
+      }
+
+      trueAnswers = JSON.parse(JSON.stringify(answers));
+      reportedAnswers = JSON.parse(JSON.stringify(answers));
+
+      trueProb = computeAggregateProbability(trueAnswers, trueAnswers);
+      updateGauge(trueProb);
+      renderTruePrefsChips();
+      renderReportedGrid();
+      showResults();
+    });
+
+    document.getElementById("back-btn").addEventListener("click", showQuestionnaire);
+    document.getElementById("reset-btn").addEventListener("click", () => {
+      reportedAnswers = JSON.parse(JSON.stringify(trueAnswers));
+      renderReportedGrid();
+      recalculate();
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+})();

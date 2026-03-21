@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive demo: see how truthful preference reporting affects your interview probability in the academic job market.">
+    <title>Platform Demo | Academic Job Market Design</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="platform.css">
+</head>
+<body>
+
+<nav id="navbar" class="site-nav sticky">
+    <div class="nav-inner">
+        <a href="index.html" class="nav-brand">AJM Design</a>
+        <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-list" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul class="nav-list" id="nav-list">
+            <li><a href="index.html#problem">Market Frictions</a></li>
+            <li><a href="index.html#overview">Overview</a></li>
+            <li><a href="index.html#mechanism">Mechanism</a></li>
+            <li><a href="index.html#results">Results</a></li>
+            <li><a href="index.html#questionnaire">Questionnaire</a></li>
+            <li><a href="index.html#paper">Paper</a></li>
+            <li><a href="platform.html" class="nav-cta active">Platform</a></li>
+        </ul>
+    </div>
+</nav>
+
+<main class="platform-main">
+
+    <!-- ===== VIEW 1: QUESTIONNAIRE ===== -->
+    <div id="view-questionnaire" class="platform-view platform-view--active">
+        <div class="platform-header">
+            <p class="section-kicker">Interactive Demo</p>
+            <h1>Preference Questionnaire</h1>
+            <p class="platform-subtitle">
+                Fill out the questionnaire below with your <strong>true preferences</strong>. On the next screen, you will see
+                how your estimated interview probability changes when you deviate from truthful reporting.
+            </p>
+        </div>
+
+        <form id="questionnaire-form" class="questionnaire" novalidate>
+
+            <!-- Section A -->
+            <div class="q-section-header">Section A: Geographic and Location Preferences</div>
+
+            <fieldset class="q-card">
+                <legend class="q-label">Q1. What is your preferred geographic setting for your position?</legend>
+                <div class="q-options">
+                    <label class="q-option"><input type="radio" name="q1" value="A" required><span>(A)</span> Major metropolitan area (population &gt; 1 million)</label>
+                    <label class="q-option"><input type="radio" name="q1" value="B"><span>(B)</span> Mid-sized city (population 250,000&ndash;1 million)</label>
+                    <label class="q-option"><input type="radio" name="q1" value="C"><span>(C)</span> Small city or college town (population 50,000&ndash;250,000)</label>
+                    <label class="q-option"><input type="radio" name="q1" value="D"><span>(D)</span> Rural or small-town setting (population &lt; 50,000)</label>
+                    <label class="q-option"><input type="radio" name="q1" value="E"><span>(E)</span> No preference</label>
+                </div>
+            </fieldset>
+
+            <fieldset class="q-card">
+                <legend class="q-label">Q2. Which geographic region(s) of the United States would you prefer?</legend>
+                <p class="q-hint">Select all that apply.</p>
+                <div class="q-options">
+                    <label class="q-option"><input type="checkbox" name="q2" value="Northeast"><span>(A)</span> Northeast (New England, Mid-Atlantic)</label>
+                    <label class="q-option"><input type="checkbox" name="q2" value="Southeast"><span>(B)</span> Southeast (South Atlantic, East South Central)</label>
+                    <label class="q-option"><input type="checkbox" name="q2" value="Midwest"><span>(C)</span> Midwest (East North Central, West North Central)</label>
+                    <label class="q-option"><input type="checkbox" name="q2" value="Southwest"><span>(D)</span> Southwest (West South Central, Mountain West)</label>
+                    <label class="q-option"><input type="checkbox" name="q2" value="West Coast"><span>(E)</span> West Coast (Pacific)</label>
+                    <label class="q-option"><input type="checkbox" name="q2" value="No preference" id="q2-nopref"><span>(F)</span> No preference</label>
+                </div>
+            </fieldset>
+
+            <!-- Section B -->
+            <div class="q-section-header">Section B: Teaching and Mentoring</div>
+
+            <fieldset class="q-card">
+                <legend class="q-label">Q3. What is your preferred cumulative teaching hours per academic year?</legend>
+                <p class="q-hint">For reference, under a semester system, one course corresponds to approximately 45 teaching hours.</p>
+                <div class="q-options">
+                    <label class="q-option"><input type="radio" name="q3" value="A" required><span>(A)</span> Minimal (fewer than 100 hrs)</label>
+                    <label class="q-option"><input type="radio" name="q3" value="B"><span>(B)</span> Light (100&ndash;150 hrs)</label>
+                    <label class="q-option"><input type="radio" name="q3" value="C"><span>(C)</span> Moderate (150&ndash;200 hrs)</label>
+                    <label class="q-option"><input type="radio" name="q3" value="D"><span>(D)</span> Substantial (more than 200 hrs)</label>
+                    <label class="q-option"><input type="radio" name="q3" value="E"><span>(E)</span> No strong preference</label>
+                </div>
+            </fieldset>
+
+            <fieldset class="q-card">
+                <legend class="q-label">Q4. What type of courses would you prefer to teach?</legend>
+                <div class="q-options">
+                    <label class="q-option"><input type="radio" name="q4" value="A" required><span>(A)</span> Primarily graduate-level courses in my research area</label>
+                    <label class="q-option"><input type="radio" name="q4" value="B"><span>(B)</span> Mix of graduate and advanced undergraduate courses</label>
+                    <label class="q-option"><input type="radio" name="q4" value="C"><span>(C)</span> Primarily undergraduate service courses (e.g., introductory statistics)</label>
+                    <label class="q-option"><input type="radio" name="q4" value="D"><span>(D)</span> Flexible; willing to teach across all levels</label>
+                </div>
+            </fieldset>
+
+            <!-- Section C -->
+            <div class="q-section-header">Section C: Research Environment</div>
+
+            <fieldset class="q-card">
+                <legend class="q-label">Q5. What is your preferred ratio of Ph.D. students to faculty in the department?</legend>
+                <div class="q-options">
+                    <label class="q-option"><input type="radio" name="q5" value="A" required><span>(A)</span> Small program (fewer than 2 students per faculty member)</label>
+                    <label class="q-option"><input type="radio" name="q5" value="B"><span>(B)</span> Medium program (2&ndash;3 students per faculty member)</label>
+                    <label class="q-option"><input type="radio" name="q5" value="C"><span>(C)</span> Large program (more than 3 students per faculty member)</label>
+                    <label class="q-option"><input type="radio" name="q5" value="D"><span>(D)</span> No strong preference</label>
+                </div>
+            </fieldset>
+
+            <fieldset class="q-card">
+                <legend class="q-label">Q6. How important is proximity to a medical school or health sciences center?</legend>
+                <div class="q-options">
+                    <label class="q-option"><input type="radio" name="q6" value="A" required><span>(A)</span> Essential (my research requires regular collaboration)</label>
+                    <label class="q-option"><input type="radio" name="q6" value="B"><span>(B)</span> Very important (would significantly benefit my research)</label>
+                    <label class="q-option"><input type="radio" name="q6" value="C"><span>(C)</span> Moderately important (beneficial but not essential)</label>
+                    <label class="q-option"><input type="radio" name="q6" value="D"><span>(D)</span> Not important (my research does not require such access)</label>
+                </div>
+            </fieldset>
+
+            <div class="q-actions">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-arrow-right"></i> See My Results
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ===== VIEW 2: RESULTS ===== -->
+    <div id="view-results" class="platform-view">
+        <div class="platform-header">
+            <p class="section-kicker">Results</p>
+            <h1>Your Interview Probability</h1>
+            <p class="platform-subtitle">
+                Your estimated interview probability at departments matching your true preferences. Toggle answers below to see how misreporting affects your chances.
+            </p>
+        </div>
+
+        <!-- Probability gauge -->
+        <div class="gauge-container">
+            <div class="gauge-wrap">
+                <svg class="gauge-svg" viewBox="0 0 200 120">
+                    <path class="gauge-bg" d="M20,100 A80,80 0 0,1 180,100" fill="none" stroke-width="16" stroke-linecap="round"/>
+                    <path class="gauge-fill" id="gauge-fill" d="M20,100 A80,80 0 0,1 180,100" fill="none" stroke-width="16" stroke-linecap="round"/>
+                </svg>
+                <div class="gauge-value" id="gauge-value">--</div>
+                <div class="gauge-label">Estimated interview probability</div>
+            </div>
+            <div class="gauge-comparison" id="gauge-comparison"></div>
+        </div>
+
+        <!-- True preferences summary -->
+        <div class="true-prefs-banner" id="true-prefs-banner">
+            <div class="true-prefs-title"><i class="fas fa-check-circle"></i> Your True Preferences</div>
+            <div class="true-prefs-chips" id="true-prefs-chips"></div>
+        </div>
+
+        <!-- Editable preferences -->
+        <div class="reported-section">
+            <div class="reported-header">
+                <h2>Reported Preferences</h2>
+                <p>Toggle answers below to explore what happens when you misreport.</p>
+                <button class="btn btn-ghost btn-sm" id="reset-btn"><i class="fas fa-undo"></i> Reset to True</button>
+            </div>
+
+            <div class="reported-grid" id="reported-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <div class="back-actions">
+            <button class="btn btn-secondary" id="back-btn"><i class="fas fa-arrow-left"></i> Start Over</button>
+        </div>
+    </div>
+
+</main>
+
+<footer class="site-footer">
+    <p>&copy; 2026 Ali Kaazempur-Mofrad, Xiaowu Dai, Xuming He.</p>
+</footer>
+
+<script src="platform.js"></script>
+</body>
+</html>
