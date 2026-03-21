@@ -1,0 +1,23 @@
+{
+  "model": {
+    "description": "P(interviewed) = logistic(a0 + a1*fit_6q + a2*s_j + a3*fit_6q*s_j). Fit from simulated competitive interview selection with 300 candidates, per-department normalisation, sigmoid transform, and top-k ranking. Candidate quality fixed at median (v_i_bar = 0.8736 ). 6Q fit uses: geographic setting, region, teaching load, course types, PhD ratio, medical school proximity.",
+    "intercept": -32.04668196,
+    "coef_fit": 42.92251553,
+    "coef_sj": -18.24555708,
+    "coef_fit_sj": 17.05453183,
+    "median_v_i_bar": 0.8736
+  },
+  "simulation_params": {
+    "n_candidates": 300,
+    "n_years": 50,
+    "gamma": 1.5,
+    "k_multiplier": 5
+  },
+  "diagnostics": {
+    "n_pairs": 921000,
+    "interview_rate": 0.01666667,
+    "AIC": 45616.86011258,
+    "null_deviance": 156139.1114651,
+    "residual_deviance": 45608.86011258
+  }
+}
