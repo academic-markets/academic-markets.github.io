@@ -442,7 +442,8 @@
   }
 
   // ── Session persistence ────────────────────────────────────────────
-  // Survives page refresh but clears when the tab closes.
+  // Only restores on a true page reload (Cmd+R / F5), not when
+  // navigating back from another page like index.html.
   function saveState() {
     sessionStorage.setItem("platform_true", JSON.stringify(trueAnswers));
     sessionStorage.setItem("platform_reported", JSON.stringify(reportedAnswers));
@@ -453,7 +454,14 @@
     sessionStorage.removeItem("platform_reported");
   }
 
+  function isPageReload() {
+    const entries = performance.getEntriesByType("navigation");
+    if (entries.length > 0) return entries[0].type === "reload";
+    return false;
+  }
+
   function restoreState() {
+    if (!isPageReload()) { clearState(); return false; }
     const t = sessionStorage.getItem("platform_true");
     const r = sessionStorage.getItem("platform_reported");
     if (!t || !r) return false;
