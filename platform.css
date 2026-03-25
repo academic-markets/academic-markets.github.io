@@ -362,6 +362,14 @@
     margin-top: 2rem;
 }
 
+.method-note {
+    margin-top: 0.6rem;
+    font-size: 0.95rem;
+    color: var(--ink-500);
+    max-width: 44rem;
+    margin-inline: auto;
+}
+
 .demo-disclaimer {
     margin-top: 1.2rem;
     text-align: center;

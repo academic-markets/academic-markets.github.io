@@ -202,6 +202,7 @@ button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.45rem;
     min-height: 3.3rem;
     padding: 0.9rem 1.35rem;
     border-radius: 999px;
