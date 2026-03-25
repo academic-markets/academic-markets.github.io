@@ -438,6 +438,28 @@
   function recalculate() {
     const prob = computeAggregateProbability(trueAnswers, reportedAnswers);
     updateGauge(prob);
+    saveState();
+  }
+
+  // ── Session persistence ────────────────────────────────────────────
+  // Survives page refresh but clears when the tab closes.
+  function saveState() {
+    sessionStorage.setItem("platform_true", JSON.stringify(trueAnswers));
+    sessionStorage.setItem("platform_reported", JSON.stringify(reportedAnswers));
+  }
+
+  function clearState() {
+    sessionStorage.removeItem("platform_true");
+    sessionStorage.removeItem("platform_reported");
+  }
+
+  function restoreState() {
+    const t = sessionStorage.getItem("platform_true");
+    const r = sessionStorage.getItem("platform_reported");
+    if (!t || !r) return false;
+    trueAnswers = JSON.parse(t);
+    reportedAnswers = JSON.parse(r);
+    return true;
   }
 
   // ── Q2 "No preference" mutual exclusion ────────────────────────────
@@ -479,20 +501,32 @@
 
       trueAnswers = JSON.parse(JSON.stringify(answers));
       reportedAnswers = JSON.parse(JSON.stringify(answers));
-
-      trueProb = computeAggregateProbability(trueAnswers, trueAnswers);
-      updateGauge(trueProb);
-      renderTruePrefsChips();
-      renderReportedGrid();
-      showResults();
+      enterResults();
     });
 
-    document.getElementById("back-btn").addEventListener("click", showQuestionnaire);
+    document.getElementById("back-btn").addEventListener("click", () => {
+      clearState();
+      showQuestionnaire();
+    });
     document.getElementById("reset-btn").addEventListener("click", () => {
       reportedAnswers = JSON.parse(JSON.stringify(trueAnswers));
       renderReportedGrid();
       recalculate();
     });
+
+    // Restore previous session on refresh
+    if (restoreState()) {
+      enterResults();
+    }
+  }
+
+  function enterResults() {
+    trueProb = computeAggregateProbability(trueAnswers, trueAnswers);
+    updateGauge(computeAggregateProbability(trueAnswers, reportedAnswers));
+    renderTruePrefsChips();
+    renderReportedGrid();
+    saveState();
+    showResults();
   }
 
   document.addEventListener("DOMContentLoaded", init);
