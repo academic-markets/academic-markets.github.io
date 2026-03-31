@@ -1,11 +1,11 @@
 {
   "model": {
-    "description": "P(interviewed) = logistic(a0 + a1*fit_6q + a2*s_j + a3*fit_6q*s_j). Fit from simulated competitive interview selection with 300 candidates, per-department normalisation, sigmoid transform, and top-k ranking. Evaluated at mean candidate quality (v_i_bar = 0.6075 ). 6Q fit uses: geographic setting, region (with signal dilution), teaching load, course types, PhD ratio, medical school proximity.",
-    "intercept": -31.31058807,
-    "coef_fit": 41.9251937,
-    "coef_sj": -17.59256875,
-    "coef_fit_sj": 16.35257109,
-    "mean_v_i_bar": 0.60754467
+    "description": "P(interviewed) = logistic(a0 + a1*fit_6q + a2*s_j + a3*fit_6q*s_j). Fit from simulated competitive interview selection with 300 candidates, per-department normalisation, sigmoid transform, and top-k ranking. Department utility: U = v_i_bar^alpha * f_j^(1-alpha). Evaluated at calibrated quality level (v_i_bar = 0.86 ). Candidate preferences generated with quality-correlated distributions. 6Q fit uses: geographic setting, region (with signal dilution), teaching load, course types (D=neutral), PhD ratio, medical school (4-level gradient: Essential/VeryImportant/Moderate/NotImportant). All questions support 'No preference' options.",
+    "intercept": -51.97307247,
+    "coef_fit": 78.05311339,
+    "coef_sj": 43.29209616,
+    "coef_fit_sj": -71.02871971,
+    "mean_v_i_bar": 0.86
   },
   "simulation_params": {
     "n_candidates": 300,
@@ -16,8 +16,8 @@
   "diagnostics": {
     "n_pairs": 921000,
     "interview_rate": 0.01666667,
-    "AIC": 46891.5134412,
-    "null_deviance": 156139.1114651,
-    "residual_deviance": 46881.5134412
+    "AIC": 31240.07672641,
+    "null_deviance": 156139.11146512,
+    "residual_deviance": 31230.07672641
   }
 }

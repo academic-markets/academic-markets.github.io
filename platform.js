@@ -65,12 +65,46 @@
     model = modelData.model;
   }
 
+  // ── Department-specific weights ─────────────────────────────────────
+  //
+  // Each department weights the 6 questions differently based on:
+  //
+  // Tier-based logic (via s_j):
+  //   Lower-prestige departments weight geography & teaching more
+  //   (location and workload are bigger parts of their value proposition).
+  //   Higher-prestige departments weight PhD program fit more
+  //   (research mentoring expectations are central).
+  //
+  // Attribute-derived adjustments:
+  //   - Rural/college-town depts boost Q1 weight (location is a harder sell)
+  //   - Heavy-teaching depts boost Q3 weight (need compatible candidates)
+  //   - Large PhD programs boost Q5 weight (mentoring fit matters more)
+  //   - Depts WITH medical schools boost Q6 weight (it's a key feature);
+  //     depts WITHOUT barely weight it (irrelevant to their offer)
+
+  const GEO_MULT = { A: 0.85, B: 1.0, C: 1.3, D: 1.5 };
+  const TEACH_MULT = { A: 0.8, B: 1.0, C: 1.3, D: 1.5 };
+
+  function deptWeights(dept) {
+    const sj = dept.s_j;
+    let w1 = (0.12 + 0.18 * (1 - sj)) * (GEO_MULT[dept.q1_geographic_setting] || 1);
+    let w2 = 0.12 + 0.13 * (1 - sj);
+    let w3 = (0.10 + 0.15 * (1 - sj)) * (TEACH_MULT[dept.q9_typical_teaching_load] || 1);
+    let w4 = 0.10 + 0.08 * (1 - sj);
+    const phdNorm = Math.min(Math.max((dept.q14_phd_student_ratio - 0.5) / 4.5, 0), 1);
+    let w5 = (0.28 - 0.13 * (1 - sj)) * (0.7 + 0.8 * phdNorm);
+    let w6 = 0.15 * (dept.q15_medical_school_proximity === 1 ? 1.4 : 0.3);
+    const t = w1 + w2 + w3 + w4 + w5 + w6;
+    return [w1 / t, w2 / t, w3 / t, w4 / t, w5 / t, w6 / t];
+  }
+
   // ── Fit-score computation ──────────────────────────────────────────
-  // Raw 6-question fit score: mean of 6 dimension scores ∈ [0, 1].
+  // Weighted 6-question fit score using department-specific weights.
   // Matches the R pre-computation exactly.
 
   function rawFitScore(answers, dept) {
     const scores = new Float64Array(6);
+    const w = deptWeights(dept);
 
     // q1: geographic setting (ordinal, 4 levels)
     if (answers.q1 && answers.q1 !== "E") {
@@ -80,9 +114,6 @@
     }
 
     // q2: region (match with signal dilution)
-    // Departments discount broad selections — 1/k where k = regions listed.
-    // Selecting 1 region is a strong signal; selecting all 5 tells the
-    // department nothing about commitment to *their* region.
     if (answers.q2 && answers.q2.length > 0 && !answers.q2.includes("No preference")) {
       const k = answers.q2.length;
       scores[1] = answers.q2.includes(dept.q2_region) ? (1.0 / k) : 0.0;
@@ -98,8 +129,6 @@
     }
 
     // q4 → q10: course types (ordinal A-C; D = "Flexible" is neutral)
-    // "Flexible" means no strong preference — departments can't infer
-    // commitment to their teaching model, so it scores as neutral 0.5.
     if (answers.q4 && answers.q4 !== "D") {
       scores[3] = categoricalScore(answers.q4, dept.q10_course_types, LEVELS.q10);
     } else {
@@ -120,7 +149,7 @@
       scores[4] = 0.5;
     }
 
-    // q6 → q15: medical school (gradient scoring, matches R model)
+    // q6 → q15: medical school (gradient scoring)
     if (answers.q6 && Q6_SCORES[answers.q6]) {
       const pair = Q6_SCORES[answers.q6];
       scores[5] = dept.q15_medical_school_proximity === 1 ? pair[0] : pair[1];
@@ -129,8 +158,8 @@
     }
 
     let S = 0;
-    for (let i = 0; i < 6; i++) S += scores[i];
-    return S / 6;
+    for (let i = 0; i < 6; i++) S += w[i] * scores[i];
+    return S;
   }
 
   function categoricalScore(candVal, deptVal, levels) {
@@ -187,34 +216,56 @@
       reportedFits[j] = rawFitScore(reportedAns, departments[j]);
     }
 
-    // ── Build ideal set with strict filters ──
+    // ── Build ideal set with graduated filter relaxation ──
+    //
+    // Filters are relaxed one at a time, from most flexible to least:
+    //   Level 0: region + exact geo + medical school  (strictest)
+    //   Level 1: region + ±1 geo step + medical school
+    //   Level 2: region + medical school  (drop geo)
+    //   Level 3: region only  (drop medical school)
+    //   Level 4: top-N by fit  (drop all filters)
+
     const hasRegionPref = trueAns.q2 && trueAns.q2.length > 0
                        && !trueAns.q2.includes("No preference");
     const hasGeoPref    = trueAns.q1 && trueAns.q1 !== "E";
     const needsMedSchool = trueAns.q6 === "A" || trueAns.q6 === "B";
+    const geoLevels = ["A", "B", "C", "D"];
+    const trueGeoPos = hasGeoPref ? geoLevels.indexOf(trueAns.q1) : -1;
 
-    const eligible = [];
-    for (let j = 0; j < nDepts; j++) {
-      const dept = departments[j];
-
-      // Strict region filter
-      if (hasRegionPref && !trueAns.q2.includes(dept.q2_region)) continue;
-
-      // Strict geographic setting filter (exact match)
-      if (hasGeoPref && dept.q1_geographic_setting !== trueAns.q1) continue;
-
-      // Strict medical school filter (Essential / Very Important)
-      if (needsMedSchool && dept.q15_medical_school_proximity !== 1) continue;
-
-      eligible.push({ fit: trueFits[j], idx: j });
+    function filterDepts(useRegion, geoMode, useMed) {
+      const result = [];
+      for (let j = 0; j < nDepts; j++) {
+        const dept = departments[j];
+        if (useRegion && hasRegionPref && !trueAns.q2.includes(dept.q2_region)) continue;
+        if (geoMode === "exact" && hasGeoPref && dept.q1_geographic_setting !== trueAns.q1) continue;
+        if (geoMode === "near" && hasGeoPref) {
+          const deptGeoPos = geoLevels.indexOf(dept.q1_geographic_setting);
+          if (Math.abs(trueGeoPos - deptGeoPos) > 1) continue;
+        }
+        if (useMed && needsMedSchool && dept.q15_medical_school_proximity !== 1) continue;
+        result.push({ fit: trueFits[j], idx: j });
+      }
+      return result;
     }
 
-    // If strict filters leave too few departments, relax to top-N by fit
-    let idealPool;
-    if (eligible.length >= 5) {
-      eligible.sort((a, b) => b.fit - a.fit);
-      idealPool = eligible.slice(0, N_IDEAL);
-    } else {
+    const relaxationLevels = [
+      () => filterDepts(true, "exact", true),    // Level 0: all strict
+      () => filterDepts(true, "near",  true),    // Level 1: relax geo to ±1
+      () => filterDepts(true, "none",  true),    // Level 2: drop geo
+      () => filterDepts(true, "none",  false),   // Level 3: drop medical school
+    ];
+
+    let idealPool = null;
+    for (const tryFilter of relaxationLevels) {
+      const eligible = tryFilter();
+      if (eligible.length >= 5) {
+        eligible.sort((a, b) => b.fit - a.fit);
+        idealPool = eligible.slice(0, N_IDEAL);
+        break;
+      }
+    }
+    if (!idealPool) {
+      // Level 4 fallback: top-N by fit across all departments
       const all = [];
       for (let j = 0; j < nDepts; j++) all.push({ fit: trueFits[j], idx: j });
       all.sort((a, b) => b.fit - a.fit);
