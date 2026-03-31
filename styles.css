@@ -789,6 +789,17 @@ main {
     color: var(--ink-900);
 }
 
+.gallery-hint {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--color-text-muted, #8892a4);
+    margin-top: 1.5rem;
+    margin-bottom: -0.5rem;
+}
+.gallery-hint i {
+    margin-right: 0.3rem;
+}
+
 .gallery-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
