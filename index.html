@@ -88,24 +88,6 @@
         }
         .lightbox-close:hover { background: rgba(255,255,255,0.24); }
 
-        .questionnaire-pdf-btn {
-            position: absolute;
-            top: clamp(1.5rem, 3vw, 2.5rem);
-            right: clamp(1.5rem, 3vw, 2.5rem);
-            z-index: 2;
-            font-size: clamp(0.78rem, 1.8vw, 0.95rem);
-            padding: 0.6rem 1rem;
-            min-height: auto;
-            white-space: nowrap;
-        }
-        @media (max-width: 640px) {
-            .questionnaire-pdf-btn {
-                position: static;
-                margin-bottom: 1rem;
-                width: 100%;
-                justify-content: center;
-            }
-        }
     </style>
 </head>
 <body id="top">
@@ -184,12 +166,11 @@
         </button>
         <ul class="nav-list" id="nav-list">
             <li><a href="#problem">Market Frictions</a></li>
-            <li><a href="#overview">Overview</a></li>
             <li><a href="#mechanism">Mechanism</a></li>
             <li><a href="#results">Results</a></li>
-            <li><a href="#questionnaire">Questionnaire</a></li>
-            <li><a href="#paper">Paper</a></li>
-            <li><a href="platform.html" class="nav-cta">Platform</a></li>
+            <li><a href="#questionnaire" class="nav-secondary">Questionnaire</a></li>
+            <li><a href="#paper" class="nav-secondary">Paper</a></li>
+            <li class="nav-cta-wrap"><a href="platform.html" class="nav-cta">Platform</a></li>
         </ul>
     </div>
 </nav>
@@ -228,77 +209,12 @@
         </div>
     </section>
 
-    <section id="overview" class="section section-overview">
-        <div class="section-header reveal">
-            <p class="section-kicker"></p>
-            <h2>Overview</h2>
-            <p>
-                A preference-signaling layer for academic hiring that keeps disclosure credible and informs interview decisions.
-            </p>
-        </div>
-
-        <div class="overview-grid">
-            <article class="editorial-card reveal">
-                <h3>Structured preference signaling</h3>
-                <p>
-                    Candidates complete one standardized questionnaire. Departments evaluate fit using a shared structured signal instead of cover-letter interpretation.
-                </p>
-            </article>
-
-            <article class="editorial-card editorial-card-accent reveal">
-                <h3>Signal credibility</h3>
-                <ul class="feature-list">
-                    <li><i class="fas fa-check"></i> Single submission format makes signals comparable across departments</li>
-                    <li><i class="fas fa-check"></i> Scarcity prevents costless customization per department</li>
-                    <li><i class="fas fa-check"></i> Continuous scores support market-wide inference</li>
-                </ul>
-            </article>
-
-            <article class="stat-ribbon reveal">
-                <div>
-                    <span class="ribbon-label">What changes</span>
-                    <p>Candidates express structured preferences once and disclose the signal to selected departments.</p>
-                </div>
-                <div>
-                    <span class="ribbon-label">Selection rule</span>
-                    <p>Departments combine signals with traditional materials using confidence-calibrated ranking.</p>
-                </div>
-                <div>
-                    <span class="ribbon-label">Market-level effect</span>
-                    <p>Welfare and fill rates increase with participation; universal disclosure is a dominant strategy.</p>
-                </div>
-            </article>
-        </div>
-
-        <div class="compare-board">
-            <article class="compare-card reveal">
-                <p class="card-kicker">Without signaling</p>
-                <h3>Volume overwhelms information</h3>
-                <ul class="feature-list">
-                    <li><i class="fas fa-arrow-right"></i> Genuine interest indistinguishable from strategic applications</li>
-                    <li><i class="fas fa-arrow-right"></i> Interview slots consumed by low-probability candidates</li>
-                    <li><i class="fas fa-arrow-right"></i> Offer concentration leaves positions unfilled</li>
-                </ul>
-            </article>
-
-            <article class="compare-card compare-card-solution reveal">
-                <p class="card-kicker">With signaling</p>
-                <h3>Preference data informs interviews</h3>
-                <ul class="feature-list">
-                    <li><i class="fas fa-arrow-right"></i> Candidates communicate fit in a standardized format</li>
-                    <li><i class="fas fa-arrow-right"></i> Interview decisions incorporate estimated acceptance probabilities</li>
-                    <li><i class="fas fa-arrow-right"></i> Better shortlists raise match quality and fill rates</li>
-                </ul>
-            </article>
-        </div>
-    </section>
-
     <section id="mechanism" class="section section-mechanism">
         <div class="section-header reveal">
-            <p class="section-kicker">Mechanism</p>
+            <p class="section-kicker">Proposed mechanism</p>
             <h2>Three-stage design</h2>
             <p>
-                Adds a structured preference layer before interviews, then uses uncertainty-aware ranking to guide interview invitations.
+                A preference-signaling layer for academic hiring: candidates complete a single questionnaire and departments use the resulting signals to inform interview decisions.
             </p>
         </div>
 
@@ -349,15 +265,27 @@
             </figure>
         </div>
 
-        <article class="innovation-banner reveal">
-            <div>
-                <p class="section-kicker"></p>
-                <h3>Joint uncertainty control for shortlist selection</h3>
-            </div>
-            <p>
-                Simultaneous pairwise comparisons ensure the shortlist contains the top candidates with high probability&mdash;not just those with the most optimistic point estimates.
-            </p>
-        </article>
+        <div class="compare-board">
+            <article class="compare-card reveal">
+                <p class="card-kicker">Without signaling</p>
+                <h3>Volume overwhelms information</h3>
+                <ul class="feature-list">
+                    <li><i class="fas fa-arrow-right"></i> Genuine interest indistinguishable from strategic applications</li>
+                    <li><i class="fas fa-arrow-right"></i> Interview slots consumed by low-probability candidates</li>
+                    <li><i class="fas fa-arrow-right"></i> Offer concentration leaves positions unfilled</li>
+                </ul>
+            </article>
+
+            <article class="compare-card compare-card-solution reveal">
+                <p class="card-kicker">With signaling</p>
+                <h3>Preference data informs interviews</h3>
+                <ul class="feature-list">
+                    <li><i class="fas fa-arrow-right"></i> Candidates communicate fit in a standardized format</li>
+                    <li><i class="fas fa-arrow-right"></i> Interview decisions incorporate estimated acceptance probabilities</li>
+                    <li><i class="fas fa-arrow-right"></i> Better shortlists raise match quality and fill rates</li>
+                </ul>
+            </article>
+        </div>
     </section>
 
     <section id="results" class="section section-results">
@@ -469,103 +397,52 @@
         </div>
     </section>
 
-    <section id="questionnaire" class="section section-questionnaire" style="position: relative;">
-        <a href="fig/Example_Questionnaire.pdf" target="_blank" class="btn btn-secondary questionnaire-pdf-btn">
-            <i class="fas fa-file-pdf" style="margin-right: 0.4rem;"></i> Example questionnaire
-        </a>
+    <section id="questionnaire" class="section section-questionnaire">
         <div class="section-header reveal">
             <p class="section-kicker">Questionnaire</p>
             <h2>A market-wide comparable signal</h2>
-            <p>
-                The questionnaire covers dimensions central to academic job decisions. Potential questions may include:
+            <!--<div style="display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; margin-top: 1.2rem;">
+                <div class="principle-item"><i class="fas fa-lock"></i> <span>Single submission</span></div>
+                <div class="principle-item"><i class="fas fa-balance-scale"></i> <span>Same dimensions for all</span></div>
+                <div class="principle-item"><i class="fas fa-chart-line"></i> <span>Continuous scores</span></div>
+                <div class="principle-item"><i class="fas fa-shield-alt"></i> <span>No department tailoring</span></div>
+            </div>-->
+
+            <p style="margin-top: 1.2rem;">
+                The questionnaire covers dimensions central to academic job decisions.
             </p>
         </div>
 
-        <div class="questionnaire-grid">
-            <article class="question-card reveal">
-                <div class="question-icon"><i class="fas fa-map-marker-alt"></i></div>
-                <h3>Geography and place</h3>
-                <ul class="token-list">
-                    <li>Urban or rural preference</li>
-                    <li>Regional priorities</li>
-                    <li>Airport proximity</li>
-                    <li>Cost-of-living sensitivity</li>
-                    <li>Partner placement support</li>
-                </ul>
-            </article>
-
-            <article class="question-card reveal">
-                <div class="question-icon"><i class="fas fa-dollar-sign"></i></div>
-                <h3>Compensation and resources</h3>
-                <ul class="token-list">
-                    <li>Salary floor expectations</li>
-                    <li>Research startup needs</li>
-                    <li>Summer salary support</li>
-                    <li>Research budget priorities</li>
-                </ul>
-            </article>
-
-            <article class="question-card reveal">
-                <div class="question-icon"><i class="fas fa-chalkboard-teacher"></i></div>
-                <h3>Teaching and mentoring</h3>
-                <ul class="token-list">
-                    <li>Preferred teaching load</li>
-                    <li>Graduate or undergraduate emphasis</li>
-                    <li>Mentoring structure</li>
-                    <li>Faculty development support</li>
-                </ul>
-            </article>
-
-            <article class="question-card reveal">
-                <div class="question-icon"><i class="fas fa-flask"></i></div>
-                <h3>Research environment</h3>
-                <ul class="token-list">
-                    <li>Departmental research culture</li>
-                    <li>Publication ecosystem</li>
-                    <li>PhD pipeline strength</li>
-                    <li>Medical-school proximity</li>
-                    <li>Collaboration expectations</li>
-                </ul>
-            </article>
-        </div>
-
-        <article class="principles-panel reveal">
-            <div class="principles-copy">
-                <<p class="card-kicker">Design principles</p>
-                <h3>Design principles</h3>
-                <p>
-                    Standardized enough to compare candidates fairly, broad enough to reveal meaningful preferences.
-                </p>
+        <article class="signal-card reveal">
+            <p class="card-kicker" style="margin-bottom: 1rem;">Potential questionnaire categories</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.85rem; justify-content: center;">
+                <div class="principle-item"><i class="fas fa-map-marker-alt"></i> <span>Geography and place</span></div>
+                <div class="principle-item"><i class="fas fa-dollar-sign"></i> <span>Compensation and resources</span></div>
+                <div class="principle-item"><i class="fas fa-chalkboard-teacher"></i> <span>Teaching and mentoring</span></div>
+                <div class="principle-item"><i class="fas fa-flask"></i> <span>Research environment</span></div>
             </div>
 
-            <div class="principles-list">
-                <div class="principle-item">
-                    <i class="fas fa-lock"></i>
-                    <span>Single submission preserves credibility</span>
+            <hr style="margin-top: 1.5rem; border: none; border-top: 1px solid var(--line); margin-bottom: 1.5rem;">
+            <div>
+                <div style="display: flex; align-items: center; margin-bottom: 0.6rem;">
+                    <span class="figure-tag">Example questionnaire</span>
+                    <a href="fig/Example_Questionnaire.pdf" target="_blank" style="margin-left: 0.5rem; font-size: 0.85rem;">Open in new tab <i class="fas fa-external-link-alt"></i></a>
                 </div>
-                <div class="principle-item">
-                    <i class="fas fa-balance-scale"></i>
-                    <span>Same dimensions for every department</span>
-                </div>
-                <div class="principle-item">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Continuous scores enable market-wide ranking</span>
-                </div>
-                <div class="principle-item">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>No department-specific tailoring</span>
+                <div class="figure-shell" style="padding: 0; overflow: hidden;">
+                    <iframe src="fig/Example_Questionnaire.pdf" style="width: 100%; height: 600px; border: none; border-radius: var(--radius-md);"></iframe>
                 </div>
             </div>
         </article>
+
     </section>
 
     <section id="paper" class="section section-resources">
         <div class="section-header reveal">
-            <p class="section-kicker">Paper and repository</p>
+            <p class="section-kicker">Paper and Code</p>
 
         </div>
 
-        <article class="resource-card reveal" style="max-width: 42rem; margin-inline: auto;">
+        <article class="resource-card reveal">
             <div class="resource-actions">
                 <a href="#" class="btn btn-primary" data-modal-trigger="coming-soon">Paper</a>
                 <a href="https://github.com/amofrad/Academic-Job-Market" class="btn btn-secondary" target="_blank" rel="noreferrer">
@@ -573,19 +450,19 @@
                 </a>
             </div>
             <div style="margin-top: 1.5rem;">
-                <div class="bibtex-header">
-                    <span class="card-kicker">BibTeX</span>
-                    <button class="copy-btn" id="copy-bibtex" aria-label="Copy BibTeX to clipboard">
+                <span class="card-kicker" style="margin-bottom: 0.6rem; display: block;">BibTeX</span>
+                <div style="position: relative;">
+                    <button class="copy-btn" id="copy-bibtex" aria-label="Copy BibTeX to clipboard" style="position: absolute; top: 0.6rem; right: 0.6rem;">
                         <i class="fas fa-copy"></i> Copy
                     </button>
-                </div>
-                <pre class="bibtex-pre" id="bibtex-content">@article{academicmarket2026,
+                    <pre class="bibtex-pre" id="bibtex-content">@article{academicmarket2026,
   title={A Statistical Market-Design Framework
          for Academic Job Markets},
   author={Kaazempur-Mofrad, Ali and
           Dai, Xiaowu and He, Xuming},
   year={2026}
 }</pre>
+                </div>
             </div>
         </article>
     </section>

@@ -198,6 +198,18 @@ button {
     margin-top: 1.8rem;
 }
 
+.resource-actions .btn {
+    background: var(--ink-950);
+    color: #fff;
+    border-color: var(--ink-950);
+}
+
+.resource-actions .btn:hover {
+    background: #fff;
+    color: var(--ink-950);
+    border-color: var(--ink-950);
+}
+
 .btn {
     display: inline-flex;
     align-items: center;
@@ -436,19 +448,46 @@ button {
 
 .nav-list a:hover,
 .nav-list a.active {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.12);
+    color: var(--ink-950);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.nav-list .nav-cta-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-left: auto;
+}
+
+.nav-list .nav-cta-wrap::before {
+    content: "";
+    display: block;
+    flex-shrink: 0;
+    width: 1px;
+    height: 1.4rem;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-list a.nav-secondary {
+    background: rgba(14, 124, 134, 0.18);
+}
+
+.nav-list a.nav-secondary:hover,
+.nav-list a.nav-secondary.active {
+    color: var(--ink-950);
+    background: rgba(255, 255, 255, 0.9);
 }
 
 .nav-list .nav-cta {
-    color: var(--ink-950);
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.82);
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px solid var(--teal);
 }
 
 .nav-list .nav-cta:hover {
-    background: #fff;
     color: var(--ink-950);
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.9);
 }
 
 main {
@@ -1121,6 +1160,20 @@ main {
     }
 
     .nav-list a {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .nav-list .nav-cta-wrap {
+        margin-left: 0;
+        gap: 0;
+    }
+
+    .nav-list .nav-cta-wrap::before {
+        display: none;
+    }
+
+    .nav-list .nav-cta {
         width: 100%;
         justify-content: center;
     }
