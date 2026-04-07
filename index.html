@@ -28,6 +28,7 @@
         }
         .copy-btn:hover { background: rgba(255,255,255,0.95); }
         .copy-btn.copied { color: var(--teal); border-color: var(--teal); }
+        .copy-btn.copy-manual { color: var(--rust); border-color: var(--rust); }
         .bibtex-header {
             display: flex;
             align-items: center;
@@ -61,13 +62,36 @@
             cursor: zoom-out;
         }
         .lightbox-overlay.active { display: flex; }
+        .lightbox-panel {
+            width: min(92vw, 1200px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.9rem;
+            cursor: default;
+        }
         .lightbox-overlay img {
-            max-width: min(92vw, 1200px);
-            max-height: 90vh;
+            width: 100%;
+            max-width: 100%;
+            max-height: min(78vh, 900px);
             border-radius: var(--radius-lg);
             box-shadow: 0 32px 80px rgba(0,0,0,0.55);
             object-fit: contain;
             cursor: default;
+        }
+        .lightbox-caption {
+            width: 100%;
+            padding: 0.95rem 1.05rem;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: rgba(255, 255, 255, 0.94);
+            font-size: 0.96rem;
+            line-height: 1.6;
+            text-align: left;
+        }
+        .lightbox-caption[hidden] {
+            display: none !important;
         }
         .lightbox-close {
             position: fixed;
@@ -87,6 +111,126 @@
             transition: background-color 0.2s ease;
         }
         .lightbox-close:hover { background: rgba(255,255,255,0.24); }
+        .pdf-viewer {
+            --pdf-stage-height: clamp(360px, 76vh, 680px);
+            --pdf-pages-per-row: 2;
+            padding: 0.75rem;
+            background: linear-gradient(180deg, rgba(237, 243, 240, 0.92), rgba(246, 245, 241, 0.96));
+        }
+        .pdf-viewer-preview {
+            cursor: zoom-in;
+        }
+        .pdf-viewer-preview:focus-visible {
+            outline: 3px solid rgba(14, 124, 134, 0.28);
+            outline-offset: 3px;
+        }
+        .pdf-viewer-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: var(--pdf-stage-height);
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--ink-700);
+            font-size: 0.95rem;
+        }
+        .pdf-viewer-status.is-error {
+            color: var(--rust);
+        }
+        .pdf-spread-stage {
+            display: grid;
+            grid-template-columns: repeat(var(--pdf-pages-per-row), minmax(0, 1fr));
+            gap: 0.55rem;
+            align-items: start;
+        }
+        .pdf-viewer-status[hidden],
+        .pdf-spread-stage[hidden] {
+            display: none !important;
+        }
+        .pdf-page {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            min-height: 0;
+            padding: 0.08rem;
+        }
+        .pdf-page canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 18px 36px rgba(20, 35, 49, 0.14);
+        }
+        .pdf-modal-overlay {
+            cursor: default;
+        }
+        .pdf-modal-panel {
+            position: relative;
+            width: min(97vw, 1480px);
+            max-height: 92vh;
+            padding: 1rem;
+            border-radius: var(--radius-xl);
+            background: rgba(255, 253, 247, 0.98);
+            box-shadow: 0 34px 80px rgba(0,0,0,0.38);
+            overflow: auto;
+            cursor: default;
+        }
+        .pdf-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 0.9rem;
+            padding-right: 3.25rem;
+        }
+        .pdf-modal-header h3 {
+            margin: 0;
+            font-family: "Lora", serif;
+            font-size: clamp(1.2rem, 2vw, 1.6rem);
+            color: var(--ink-950);
+        }
+        .pdf-modal-header a {
+            flex-shrink: 0;
+            color: var(--teal-deep);
+            font-size: 0.92rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .pdf-modal-header a:hover {
+            text-decoration: underline;
+        }
+        .pdf-viewer-modal {
+            --pdf-stage-height: min(82vh, 940px);
+            padding: 0.75rem;
+        }
+        .pdf-viewer-modal .pdf-spread-stage {
+            gap: 0.65rem;
+        }
+        @media (max-width: 760px) {
+            .pdf-viewer {
+                --pdf-stage-height: clamp(280px, 54vh, 460px);
+                --pdf-pages-per-row: 1;
+                padding: 0.5rem;
+            }
+            .pdf-spread-stage {
+                gap: 0.4rem;
+            }
+            .pdf-modal-panel {
+                width: min(100vw - 1rem, 100%);
+                padding: 0.75rem;
+            }
+            .pdf-modal-header {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 0.45rem;
+                padding-right: 2.8rem;
+            }
+            .pdf-viewer-modal {
+                --pdf-stage-height: min(76vh, 760px);
+                padding: 0.55rem;
+            }
+        }
 
     </style>
 </head>
@@ -94,7 +238,7 @@
 <header class="site-header">
     <div class="hero-shell">
         <div class="hero-copy reveal">
-            <p class="eyebrow"> market design for academic hiring</p>
+            <p class="eyebrow">market design for academic hiring</p>
             <p class="paper-label">A Statistical Market-Design Framework for Academic Job Markets</p>
             <h1>Preference signaling for the academic job market.</h1>
             <p class="hero-summary">
@@ -256,7 +400,7 @@
 
             <figure class="process-figure reveal">
                 <div class="figure-shell">
-                    <img src="fig/procedure.png" alt="Overview of the signaling, interview, and matching stages in the proposed market-design framework.">
+                    <img src="fig/procedure.png" alt="Overview of the signaling, interview, and matching stages in the proposed market-design framework." loading="lazy" decoding="async" data-lightbox-caption="Process map. The questionnaire enters the pipeline before interview selection and feeds the confidence-calibrated ranking procedure.">
                 </div>
                 <figcaption>
                     <span class="figure-tag">Process map</span>
@@ -333,7 +477,7 @@
         <div class="gallery-grid">
             <figure class="figure-card reveal">
                 <div class="figure-shell">
-                    <img src="fig/fig_candidate_by_participation.png" alt="Candidate welfare and matching rate by participation status.">
+                    <img src="fig/fig_candidate_by_participation.png" alt="Candidate welfare and matching rate by participation status." loading="lazy" decoding="async" data-lightbox-caption="Participation effects. Candidate outcomes by participation status. Left: mean welfare. Right: matching rate.">
                 </div>
                 <figcaption>
                     <span class="figure-tag">Participation effects</span>
@@ -343,8 +487,8 @@
 
             <figure class="figure-card reveal">
                 <div class="paired-figure">
-                    <img src="fig/fig_candidate_welfare.png" alt="Aggregate candidate welfare across participation rates.">
-                    <img src="fig/fig_candidate_welfare_unconditional.png" alt="Candidate welfare by quality tier across participation rates.">
+                    <img src="fig/fig_candidate_welfare.png" alt="Aggregate candidate welfare across participation rates." loading="lazy" decoding="async" data-lightbox-caption="Candidate-side gains. Aggregate mean candidate welfare by participation rate.">
+                    <img src="fig/fig_candidate_welfare_unconditional.png" alt="Candidate welfare by quality tier across participation rates." loading="lazy" decoding="async" data-lightbox-caption="Candidate-side gains. Mean candidate welfare by participation rate, broken out by candidate quality tier.">
                 </div>
                 <figcaption>
                     <span class="figure-tag">Candidate-side gains</span>
@@ -354,8 +498,8 @@
 
             <figure class="figure-card reveal">
                 <div class="paired-figure">
-                    <img src="fig/fig_candidate_utility_by_tier.png" alt="Matched candidate utility by quality tier and participation rate.">
-                    <img src="fig/fig_department_welfare.png" alt="Department welfare per hiring position by prestige tier and participation rate.">
+                    <img src="fig/fig_candidate_utility_by_tier.png" alt="Matched candidate utility by quality tier and participation rate." loading="lazy" decoding="async" data-lightbox-caption="Distributional effects. Mean matched candidate utility by quality tier and participation rate.">
+                    <img src="fig/fig_department_welfare.png" alt="Department welfare per hiring position by prestige tier and participation rate." loading="lazy" decoding="async" data-lightbox-caption="Distributional effects. Department welfare per hiring position by prestige tier and participation rate.">
                 </div>
                 <figcaption>
                     <span class="figure-tag">Distributional effects</span>
@@ -365,8 +509,8 @@
 
             <figure class="figure-card reveal">
                 <div class="paired-figure">
-                    <img src="fig/fig_dept_interview_heatmap.png" alt="Interview allocation heatmap by department and candidate tier.">
-                    <img src="fig/fig_dept_hiring_heatmap.png" alt="Hiring distribution heatmap by department and candidate tier.">
+                    <img src="fig/fig_dept_interview_heatmap.png" alt="Interview allocation heatmap by department and candidate tier." loading="lazy" decoding="async" data-lightbox-caption="Allocation shift. Interview allocations by department tier and candidate tier under structured signaling.">
+                    <img src="fig/fig_dept_hiring_heatmap.png" alt="Hiring distribution heatmap by department and candidate tier." loading="lazy" decoding="async" data-lightbox-caption="Allocation shift. Hiring allocations by department tier and candidate tier under structured signaling.">
                 </div>
                 <figcaption>
                     <span class="figure-tag">Allocation shift</span>
@@ -376,8 +520,8 @@
 
             <figure class="figure-card reveal">
                 <div class="paired-figure">
-                    <img src="fig/fig_dept_outcome_pies.png" alt="Department position outcomes under baseline and full participation.">
-                    <img src="fig/fig_cand_outcome_pies.png" alt="Candidate hire outcomes under baseline and full participation.">
+                    <img src="fig/fig_dept_outcome_pies.png" alt="Department position outcomes under baseline and full participation." loading="lazy" decoding="async" data-lightbox-caption="Outcome composition. Department position outcomes: initial-offer fills, scramble fills, and unfilled positions, comparing baseline with full participation.">
+                    <img src="fig/fig_cand_outcome_pies.png" alt="Candidate hire outcomes under baseline and full participation." loading="lazy" decoding="async" data-lightbox-caption="Outcome composition. Candidate hire outcomes: matched versus unmatched, comparing baseline with full participation.">
                 </div>
                 <figcaption>
                     <span class="figure-tag">Outcome composition</span>
@@ -387,7 +531,7 @@
 
             <figure class="figure-card reveal">
                 <div class="figure-shell figure-shell-narrow">
-                    <img src="fig/fig_blocking_pairs.png" alt="Blocking pair rate by participation rate.">
+                    <img src="fig/fig_blocking_pairs.png" alt="Blocking pair rate by participation rate." loading="lazy" decoding="async" data-lightbox-caption="Stability. Blocking pair rate by participation rate.">
                 </div>
                 <figcaption>
                     <span class="figure-tag">Stability</span>
@@ -426,10 +570,16 @@
             <div>
                 <div style="display: flex; align-items: center; margin-bottom: 0.6rem;">
                     <span class="figure-tag">Example questionnaire</span>
-                    <a href="fig/Example_Questionnaire.pdf" target="_blank" style="margin-left: 0.5rem; font-size: 0.85rem;">Open in new tab <i class="fas fa-external-link-alt"></i></a>
+                    <a href="fig/Example_Questionnaire.pdf" target="_blank" rel="noopener noreferrer" style="margin-left: 0.5rem; font-size: 0.85rem;">Open in new tab <i class="fas fa-external-link-alt"></i></a>
                 </div>
                 <div class="figure-shell" style="padding: 0; overflow: hidden;">
-                    <iframe src="fig/Example_Questionnaire.pdf" style="width: 100%; height: 600px; border: none; border-radius: var(--radius-md);"></iframe>
+                    <div class="pdf-viewer pdf-viewer-preview" id="questionnaire-pdf-viewer" data-pdf-src="fig/Example_Questionnaire.pdf" tabindex="0" role="button" aria-label="Example questionnaire preview. Open larger two-page viewer">
+                        <div class="pdf-viewer-status" id="questionnaire-pdf-status">Loading two-page preview...</div>
+                        <div class="pdf-spread-stage" id="questionnaire-pdf-stage" hidden>
+                            <div class="pdf-page"><canvas id="questionnaire-pdf-page-1" aria-label="Questionnaire preview page 1"></canvas></div>
+                            <div class="pdf-page"><canvas id="questionnaire-pdf-page-2" aria-label="Questionnaire preview page 2"></canvas></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </article>
@@ -439,13 +589,12 @@
     <section id="paper" class="section section-resources">
         <div class="section-header reveal">
             <p class="section-kicker">Paper and Code</p>
-
         </div>
 
         <article class="resource-card reveal">
             <div class="resource-actions">
                 <a href="#" class="btn btn-primary" data-modal-trigger="coming-soon">Paper</a>
-                <a href="https://github.com/amofrad/Academic-Job-Market" class="btn btn-secondary" target="_blank" rel="noreferrer">
+                <a href="https://github.com/amofrad/Academic-Job-Market" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
                     <i class="fab fa-github"></i> Code repository
                 </a>
             </div>
@@ -472,51 +621,105 @@
     <p>&copy; 2026 Ali Kaazempur-Mofrad, Xiaowu Dai, Xuming He.</p>
 </footer>
 
-<div id="lightbox" class="lightbox-overlay" role="presentation">
+<div id="lightbox" class="lightbox-overlay" role="dialog" aria-modal="true" aria-label="Expanded figure" aria-hidden="true">
     <button class="lightbox-close" id="lightbox-close" aria-label="Close image">&times;</button>
-    <img id="lightbox-img" src="" alt="">
+    <div class="lightbox-panel">
+        <img id="lightbox-img" src="" alt="">
+        <div class="lightbox-caption" id="lightbox-caption" hidden></div>
+    </div>
 </div>
 
-<div id="coming-soon-modal" class="modal-overlay" role="presentation">
+<div id="pdf-modal" class="lightbox-overlay pdf-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="pdf-modal-title" aria-hidden="true">
+    <div class="pdf-modal-panel">
+        <button class="lightbox-close" id="pdf-modal-close" aria-label="Close questionnaire viewer">&times;</button>
+        <div class="pdf-modal-header">
+            <h3 id="pdf-modal-title">Example questionnaire</h3>
+            <a href="fig/Example_Questionnaire.pdf" target="_blank" rel="noopener noreferrer">Open in new tab <i class="fas fa-external-link-alt"></i></a>
+        </div>
+        <div class="pdf-viewer pdf-viewer-modal" id="questionnaire-pdf-modal-viewer">
+            <div class="pdf-viewer-status" id="questionnaire-pdf-modal-status">Loading two-page preview...</div>
+            <div class="pdf-spread-stage" id="questionnaire-pdf-modal-stage" hidden>
+                <div class="pdf-page"><canvas id="questionnaire-pdf-modal-page-1" aria-label="Questionnaire modal page 1"></canvas></div>
+                <div class="pdf-page"><canvas id="questionnaire-pdf-modal-page-2" aria-label="Questionnaire modal page 2"></canvas></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="coming-soon-modal" class="modal-overlay" aria-hidden="true">
     <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="coming-soon-title">
         <button class="modal-close" id="modal-close" aria-label="Close modal">&times;</button>
         <div class="modal-badge"><i class="fas fa-rocket"></i></div>
         <h3 id="coming-soon-title">Coming soon</h3>
         <p>
-            The platform is under development. Check back soon for updates.        </p>
+            The platform is under development. Check back soon for updates.
+        </p>
     </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
     const navToggle = document.getElementById("nav-toggle");
     const navList = document.getElementById("nav-list");
     const navbar = document.getElementById("navbar");
-    const navLinks = Array.from(document.querySelectorAll(".nav-list a[href^='#']:not([data-modal-trigger])"));
+    const navLinks = Array.from(document.querySelectorAll(".nav-list a[href^='#']"));
     const sections = Array.from(document.querySelectorAll("main section[id]"));
     const modal = document.getElementById("coming-soon-modal");
     const modalClose = document.getElementById("modal-close");
     const modalTriggers = document.querySelectorAll("[data-modal-trigger='coming-soon']");
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const questionnairePdfViewer = document.getElementById("questionnaire-pdf-viewer");
+    const questionnairePdfStatus = document.getElementById("questionnaire-pdf-status");
+    const questionnairePdfStage = document.getElementById("questionnaire-pdf-stage");
+    const questionnairePdfCanvases = [
+        document.getElementById("questionnaire-pdf-page-1"),
+        document.getElementById("questionnaire-pdf-page-2")
+    ];
+    const questionnairePdfModal = document.getElementById("pdf-modal");
+    const questionnairePdfModalClose = document.getElementById("pdf-modal-close");
+    const questionnairePdfModalViewer = document.getElementById("questionnaire-pdf-modal-viewer");
+    const questionnairePdfModalStatus = document.getElementById("questionnaire-pdf-modal-status");
+    const questionnairePdfModalStage = document.getElementById("questionnaire-pdf-modal-stage");
+    const questionnairePdfModalCanvases = [
+        document.getElementById("questionnaire-pdf-modal-page-1"),
+        document.getElementById("questionnaire-pdf-modal-page-2")
+    ];
+    let lastLightboxTrigger = null;
+    let lastPdfModalTrigger = null;
+    let lastModalTrigger = null;
+    let questionnairePdfDoc = null;
+    let questionnairePdfResizeObserver = null;
+    let copyFeedbackTimer = null;
+    const questionnairePdfPreviewConfig = {
+        viewer: questionnairePdfViewer,
+        status: questionnairePdfStatus,
+        stage: questionnairePdfStage,
+        canvases: questionnairePdfCanvases,
+        renderVersion: 0
+    };
+    const questionnairePdfModalConfig = {
+        viewer: questionnairePdfModalViewer,
+        status: questionnairePdfModalStatus,
+        stage: questionnairePdfModalStage,
+        canvases: questionnairePdfModalCanvases,
+        renderVersion: 0
+    };
+    const copyBibtexButton = document.getElementById("copy-bibtex");
+    const bibtexContent = document.getElementById("bibtex-content");
 
     function setNavState(isOpen) {
         navList.classList.toggle("open", isOpen);
         navToggle.setAttribute("aria-expanded", String(isOpen));
     }
 
-    function showComingSoon(event) {
-        if (event) event.preventDefault();
-        modal.classList.add("active");
-        document.body.classList.add("modal-open");
-    }
-
-    function hideComingSoon(event) {
-        if (event) event.preventDefault();
-        modal.classList.remove("active");
-        document.body.classList.remove("modal-open");
-    }
-
     navToggle.addEventListener("click", () => {
         setNavState(!navList.classList.contains("open"));
+    });
+
+    document.addEventListener("click", (event) => {
+        if (!navList.classList.contains("open")) return;
+        if (navToggle.contains(event.target) || navList.contains(event.target)) return;
+        setNavState(false);
     });
 
     navLinks.forEach((link) => {
@@ -528,6 +731,24 @@
             setNavState(false);
         });
     });
+
+    function showComingSoon(event) {
+        if (event) event.preventDefault();
+        lastModalTrigger = event?.currentTarget || document.activeElement;
+        modal.classList.add("active");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+        modalClose.focus({ preventScroll: true });
+    }
+
+    function hideComingSoon(event) {
+        if (event) event.preventDefault();
+        modal.classList.remove("active");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+        if (lastModalTrigger) lastModalTrigger.focus({ preventScroll: true });
+        lastModalTrigger = null;
+    }
 
     modalTriggers.forEach((trigger) => {
         trigger.addEventListener("click", (event) => {
@@ -541,16 +762,10 @@
         if (event.target === modal) hideComingSoon(event);
     });
 
-    document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-            if (lightbox.classList.contains("active")) closeLightbox();
-            else if (modal.classList.contains("active")) hideComingSoon();
-        }
-    });
-
     window.addEventListener("scroll", () => {
         navbar.classList.toggle("sticky", window.scrollY > 24);
     }, { passive: true });
+    navbar.classList.toggle("sticky", window.scrollY > 24);
 
     const sectionObserver = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
@@ -575,39 +790,337 @@
     const lightbox = document.getElementById("lightbox");
     const lightboxImg = document.getElementById("lightbox-img");
     const lightboxClose = document.getElementById("lightbox-close");
+    const lightboxCaption = document.getElementById("lightbox-caption");
 
-    function openLightbox(src, alt) {
+    function openLightbox(src, alt, trigger, caption) {
+        lastLightboxTrigger = trigger || document.activeElement;
         lightboxImg.src = src;
         lightboxImg.alt = alt;
+        if (caption) {
+            lightboxCaption.textContent = caption;
+            lightboxCaption.hidden = false;
+        } else {
+            lightboxCaption.textContent = "";
+            lightboxCaption.hidden = true;
+        }
         lightbox.classList.add("active");
+        lightbox.setAttribute("aria-hidden", "false");
         document.body.classList.add("modal-open");
+        lightboxClose.focus({ preventScroll: true });
     }
 
     function closeLightbox() {
         lightbox.classList.remove("active");
+        lightbox.setAttribute("aria-hidden", "true");
         document.body.classList.remove("modal-open");
+        lightboxImg.src = "";
+        lightboxImg.alt = "";
+        lightboxCaption.textContent = "";
+        lightboxCaption.hidden = true;
+        if (lastLightboxTrigger) lastLightboxTrigger.focus({ preventScroll: true });
+        lastLightboxTrigger = null;
     }
 
     // All figures: figure-shell covers Figs 1, 2, 7; paired-figure covers Figs 3–6
     document.querySelectorAll(".figure-shell img, .paired-figure img").forEach((img) => {
         img.classList.add("fig-zoomable");
-        img.addEventListener("click", () => openLightbox(img.src, img.alt));
+        img.setAttribute("tabindex", "0");
+        img.setAttribute("role", "button");
+        img.setAttribute("aria-label", (img.alt || "Figure") + ". Expand image");
+        const lightboxCaptionText = img.dataset.lightboxCaption || img.alt || "";
+        img.addEventListener("click", () => openLightbox(img.src, img.alt, img, lightboxCaptionText));
+        img.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                openLightbox(img.src, img.alt, img, lightboxCaptionText);
+            }
+        });
     });
 
     lightboxClose.addEventListener("click", closeLightbox);
     lightbox.addEventListener("click", (e) => { if (e.target === lightbox) closeLightbox(); });
 
-    document.getElementById("copy-bibtex").addEventListener("click", () => {
-        const text = document.getElementById("bibtex-content").textContent;
-        navigator.clipboard.writeText(text).then(() => {
-            const btn = document.getElementById("copy-bibtex");
-            btn.classList.add("copied");
-            btn.innerHTML = '<i class="fas fa-check"></i> Copied';
-            setTimeout(() => {
-                btn.classList.remove("copied");
-                btn.innerHTML = '<i class="fas fa-copy"></i> Copy';
-            }, 2000);
+    function getActiveOverlay() {
+        if (lightbox.classList.contains("active")) return lightbox;
+        if (questionnairePdfModal.classList.contains("active")) return questionnairePdfModal;
+        if (modal.classList.contains("active")) return modal;
+        return null;
+    }
+
+    function trapFocusWithin(event, container) {
+        const focusableElements = Array.from(container.querySelectorAll(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )).filter((element) => !element.hidden && (element.offsetWidth > 0 || element.offsetHeight > 0 || element === document.activeElement));
+
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (focusableElements.length === 1) {
+            event.preventDefault();
+            firstElement.focus({ preventScroll: true });
+            return;
+        }
+
+        if (event.shiftKey && document.activeElement === firstElement) {
+            event.preventDefault();
+            lastElement.focus({ preventScroll: true });
+        } else if (!event.shiftKey && document.activeElement === lastElement) {
+            event.preventDefault();
+            firstElement.focus({ preventScroll: true });
+        }
+    }
+
+    document.addEventListener("keydown", (event) => {
+        const activeOverlay = getActiveOverlay();
+
+        if (event.key === "Tab" && activeOverlay) {
+            trapFocusWithin(event, activeOverlay);
+            return;
+        }
+
+        if (event.key !== "Escape") return;
+
+        if (activeOverlay === lightbox) closeLightbox();
+        else if (activeOverlay === questionnairePdfModal) closeQuestionnairePdfModal();
+        else if (activeOverlay === modal) hideComingSoon();
+        else if (navList.classList.contains("open")) setNavState(false);
+    });
+
+    function setPdfViewerStatus(config, message, isError = false) {
+        if (!config?.status) return;
+        config.status.textContent = message;
+        config.status.hidden = false;
+        config.status.classList.toggle("is-error", isError);
+        if (config.stage) config.stage.hidden = true;
+    }
+
+    async function renderPdfSpread(config) {
+        if (!questionnairePdfDoc || !config?.viewer || !config.stage) return;
+
+        const renderVersion = ++config.renderVersion;
+        const firstPage = await questionnairePdfDoc.getPage(1);
+        const baseViewport = firstPage.getViewport({ scale: 1 });
+        const stageStyles = window.getComputedStyle(config.stage);
+        const viewerStyles = window.getComputedStyle(config.viewer);
+        const statusStyles = config.status ? window.getComputedStyle(config.status) : null;
+        const stageColumnGap = parseFloat(stageStyles.columnGap || stageStyles.gap || "0");
+        const stageRowGap = parseFloat(stageStyles.rowGap || stageStyles.gap || "0");
+        const pagesInSpread = Math.min(config.canvases.length, questionnairePdfDoc.numPages);
+        const pagesPerRow = Math.max(
+            1,
+            Math.min(
+                parseInt(viewerStyles.getPropertyValue("--pdf-pages-per-row"), 10) || pagesInSpread,
+                pagesInSpread
+            )
+        );
+        const pageRows = Math.ceil(pagesInSpread / pagesPerRow);
+        const horizontalPadding = parseFloat(viewerStyles.paddingLeft || "0") + parseFloat(viewerStyles.paddingRight || "0");
+        const stageWidth = config.viewer.clientWidth - horizontalPadding;
+        const stageHeight = parseFloat(statusStyles?.minHeight || "0") || 640;
+        const scaleByWidth = ((stageWidth - (stageColumnGap * (pagesPerRow - 1))) / pagesPerRow) / baseViewport.width;
+        const scaleByHeight = ((stageHeight - (stageRowGap * (pageRows - 1))) / pageRows) / baseViewport.height;
+        const scale = Math.max(0.2, pagesPerRow === 1 ? scaleByWidth : Math.min(scaleByWidth, scaleByHeight));
+        const outputScale = window.devicePixelRatio || 1;
+
+        for (let i = 0; i < config.canvases.length; i += 1) {
+            const pageNumber = i + 1;
+            const canvas = config.canvases[i];
+            const pageWrapper = canvas?.closest(".pdf-page");
+            if (!canvas || !pageWrapper) continue;
+
+            if (pageNumber > questionnairePdfDoc.numPages) {
+                pageWrapper.hidden = true;
+                continue;
+            }
+
+            pageWrapper.hidden = false;
+            const page = pageNumber === 1 ? firstPage : await questionnairePdfDoc.getPage(pageNumber);
+            const viewport = page.getViewport({ scale });
+            const context = canvas.getContext("2d", { alpha: false });
+            const transform = outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null;
+
+            canvas.width = Math.floor(viewport.width * outputScale);
+            canvas.height = Math.floor(viewport.height * outputScale);
+            canvas.style.width = `${viewport.width}px`;
+            canvas.style.height = `${viewport.height}px`;
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            await page.render({
+                canvasContext: context,
+                viewport,
+                transform
+            }).promise;
+        }
+
+        if (renderVersion !== config.renderVersion) return;
+        config.status.hidden = true;
+        config.stage.hidden = false;
+    }
+
+    function openQuestionnairePdfModal(trigger) {
+        lastPdfModalTrigger = trigger || document.activeElement;
+        questionnairePdfModal.classList.add("active");
+        questionnairePdfModal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+        questionnairePdfModalClose.focus({ preventScroll: true });
+        setPdfViewerStatus(questionnairePdfModalConfig, "Loading two-page preview...");
+        requestAnimationFrame(() => {
+            renderPdfSpread(questionnairePdfModalConfig).catch(() => {
+                setPdfViewerStatus(questionnairePdfModalConfig, "The larger preview could not be loaded. Please use \"Open in new tab\".", true);
+            });
         });
+    }
+
+    function closeQuestionnairePdfModal() {
+        questionnairePdfModal.classList.remove("active");
+        questionnairePdfModal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+        if (lastPdfModalTrigger) lastPdfModalTrigger.focus({ preventScroll: true });
+        lastPdfModalTrigger = null;
+    }
+
+    function schedulePdfRender(config, errorMessage) {
+        if (!questionnairePdfDoc || !config?.viewer) return;
+        window.clearTimeout(config.resizeTimer);
+        config.resizeTimer = window.setTimeout(() => {
+            if (config === questionnairePdfModalConfig && !questionnairePdfModal.classList.contains("active")) return;
+            renderPdfSpread(config).catch(() => {
+                setPdfViewerStatus(config, errorMessage, true);
+            });
+        }, 120);
+    }
+
+    function observePdfViewers() {
+        if (!window.ResizeObserver) {
+            window.addEventListener("resize", () => {
+                schedulePdfRender(questionnairePdfPreviewConfig, "The preview could not be resized. Please use \"Open in new tab\".");
+                if (questionnairePdfModal.classList.contains("active")) {
+                    schedulePdfRender(questionnairePdfModalConfig, "The larger preview could not be resized. Please use \"Open in new tab\".");
+                }
+            }, { passive: true });
+            return;
+        }
+
+        const viewerConfigPairs = new Map([
+            [questionnairePdfViewer, questionnairePdfPreviewConfig],
+            [questionnairePdfModalViewer, questionnairePdfModalConfig]
+        ]);
+
+        questionnairePdfResizeObserver = new ResizeObserver((entries) => {
+            entries.forEach((entry) => {
+                const config = viewerConfigPairs.get(entry.target);
+                if (!config) return;
+
+                const nextWidth = Math.round(entry.contentRect.width);
+                if (nextWidth < 1 || nextWidth === config.lastObservedWidth) return;
+                config.lastObservedWidth = nextWidth;
+
+                schedulePdfRender(
+                    config,
+                    config === questionnairePdfModalConfig
+                        ? "The larger preview could not be resized. Please use \"Open in new tab\"."
+                        : "The preview could not be resized. Please use \"Open in new tab\"."
+                );
+            });
+        });
+
+        viewerConfigPairs.forEach((_, element) => {
+            if (element) questionnairePdfResizeObserver.observe(element);
+        });
+    }
+
+    async function initQuestionnairePdfViewer() {
+        if (!questionnairePdfViewer) return;
+        if (!window.pdfjsLib) {
+            setPdfViewerStatus(questionnairePdfPreviewConfig, "Two-page preview is unavailable here. Please use \"Open in new tab\".", true);
+            return;
+        }
+
+        try {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+            questionnairePdfDoc = await pdfjsLib.getDocument(questionnairePdfViewer.dataset.pdfSrc).promise;
+            await renderPdfSpread(questionnairePdfPreviewConfig);
+
+            questionnairePdfViewer.addEventListener("click", () => openQuestionnairePdfModal(questionnairePdfViewer));
+            questionnairePdfViewer.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    openQuestionnairePdfModal(questionnairePdfViewer);
+                }
+            });
+
+            questionnairePdfModalClose.addEventListener("click", closeQuestionnairePdfModal);
+            questionnairePdfModal.addEventListener("click", (event) => {
+                if (event.target === questionnairePdfModal) closeQuestionnairePdfModal();
+            });
+
+            observePdfViewers();
+        } catch (error) {
+            setPdfViewerStatus(questionnairePdfPreviewConfig, "The two-page preview could not be loaded. Please use \"Open in new tab\".", true);
+        }
+    }
+
+    async function copyText(text) {
+        if (navigator.clipboard?.writeText) {
+            try {
+                await navigator.clipboard.writeText(text);
+                return true;
+            } catch (error) {
+                // Fall back to manual copy support below.
+            }
+        }
+
+        const helper = document.createElement("textarea");
+        helper.value = text;
+        helper.setAttribute("readonly", "");
+        helper.style.position = "fixed";
+        helper.style.opacity = "0";
+        helper.style.pointerEvents = "none";
+        helper.style.inset = "0 auto auto -9999px";
+        document.body.appendChild(helper);
+        helper.focus();
+        helper.select();
+        helper.setSelectionRange(0, helper.value.length);
+
+        let copied = false;
+        try {
+            copied = document.execCommand("copy");
+        } catch (error) {
+            copied = false;
+        }
+
+        document.body.removeChild(helper);
+        return copied;
+    }
+
+    function setCopyButtonFeedback(message, iconClass, stateClass) {
+        window.clearTimeout(copyFeedbackTimer);
+        copyBibtexButton.classList.remove("copied", "copy-manual");
+        if (stateClass) copyBibtexButton.classList.add(stateClass);
+        copyBibtexButton.innerHTML = `<i class="${iconClass}"></i> ${message}`;
+        copyFeedbackTimer = window.setTimeout(() => {
+            copyBibtexButton.classList.remove("copied", "copy-manual");
+            copyBibtexButton.innerHTML = '<i class="fas fa-copy"></i> Copy';
+        }, 2400);
+    }
+
+    copyBibtexButton.addEventListener("click", async () => {
+        const text = bibtexContent.textContent;
+        const copied = await copyText(text);
+
+        if (copied) {
+            setCopyButtonFeedback("Copied", "fas fa-check", "copied");
+            return;
+        }
+
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(bibtexContent);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        setCopyButtonFeedback("Press Cmd/Ctrl+C", "fas fa-keyboard", "copy-manual");
     });
 
     document.querySelectorAll(".reveal").forEach((element, index) => {
@@ -618,6 +1131,8 @@
         }
         revealObserver.observe(element);
     });
+
+    initQuestionnairePdfViewer();
 </script>
 </body>
 </html>

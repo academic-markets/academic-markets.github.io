@@ -14,10 +14,20 @@
   "use strict";
 
   // ── Constants ──────────────────────────────────────────────────────
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const PHD_RATIO_MIN = 0.5;
   const PHD_RATIO_MAX = 5.0;
   const PHD_RATIO_RANGE = PHD_RATIO_MAX - PHD_RATIO_MIN;
   const N_IDEAL = 20;          // top departments by true fit
+  const QUESTION_ORDER = ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6"];
+  const QUESTION_TITLES = {
+    Q1: "Geographic Setting",
+    Q2: "Region",
+    Q3: "Teaching Load",
+    Q4: "Course Types",
+    Q5: "PhD Ratio",
+    Q6: "Medical School"
+  };
 
   // Categorical level orderings (must match R simulation)
   const LEVELS = {
@@ -53,6 +63,8 @@
   let trueAnswers = null;
   let reportedAnswers = null;
   let trueProb = null;
+  let gaugeValueAnimationFrame = 0;
+  let displayedGaugeProb = 0;
 
   // ── Data loading ───────────────────────────────────────────────────
   async function loadData() {
@@ -60,6 +72,9 @@
       fetch("data/departments.json"),
       fetch("data/interview_model.json")
     ]);
+    if (!deptRes.ok || !modelRes.ok) {
+      throw new Error("Unable to load demo data.");
+    }
     departments = await deptRes.json();
     const modelData = await modelRes.json();
     model = modelData.model;
@@ -313,6 +328,45 @@
     };
   }
 
+  function writeFormAnswers(answers) {
+    const form = document.getElementById("questionnaire-form");
+    if (!form || !answers) return;
+
+    form.reset();
+
+    if (answers.q1) {
+      const q1Input = form.querySelector('input[name="q1"][value="' + answers.q1 + '"]');
+      if (q1Input) q1Input.checked = true;
+    }
+
+    if (Array.isArray(answers.q2)) {
+      answers.q2.forEach((value) => {
+        const q2Input = form.querySelector('input[name="q2"][value="' + value + '"]');
+        if (q2Input) q2Input.checked = true;
+      });
+    }
+
+    if (answers.q3) {
+      const q3Input = form.querySelector('input[name="q3"][value="' + answers.q3 + '"]');
+      if (q3Input) q3Input.checked = true;
+    }
+
+    if (answers.q4) {
+      const q4Input = form.querySelector('input[name="q4"][value="' + answers.q4 + '"]');
+      if (q4Input) q4Input.checked = true;
+    }
+
+    if (answers.q5) {
+      const q5Input = form.querySelector('input[name="q5"][value="' + answers.q5 + '"]');
+      if (q5Input) q5Input.checked = true;
+    }
+
+    if (answers.q6) {
+      const q6Input = form.querySelector('input[name="q6"][value="' + answers.q6 + '"]');
+      if (q6Input) q6Input.checked = true;
+    }
+  }
+
   function validateForm(answers) {
     const missing = [];
     if (!answers.q1) missing.push("Q1");
@@ -324,24 +378,191 @@
     return missing;
   }
 
+  function setQuestionnaireAvailability(isAvailable) {
+    const form = document.getElementById("questionnaire-form");
+    const clearFormButton = document.getElementById("clear-form-top");
+    if (!form) return;
+    form.setAttribute("aria-busy", String(!isAvailable));
+    form.querySelectorAll("input, button").forEach((control) => {
+      control.disabled = !isAvailable;
+    });
+    if (clearFormButton) clearFormButton.disabled = !isAvailable || clearFormButton.hidden;
+  }
+
+  function setPlatformNavState(isOpen) {
+    const navList = document.getElementById("nav-list");
+    const navToggle = document.getElementById("nav-toggle");
+    if (!navList || !navToggle) return;
+    navList.classList.toggle("open", isOpen);
+    navToggle.setAttribute("aria-expanded", String(isOpen));
+  }
+
   // ── UI: View switching ─────────────────────────────────────────────
-  function showResults() {
+  function showResults(options = {}) {
+    const { focusHeading: shouldFocusHeading = true } = options;
+    setPlatformNavState(false);
     document.getElementById("view-questionnaire").classList.remove("platform-view--active");
     document.getElementById("view-results").classList.add("platform-view--active");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
+    if (shouldFocusHeading) focusHeading("results-title");
+    else clearHeadingFocus("results-title");
   }
 
   function showQuestionnaire() {
+    setPlatformNavState(false);
     document.getElementById("view-results").classList.remove("platform-view--active");
     document.getElementById("view-questionnaire").classList.add("platform-view--active");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
+    focusHeading("questionnaire-title");
+  }
+
+  function focusHeading(id) {
+    const heading = document.getElementById(id);
+    if (!heading) return;
+    requestAnimationFrame(() => heading.focus({ preventScroll: true }));
+  }
+
+  function clearHeadingFocus(id) {
+    const heading = document.getElementById(id);
+    if (!heading) return;
+
+    const blurHeading = () => {
+      if (document.activeElement === heading) heading.blur();
+    };
+
+    requestAnimationFrame(blurHeading);
+    window.setTimeout(blurHeading, 120);
+  }
+
+  function setPlatformStatus(message, type) {
+    const status = document.getElementById("platform-status");
+    const statusMessage = document.getElementById("platform-status-message");
+    if (!status || !statusMessage) return;
+    if (!message) {
+      status.hidden = true;
+      statusMessage.textContent = "";
+      status.className = "platform-status";
+      return;
+    }
+    status.hidden = false;
+    statusMessage.textContent = message;
+    status.className = "platform-status" + (type ? " platform-status--" + type : "");
+  }
+
+  function clearFormErrors() {
+    const summary = document.getElementById("form-error-summary");
+    if (summary) {
+      summary.hidden = true;
+      summary.textContent = "";
+    }
+    document.querySelectorAll(".q-card").forEach(card => {
+      card.classList.remove("q-card--error");
+      card.removeAttribute("aria-invalid");
+    });
+  }
+
+  function hasAnyQuestionnaireResponses() {
+    const form = document.getElementById("questionnaire-form");
+    return !!form && form.querySelectorAll("input:checked").length > 0;
+  }
+
+  function updateQuestionnaireHeaderActions() {
+    const clearFormButton = document.getElementById("clear-form-top");
+    if (!clearFormButton) return;
+
+    const hasResponses = hasAnyQuestionnaireResponses();
+    clearFormButton.hidden = !hasResponses;
+    clearFormButton.disabled = !hasResponses;
+  }
+
+  function clearQuestionnaireResponses() {
+    const form = document.getElementById("questionnaire-form");
+    if (!form) return;
+
+    clearState();
+    trueAnswers = null;
+    reportedAnswers = null;
+    trueProb = null;
+    form.reset();
+    clearFormErrors();
+    updateQuestionnaireHeaderActions();
+  }
+
+  function showFormErrors(missing) {
+    clearFormErrors();
+    const cards = document.querySelectorAll(".q-card");
+    missing.forEach(qn => {
+      const idx = QUESTION_ORDER.indexOf(qn);
+      if (cards[idx]) {
+        cards[idx].classList.add("q-card--error");
+        cards[idx].setAttribute("aria-invalid", "true");
+      }
+    });
+
+    const summary = document.getElementById("form-error-summary");
+    if (summary) {
+      const labels = missing.map(qn => qn + " (" + QUESTION_TITLES[qn] + ")");
+      summary.textContent = "Please complete " + labels.join(", ") + " before continuing.";
+      summary.hidden = false;
+      summary.focus();
+    }
+
+    const firstMissing = missing[0];
+    const firstIndex = QUESTION_ORDER.indexOf(firstMissing);
+    if (firstIndex >= 0 && cards[firstIndex]) {
+      const firstInput = cards[firstIndex].querySelector("input");
+      if (firstInput) firstInput.focus({ preventScroll: true });
+    }
+  }
+
+  function setGaugeValue(prob) {
+    displayedGaugeProb = prob;
+    document.getElementById("gauge-value").textContent = Math.round(prob * 100) + "%";
+  }
+
+  function updateReportedProbabilityPill(prob) {
+    const pill = document.getElementById("reported-live-prob");
+    if (!pill) return;
+
+    const pct = Math.round(prob * 100);
+    pill.textContent = "Current probability: " + pct + "%";
+    pill.className = "probability-pill";
+
+    if (prob >= 0.5) pill.classList.add("probability-pill--high");
+    else if (prob >= 0.3) pill.classList.add("probability-pill--mid");
+    else pill.classList.add("probability-pill--low");
+  }
+
+  function animateGaugeValue(targetProb) {
+    window.cancelAnimationFrame(gaugeValueAnimationFrame);
+
+    if (prefersReducedMotion || Math.abs(targetProb - displayedGaugeProb) < 0.005) {
+      setGaugeValue(targetProb);
+      return;
+    }
+
+    const startProb = displayedGaugeProb;
+    const duration = Math.max(280, Math.min(720, 340 + Math.abs(targetProb - startProb) * 1200));
+    const startTime = performance.now();
+
+    function step(now) {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setGaugeValue(startProb + (targetProb - startProb) * eased);
+
+      if (progress < 1) {
+        gaugeValueAnimationFrame = window.requestAnimationFrame(step);
+      } else {
+        gaugeValueAnimationFrame = 0;
+        setGaugeValue(targetProb);
+      }
+    }
+
+    gaugeValueAnimationFrame = window.requestAnimationFrame(step);
   }
 
   // ── Gauge rendering ────────────────────────────────────────────────
   function updateGauge(prob) {
-    const pct = Math.round(prob * 100);
-    document.getElementById("gauge-value").textContent = pct + "%";
-
     const gaugeFill = document.getElementById("gauge-fill");
     const totalLen = gaugeFill.getTotalLength();
     const offset = totalLen * (1 - prob);
@@ -355,6 +576,8 @@
 
     gaugeFill.style.stroke = color;
     document.getElementById("gauge-value").style.color = color;
+    animateGaugeValue(prob);
+    updateReportedProbabilityPill(prob);
 
     const comp = document.getElementById("gauge-comparison");
     if (trueProb !== null && Math.abs(prob - trueProb) > 0.002) {
@@ -425,6 +648,8 @@
 
       const optWrap = document.createElement("div");
       optWrap.className = "toggle-options";
+      optWrap.setAttribute("role", "group");
+      optWrap.setAttribute("aria-label", q.label);
 
       q.options.forEach(opt => {
         const btn = document.createElement("button");
@@ -439,6 +664,7 @@
         } else {
           if (reportedAnswers[q.key] && reportedAnswers[q.key].includes(opt.value)) btn.classList.add("active");
         }
+        btn.setAttribute("aria-pressed", String(btn.classList.contains("active")));
         updateToggleDiffState(btn, q.key, opt.value, q.type);
 
         btn.addEventListener("click", () => {
@@ -446,6 +672,7 @@
             reportedAnswers[q.key] = opt.value;
             optWrap.querySelectorAll(".toggle-btn").forEach(b => {
               b.classList.toggle("active", b.dataset.value === opt.value);
+              b.setAttribute("aria-pressed", String(b.classList.contains("active")));
               updateToggleDiffState(b, q.key, b.dataset.value, "radio");
             });
           } else {
@@ -460,6 +687,7 @@
             }
             optWrap.querySelectorAll(".toggle-btn").forEach(b => {
               b.classList.toggle("active", reportedAnswers[q.key].includes(b.dataset.value));
+              b.setAttribute("aria-pressed", String(b.classList.contains("active")));
               updateToggleDiffState(b, q.key, b.dataset.value, "checkbox");
             });
           }
@@ -493,8 +721,6 @@
   }
 
   // ── Session persistence ────────────────────────────────────────────
-  // Only restores on a true page reload (Cmd+R / F5), not when
-  // navigating back from another page like index.html.
   function saveState() {
     sessionStorage.setItem("platform_true", JSON.stringify(trueAnswers));
     sessionStorage.setItem("platform_reported", JSON.stringify(reportedAnswers));
@@ -505,20 +731,20 @@
     sessionStorage.removeItem("platform_reported");
   }
 
-  function isPageReload() {
-    const entries = performance.getEntriesByType("navigation");
-    if (entries.length > 0) return entries[0].type === "reload";
-    return false;
-  }
-
   function restoreState() {
-    if (!isPageReload()) { clearState(); return false; }
     const t = sessionStorage.getItem("platform_true");
     const r = sessionStorage.getItem("platform_reported");
     if (!t || !r) return false;
-    trueAnswers = JSON.parse(t);
-    reportedAnswers = JSON.parse(r);
-    return true;
+    try {
+      trueAnswers = JSON.parse(t);
+      reportedAnswers = JSON.parse(r);
+      writeFormAnswers(trueAnswers);
+      updateQuestionnaireHeaderActions();
+      return true;
+    } catch (error) {
+      clearState();
+      return false;
+    }
   }
 
   // ── Q2 "No preference" mutual exclusion ────────────────────────────
@@ -533,59 +759,102 @@
     });
   }
 
+  async function hydratePlatformData() {
+    setQuestionnaireAvailability(false);
+    setPlatformStatus("Loading demo data...", "loading");
+
+    try {
+      await loadData();
+      setQuestionnaireAvailability(true);
+      setPlatformStatus("");
+      return true;
+    } catch (error) {
+      setQuestionnaireAvailability(false);
+      setPlatformStatus("The demo data could not be loaded right now. Please refresh the page or try again later.", "error");
+      return false;
+    }
+  }
+
   // ── Initialization ─────────────────────────────────────────────────
   async function init() {
-    await loadData();
-    setupQ2Logic();
+    const navbar = document.getElementById("navbar");
+    const navToggle = document.getElementById("nav-toggle");
+    const navList = document.getElementById("nav-list");
+    const form = document.getElementById("questionnaire-form");
 
-    document.getElementById("nav-toggle").addEventListener("click", () => {
-      const navList = document.getElementById("nav-list");
-      const isOpen = navList.classList.toggle("open");
-      document.getElementById("nav-toggle").setAttribute("aria-expanded", String(isOpen));
+    navToggle.addEventListener("click", () => {
+      setPlatformNavState(!navList.classList.contains("open"));
     });
 
-    document.getElementById("questionnaire-form").addEventListener("submit", (e) => {
+    document.addEventListener("click", (event) => {
+      if (!navList.classList.contains("open")) return;
+      if (navToggle.contains(event.target) || navList.contains(event.target)) return;
+      setPlatformNavState(false);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && navList.classList.contains("open")) {
+        setPlatformNavState(false);
+      }
+    });
+
+    window.addEventListener("scroll", () => {
+      navbar.classList.toggle("sticky", window.scrollY > 24);
+    }, { passive: true });
+    navbar.classList.toggle("sticky", window.scrollY > 24);
+
+    setupQ2Logic();
+    updateQuestionnaireHeaderActions();
+
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
       const answers = readFormAnswers();
       const missing = validateForm(answers);
       if (missing.length > 0) {
-        document.querySelectorAll(".q-card").forEach(c => c.classList.remove("q-card--error"));
-        missing.forEach(qn => {
-          const idx = ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6"].indexOf(qn);
-          const cards = document.querySelectorAll(".q-card");
-          if (cards[idx]) cards[idx].classList.add("q-card--error");
-        });
+        showFormErrors(missing);
         return;
       }
 
+      clearFormErrors();
       trueAnswers = JSON.parse(JSON.stringify(answers));
       reportedAnswers = JSON.parse(JSON.stringify(answers));
       enterResults();
     });
-
-    document.getElementById("back-btn").addEventListener("click", () => {
-      clearState();
-      showQuestionnaire();
+    form.addEventListener("change", () => {
+      clearFormErrors();
+      updateQuestionnaireHeaderActions();
     });
+
+    const handleStartOver = () => {
+      if (trueAnswers) writeFormAnswers(trueAnswers);
+      updateQuestionnaireHeaderActions();
+      showQuestionnaire();
+    };
+
+    document.getElementById("back-btn").addEventListener("click", handleStartOver);
+    document.getElementById("back-btn-top").addEventListener("click", handleStartOver);
+    document.getElementById("clear-form-top").addEventListener("click", clearQuestionnaireResponses);
     document.getElementById("reset-btn").addEventListener("click", () => {
       reportedAnswers = JSON.parse(JSON.stringify(trueAnswers));
       renderReportedGrid();
       recalculate();
     });
 
-    // Restore previous session on refresh
+    const loaded = await hydratePlatformData();
+    if (!loaded) return;
+
     if (restoreState()) {
-      enterResults();
+      enterResults({ focusHeading: false });
     }
   }
 
-  function enterResults() {
+  function enterResults(options = {}) {
     trueProb = computeAggregateProbability(trueAnswers, trueAnswers);
     updateGauge(computeAggregateProbability(trueAnswers, reportedAnswers));
     renderTruePrefsChips();
     renderReportedGrid();
     saveState();
-    showResults();
+    showResults(options);
   }
 
   document.addEventListener("DOMContentLoaded", init);

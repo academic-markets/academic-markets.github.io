@@ -58,21 +58,13 @@ button {
     font: inherit;
 }
 
-.skip-link {
-    position: absolute;
-    left: 1rem;
-    top: -3rem;
-    z-index: 200;
-    padding: 0.8rem 1rem;
-    background: var(--ink-950);
-    color: #fff;
-    border-radius: 999px;
-    text-decoration: none;
-    transition: top 0.2s ease;
-}
-
-.skip-link:focus {
-    top: 1rem;
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+iframe:focus-visible,
+.fig-zoomable:focus-visible {
+    outline: 3px solid rgba(14, 124, 134, 0.28);
+    outline-offset: 3px;
 }
 
 .site-header {
