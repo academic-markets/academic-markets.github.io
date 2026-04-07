@@ -122,6 +122,11 @@
     margin-inline: auto;
 }
 
+.platform-status[hidden],
+.form-alert[hidden] {
+    display: none !important;
+}
+
 .platform-status__message {
     display: inline-flex;
     align-items: center;
