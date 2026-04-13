@@ -15,6 +15,7 @@
         .copy-btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.4rem;
             padding: 0.4rem 0.85rem;
             border: 1px solid var(--line-strong);
@@ -23,8 +24,18 @@
             color: var(--ink-700);
             font-size: 0.82rem;
             font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
             cursor: pointer;
             transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        .copy-btn i {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1em;
+            line-height: 1;
+            flex-shrink: 0;
         }
         .copy-btn:hover { background: rgba(255,255,255,0.95); }
         .copy-btn.copied { color: var(--teal); border-color: var(--teal); }
@@ -610,8 +621,8 @@
 
         <article class="resource-card resource-card-featured reveal">
             <div class="resource-actions resource-actions-featured">
-                <a href="#" class="btn btn-primary" data-modal-trigger="coming-soon">Paper</a>
-                <a href="https://github.com/amofrad/Academic-Job-Market" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+                <a href="#" class="btn btn-primary btn-accent-outline" data-modal-trigger="coming-soon">Paper</a>
+                <a href="https://github.com/amofrad/Academic-Job-Market" class="btn btn-secondary btn-accent-outline" target="_blank" rel="noopener noreferrer">
                     <i class="fab fa-github"></i> Code repository
                 </a>
             </div>

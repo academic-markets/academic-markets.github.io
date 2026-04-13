@@ -246,9 +246,21 @@ iframe:focus-visible,
     border-radius: 999px;
     border: 1px solid transparent;
     font-weight: 700;
+    line-height: 1.05;
+    white-space: nowrap;
     text-decoration: none;
     transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
     cursor: pointer;
+}
+
+.btn i,
+.nav-toggle i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    line-height: 1;
+    flex-shrink: 0;
 }
 
 .btn:hover {
@@ -281,6 +293,41 @@ iframe:focus-visible,
     background: rgba(14, 124, 134, 0.08);
     color: var(--teal-deep);
     border-color: rgba(14, 124, 134, 0.2);
+}
+
+.btn-accent-outline {
+    background: rgba(255, 253, 247, 0.92);
+    border-color: rgba(14, 124, 134, 0.34);
+    color: var(--teal-deep);
+    box-shadow: none;
+}
+
+.btn-accent-outline:hover {
+    transform: none;
+    background: var(--teal);
+    border-color: var(--teal);
+    color: #fff;
+}
+
+.btn-accent-fill {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: #fff;
+    box-shadow: none;
+}
+
+.btn-accent-fill:hover {
+    transform: none;
+    background: rgba(255, 253, 247, 0.92);
+    border-color: rgba(14, 124, 134, 0.34);
+    color: var(--teal-deep);
+}
+
+.btn-ghost-invert:hover {
+    transform: none;
+    background: var(--teal);
+    border-color: var(--teal);
+    color: #fff;
 }
 
 .hero-metrics {
@@ -877,6 +924,7 @@ main {
     margin-top: 1.5rem;
     margin-bottom: -0.5rem;
 }
+
 .gallery-hint i {
     margin-right: 0.3rem;
 }
@@ -1030,6 +1078,20 @@ main {
     color: #fff;
     border-color: var(--ink-950);
     box-shadow: 0 16px 30px rgba(20, 35, 49, 0.14);
+}
+
+.resource-actions-featured .btn.btn-accent-outline {
+    background: rgba(255, 253, 247, 0.92);
+    color: var(--teal-deep);
+    border-color: rgba(14, 124, 134, 0.34);
+    box-shadow: none;
+}
+
+.resource-actions-featured .btn.btn-accent-outline:hover {
+    transform: none;
+    background: var(--teal);
+    color: #fff;
+    border-color: var(--teal);
 }
 
 .resource-bibtex {
