@@ -93,7 +93,8 @@
     padding: 1.5rem 1.6rem;
     margin-bottom: 1.2rem;
     background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(14px);
+    backdrop-filter: blur(calc(var(--surface-blur) + 2px));
+    -webkit-backdrop-filter: blur(calc(var(--surface-blur) + 2px));
     box-shadow: var(--shadow-sm);
     transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
@@ -333,7 +334,8 @@
     border-radius: var(--radius-md);
     padding: 1rem 1.25rem;
     margin-bottom: 1.25rem;
-    backdrop-filter: blur(14px);
+    backdrop-filter: blur(calc(var(--surface-blur) + 2px));
+    -webkit-backdrop-filter: blur(calc(var(--surface-blur) + 2px));
 }
 
 .true-prefs-title {
@@ -455,7 +457,8 @@
     border-radius: var(--radius-md);
     padding: 1.1rem 1.2rem;
     background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(14px);
+    backdrop-filter: blur(calc(var(--surface-blur) + 2px));
+    -webkit-backdrop-filter: blur(calc(var(--surface-blur) + 2px));
     box-shadow: var(--shadow-sm);
 }
 

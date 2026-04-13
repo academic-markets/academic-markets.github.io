@@ -15,6 +15,7 @@
 
   // ── Constants ──────────────────────────────────────────────────────
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const mobileNavBreakpoint = window.matchMedia("(min-width: 901px)");
   const PHD_RATIO_MIN = 0.5;
   const PHD_RATIO_MAX = 5.0;
   const PHD_RATIO_RANGE = PHD_RATIO_MAX - PHD_RATIO_MIN;
@@ -393,8 +394,11 @@
     const navList = document.getElementById("nav-list");
     const navToggle = document.getElementById("nav-toggle");
     if (!navList || !navToggle) return;
+    const isMobileNav = !mobileNavBreakpoint.matches;
     navList.classList.toggle("open", isOpen);
     navToggle.setAttribute("aria-expanded", String(isOpen));
+    navList.setAttribute("aria-hidden", String(isMobileNav ? !isOpen : false));
+    document.body.classList.toggle("nav-open", isMobileNav && isOpen);
   }
 
   // ── UI: View switching ─────────────────────────────────────────────
@@ -792,6 +796,16 @@
       setPlatformNavState(false);
     });
 
+    const handleMobileNavBreakpointChange = (event) => {
+      if (event.matches) setPlatformNavState(false);
+    };
+
+    if (typeof mobileNavBreakpoint.addEventListener === "function") {
+      mobileNavBreakpoint.addEventListener("change", handleMobileNavBreakpointChange);
+    } else if (typeof mobileNavBreakpoint.addListener === "function") {
+      mobileNavBreakpoint.addListener(handleMobileNavBreakpointChange);
+    }
+
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && navList.classList.contains("open")) {
         setPlatformNavState(false);
@@ -802,6 +816,7 @@
       navbar.classList.toggle("sticky", window.scrollY > 24);
     }, { passive: true });
     navbar.classList.toggle("sticky", window.scrollY > 24);
+    setPlatformNavState(false);
 
     setupQ2Logic();
     updateQuestionnaireHeaderActions();

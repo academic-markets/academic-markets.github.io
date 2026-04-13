@@ -53,15 +53,24 @@
         .lightbox-overlay {
             position: fixed;
             inset: 0;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
             padding: 1.5rem;
             background: rgba(20, 35, 49, 0.9);
             z-index: 120;
             cursor: zoom-out;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.24s ease, visibility 0s linear 0.24s;
         }
-        .lightbox-overlay.active { display: flex; }
+        .lightbox-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transition-delay: 0s;
+        }
         .lightbox-panel {
             width: min(92vw, 1200px);
             display: flex;
@@ -69,6 +78,11 @@
             align-items: center;
             gap: 0.9rem;
             cursor: default;
+            transform: translateY(16px) scale(0.985);
+            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .lightbox-overlay.active .lightbox-panel {
+            transform: translateY(0) scale(1);
         }
         .lightbox-overlay img {
             width: 100%;
@@ -175,6 +189,11 @@
             box-shadow: 0 34px 80px rgba(0,0,0,0.38);
             overflow: auto;
             cursor: default;
+            transform: translateY(16px) scale(0.985);
+            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .lightbox-overlay.active .pdf-modal-panel {
+            transform: translateY(0) scale(1);
         }
         .pdf-modal-header {
             display: flex;
@@ -235,6 +254,7 @@
     </style>
 </head>
 <body id="top">
+<a class="skip-link" href="#content">Skip to content</a>
 <header class="site-header">
     <div class="hero-shell">
         <div class="hero-copy reveal">
@@ -308,7 +328,7 @@
         <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-list" aria-label="Toggle navigation">
             <i class="fas fa-bars"></i>
         </button>
-        <ul class="nav-list" id="nav-list">
+        <ul class="nav-list" id="nav-list" aria-hidden="true">
             <li><a href="#problem">Market Frictions</a></li>
             <li><a href="#mechanism">Mechanism</a></li>
             <li><a href="#results">Results</a></li>
@@ -653,7 +673,6 @@
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
     const navToggle = document.getElementById("nav-toggle");
     const navList = document.getElementById("nav-list");
@@ -664,6 +683,9 @@
     const modalClose = document.getElementById("modal-close");
     const modalTriggers = document.querySelectorAll("[data-modal-trigger='coming-soon']");
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const mobileNavBreakpoint = window.matchMedia("(min-width: 901px)");
+    const pdfJsScriptSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+    const pdfJsWorkerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
     const questionnairePdfViewer = document.getElementById("questionnaire-pdf-viewer");
     const questionnairePdfStatus = document.getElementById("questionnaire-pdf-status");
     const questionnairePdfStage = document.getElementById("questionnaire-pdf-stage");
@@ -685,6 +707,9 @@
     let lastModalTrigger = null;
     let questionnairePdfDoc = null;
     let questionnairePdfResizeObserver = null;
+    let questionnairePdfInitPromise = null;
+    let questionnairePdfScriptPromise = null;
+    let questionnairePdfObserver = null;
     let copyFeedbackTimer = null;
     const questionnairePdfPreviewConfig = {
         viewer: questionnairePdfViewer,
@@ -704,8 +729,11 @@
     const bibtexContent = document.getElementById("bibtex-content");
 
     function setNavState(isOpen) {
+        const isMobileNav = !mobileNavBreakpoint.matches;
         navList.classList.toggle("open", isOpen);
         navToggle.setAttribute("aria-expanded", String(isOpen));
+        navList.setAttribute("aria-hidden", String(isMobileNav ? !isOpen : false));
+        document.body.classList.toggle("nav-open", isMobileNav && isOpen);
     }
 
     navToggle.addEventListener("click", () => {
@@ -717,6 +745,16 @@
         if (navToggle.contains(event.target) || navList.contains(event.target)) return;
         setNavState(false);
     });
+
+    const handleMobileNavBreakpointChange = (event) => {
+        if (event.matches) setNavState(false);
+    };
+
+    if (typeof mobileNavBreakpoint.addEventListener === "function") {
+        mobileNavBreakpoint.addEventListener("change", handleMobileNavBreakpointChange);
+    } else if (typeof mobileNavBreakpoint.addListener === "function") {
+        mobileNavBreakpoint.addListener(handleMobileNavBreakpointChange);
+    }
 
     navLinks.forEach((link) => {
         link.addEventListener("click", (event) => {
@@ -892,6 +930,25 @@
         if (config.stage) config.stage.hidden = true;
     }
 
+    function loadPdfJs() {
+        if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+        if (questionnairePdfScriptPromise) return questionnairePdfScriptPromise;
+
+        questionnairePdfScriptPromise = new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = pdfJsScriptSrc;
+            script.async = true;
+            script.onload = () => resolve(window.pdfjsLib);
+            script.onerror = () => reject(new Error("Unable to load PDF.js"));
+            document.head.appendChild(script);
+        }).catch((error) => {
+            questionnairePdfScriptPromise = null;
+            throw error;
+        });
+
+        return questionnairePdfScriptPromise;
+    }
+
     async function renderPdfSpread(config) {
         if (!questionnairePdfDoc || !config?.viewer || !config.stage) return;
 
@@ -989,6 +1046,7 @@
     }
 
     function observePdfViewers() {
+        if (questionnairePdfResizeObserver) return;
         if (!window.ResizeObserver) {
             window.addEventListener("resize", () => {
                 schedulePdfRender(questionnairePdfPreviewConfig, "The preview could not be resized. Please use \"Open in new tab\".");
@@ -1029,34 +1087,80 @@
 
     async function initQuestionnairePdfViewer() {
         if (!questionnairePdfViewer) return;
-        if (!window.pdfjsLib) {
-            setPdfViewerStatus(questionnairePdfPreviewConfig, "Two-page preview is unavailable here. Please use \"Open in new tab\".", true);
-            return;
-        }
+        if (questionnairePdfDoc) return;
+
+        setPdfViewerStatus(questionnairePdfPreviewConfig, "Loading two-page preview...");
 
         try {
-            pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+            await loadPdfJs();
+            if (!window.pdfjsLib) {
+                throw new Error("PDF.js unavailable");
+            }
+
+            pdfjsLib.GlobalWorkerOptions.workerSrc = pdfJsWorkerSrc;
             questionnairePdfDoc = await pdfjsLib.getDocument(questionnairePdfViewer.dataset.pdfSrc).promise;
             await renderPdfSpread(questionnairePdfPreviewConfig);
-
-            questionnairePdfViewer.addEventListener("click", () => openQuestionnairePdfModal(questionnairePdfViewer));
-            questionnairePdfViewer.addEventListener("keydown", (event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    openQuestionnairePdfModal(questionnairePdfViewer);
-                }
-            });
-
-            questionnairePdfModalClose.addEventListener("click", closeQuestionnairePdfModal);
-            questionnairePdfModal.addEventListener("click", (event) => {
-                if (event.target === questionnairePdfModal) closeQuestionnairePdfModal();
-            });
-
             observePdfViewers();
         } catch (error) {
             setPdfViewerStatus(questionnairePdfPreviewConfig, "The two-page preview could not be loaded. Please use \"Open in new tab\".", true);
+            throw error;
         }
     }
+
+    function ensureQuestionnairePdfViewer() {
+        if (!questionnairePdfViewer) return Promise.resolve();
+        if (!questionnairePdfInitPromise) {
+            questionnairePdfInitPromise = initQuestionnairePdfViewer().finally(() => {
+                if (!questionnairePdfDoc) questionnairePdfInitPromise = null;
+            });
+        }
+        return questionnairePdfInitPromise;
+    }
+
+    function startQuestionnairePdfObserver() {
+        if (!questionnairePdfViewer) return;
+        if (!("IntersectionObserver" in window)) {
+            ensureQuestionnairePdfViewer().catch(() => {});
+            return;
+        }
+
+        questionnairePdfObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                observer.unobserve(entry.target);
+                ensureQuestionnairePdfViewer().catch(() => {});
+            });
+        }, { rootMargin: "280px 0px" });
+
+        questionnairePdfObserver.observe(questionnairePdfViewer);
+    }
+
+    function handleQuestionnairePdfActivation(event) {
+        if (event.type === "keydown" && event.key !== "Enter" && event.key !== " ") return;
+        if (event.type === "keydown") event.preventDefault();
+
+        ensureQuestionnairePdfViewer()
+            .then(() => {
+                if (questionnairePdfDoc) openQuestionnairePdfModal(questionnairePdfViewer);
+            })
+            .catch(() => {
+                setPdfViewerStatus(questionnairePdfPreviewConfig, "The two-page preview could not be loaded. Please use \"Open in new tab\".", true);
+            });
+    }
+
+    questionnairePdfViewer?.addEventListener("click", handleQuestionnairePdfActivation);
+    questionnairePdfViewer?.addEventListener("keydown", handleQuestionnairePdfActivation);
+    questionnairePdfViewer?.addEventListener("pointerenter", () => {
+        ensureQuestionnairePdfViewer().catch(() => {});
+    }, { once: true });
+    questionnairePdfViewer?.addEventListener("focus", () => {
+        ensureQuestionnairePdfViewer().catch(() => {});
+    }, { once: true });
+
+    questionnairePdfModalClose.addEventListener("click", closeQuestionnairePdfModal);
+    questionnairePdfModal.addEventListener("click", (event) => {
+        if (event.target === questionnairePdfModal) closeQuestionnairePdfModal();
+    });
 
     async function copyText(text) {
         if (navigator.clipboard?.writeText) {
@@ -1128,7 +1232,8 @@
         revealObserver.observe(element);
     });
 
-    initQuestionnairePdfViewer();
+    setNavState(false);
+    startQuestionnairePdfObserver();
 </script>
 </body>
 </html>
