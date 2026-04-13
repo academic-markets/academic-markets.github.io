@@ -92,6 +92,9 @@ iframe:focus-visible,
     position: relative;
     overflow: hidden;
     padding: 1.4rem 0 2.2rem;
+    background:
+        radial-gradient(circle at top left, rgba(14, 124, 134, 0.12), transparent 30%),
+        radial-gradient(circle at top right, rgba(240, 195, 108, 0.18), transparent 26%);
 }
 
 .site-header::before,
@@ -136,6 +139,11 @@ iframe:focus-visible,
     padding: clamp(1.2rem, 2vw, 1.8rem);
 }
 
+.hero-headline-block {
+    position: relative;
+    margin-top: 1rem;
+}
+
 .eyebrow,
 .section-kicker,
 .card-kicker,
@@ -169,27 +177,27 @@ iframe:focus-visible,
     margin-top: 1.2rem;
     color: var(--ink-700);
     font-size: 0.98rem;
-    max-width: 46rem;
+    max-width: 42rem;
 }
 
 .hero-copy h1 {
-    margin-top: 1rem;
+    margin-top: 0.8rem;
     font-family: "Lora", serif;
-    font-size: clamp(2.2rem, 4vw, 3.6rem);
-    line-height: 1.1;
-    max-width: 18ch;
+    font-size: clamp(2.45rem, 4.3vw, 4rem);
+    line-height: 1.02;
+    max-width: 14ch;
     color: var(--ink-950);
 }
 
 .hero-summary {
-    margin-top: 1.35rem;
-    max-width: 46rem;
-    font-size: 1.14rem;
+    margin-top: 1.05rem;
+    max-width: 38rem;
+    font-size: 1.12rem;
     color: var(--ink-700);
 }
 
 .hero-meta {
-    margin-top: 1.5rem;
+    margin-top: 1.15rem;
 }
 
 .authors {
@@ -315,6 +323,7 @@ iframe:focus-visible,
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    justify-content: center;
 }
 
 .signal-card,
@@ -347,6 +356,25 @@ iframe:focus-visible,
 .signal-card-primary p {
     margin-top: 1rem;
     color: rgba(255, 255, 255, 0.82);
+}
+
+.hero-band {
+    width: var(--content-width);
+    margin: 1.35rem auto 0;
+    padding: 1.25rem 1.35rem;
+    border: 1px solid rgba(20, 35, 49, 0.08);
+    border-radius: var(--radius-xl);
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(237, 243, 240, 0.9));
+    box-shadow: var(--shadow-md);
+}
+
+.hero-metrics--band {
+    margin-top: 0.85rem;
+}
+
+.metric-tile--band {
+    background: rgba(255, 255, 255, 0.88);
 }
 
 .bullet-matrix {
@@ -1247,6 +1275,14 @@ main {
     .hero-copy h1 {
         max-width: 100%;
         font-size: clamp(2.6rem, 13vw, 4rem);
+    }
+
+    .hero-headline-block {
+        margin-top: 0.8rem;
+    }
+
+    .hero-band {
+        padding: 1rem 1.05rem;
     }
 
     .hero-metrics,
