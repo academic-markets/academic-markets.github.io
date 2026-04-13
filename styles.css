@@ -16,6 +16,11 @@
     --shadow-lg: 0 24px 60px rgba(20, 35, 49, 0.12);
     --shadow-md: 0 16px 34px rgba(20, 35, 49, 0.09);
     --shadow-sm: 0 10px 22px rgba(20, 35, 49, 0.07);
+    --surface-section: rgba(255, 255, 255, 0.82);
+    --surface-standard: rgba(255, 255, 255, 0.9);
+    --surface-raised: rgba(255, 255, 255, 0.94);
+    --surface-muted: rgba(255, 255, 255, 0.74);
+    --card-outline: rgba(20, 35, 49, 0.1);
     --radius-xl: 32px;
     --radius-lg: 24px;
     --radius-md: 18px;
@@ -287,8 +292,8 @@ iframe:focus-visible,
 
 .metric-tile {
     padding: 1rem 1.1rem;
-    background: rgba(255, 255, 255, 0.72);
-    border: 1px solid rgba(20, 35, 49, 0.08);
+    background: var(--surface-raised);
+    border: 1px solid var(--card-outline);
     border-top: 5px solid var(--teal);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
@@ -336,8 +341,10 @@ iframe:focus-visible,
 
 .signal-card {
     padding: 1.5rem;
+    border: 1px solid var(--card-outline);
+    background: var(--surface-raised);
     border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-md);
 }
 
 .signal-card-primary {
@@ -362,7 +369,7 @@ iframe:focus-visible,
     width: var(--content-width);
     margin: 1.35rem auto 0;
     padding: 1.25rem 1.35rem;
-    border: 1px solid rgba(20, 35, 49, 0.08);
+    border: 1px solid var(--card-outline);
     border-radius: var(--radius-xl);
     background:
         linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(237, 243, 240, 0.9));
@@ -374,7 +381,7 @@ iframe:focus-visible,
 }
 
 .metric-tile--band {
-    background: rgba(255, 255, 255, 0.88);
+    background: var(--surface-raised);
 }
 
 .bullet-matrix {
@@ -407,9 +414,9 @@ iframe:focus-visible,
 .mini-dashboard {
     padding: 1.2rem;
     border-radius: var(--radius-lg);
-    border: 1px solid rgba(20, 35, 49, 0.08);
-    background: rgba(255, 255, 255, 0.74);
-    box-shadow: var(--shadow-md);
+    border: 1px solid var(--card-outline);
+    background: var(--surface-standard);
+    box-shadow: none;
 }
 
 .mini-dashboard h3 {
@@ -543,9 +550,9 @@ main {
     margin-bottom: 1.25rem;
     scroll-margin-top: 7rem;
     border-radius: var(--radius-xl);
-    border: 1px solid rgba(20, 35, 49, 0.08);
-    background: var(--paper-soft);
-    box-shadow: var(--shadow-md);
+    border: 1px solid var(--card-outline);
+    background: linear-gradient(180deg, var(--surface-section), rgba(255, 255, 255, 0.94));
+    box-shadow: var(--shadow-sm);
     overflow: hidden;
 }
 
@@ -580,7 +587,7 @@ main {
 }
 
 .section-overview {
-    background: rgba(255, 255, 255, 0.92);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.96));
 }
 
 .overview-grid {
@@ -601,10 +608,10 @@ main {
 .principles-panel {
     position: relative;
     z-index: 1;
-    border: 1px solid rgba(20, 35, 49, 0.08);
+    border: 1px solid var(--card-outline);
     border-radius: var(--radius-lg);
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: var(--shadow-sm);
+    background: var(--surface-standard);
+    box-shadow: none;
 }
 
 .editorial-card {
@@ -635,7 +642,7 @@ main {
 
 .editorial-card-accent {
     background: rgba(14, 124, 134, 0.05);
-    border-color: rgba(14, 124, 134, 0.15);
+    border-color: rgba(14, 124, 134, 0.18);
 }
 
 .feature-list {
@@ -686,7 +693,7 @@ main {
 
 .compare-card-solution {
     background: rgba(14, 124, 134, 0.04);
-    border-color: rgba(14, 124, 134, 0.14);
+    border-color: rgba(14, 124, 134, 0.18);
 }
 
 .section-problem {
@@ -720,8 +727,8 @@ main {
     padding: 1.35rem;
     border-radius: var(--radius-lg);
     border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: var(--shadow-sm);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: none;
 }
 
 .friction-number {
@@ -841,8 +848,10 @@ main {
     color: #fff;
 }
 
-.section-results {
-    background: rgba(255, 255, 255, 0.92);
+.section-results,
+.section-questionnaire,
+.section-resources {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.96));
 }
 
 .results-top {
@@ -907,17 +916,13 @@ main {
     width: 100%;
     height: auto;
     border-radius: calc(var(--radius-lg) - 8px);
-    border: 1px solid rgba(20, 35, 49, 0.08);
+    border: 1px solid var(--card-outline);
     background: #fff;
 }
 
 .figure-shell-narrow {
     max-width: 78%;
     margin-inline: auto;
-}
-
-.section-questionnaire {
-    background: rgba(255, 255, 255, 0.92);
 }
 
 .questionnaire-grid {
@@ -964,7 +969,7 @@ main {
     gap: 1rem;
     padding: 1.4rem;
     margin-top: 1rem;
-    background: rgba(255, 255, 255, 0.7);
+    background: var(--surface-standard);
 }
 
 .principles-copy h3 {
@@ -986,16 +991,12 @@ main {
     align-items: center;
     padding: 1rem;
     border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(20, 35, 49, 0.08);
+    background: var(--surface-muted);
+    border: 1px solid var(--card-outline);
 }
 
 .principle-item i {
     color: var(--teal);
-}
-
-.section-resources {
-    background: rgba(255, 255, 255, 0.92);
 }
 
 .resource-layout {
