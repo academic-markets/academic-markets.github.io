@@ -1010,6 +1010,61 @@ main {
     padding: 1.5rem;
 }
 
+.resource-card-featured {
+    display: grid;
+    gap: 1.35rem;
+    border-color: rgba(20, 35, 49, 0.12);
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(237, 243, 240, 0.9));
+    box-shadow: var(--shadow-md);
+}
+
+.resource-actions-featured {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
+    margin-top: 0;
+}
+
+.resource-actions-featured .btn {
+    min-height: 3.6rem;
+    padding-inline: 1.5rem;
+}
+
+.resource-actions-featured .btn-primary {
+    box-shadow: 0 16px 30px rgba(20, 35, 49, 0.14);
+}
+
+.resource-actions-featured .btn-secondary {
+    background: var(--ink-950);
+    color: #fff;
+    border-color: var(--ink-950);
+    box-shadow: 0 16px 30px rgba(20, 35, 49, 0.14);
+}
+
+.resource-bibtex {
+    padding: 1.1rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(20, 35, 49, 0.08);
+    background: rgba(20, 35, 49, 0.04);
+}
+
+.resource-bibtex-label {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: var(--ink-700);
+}
+
+.bibtex-wrap {
+    position: relative;
+}
+
+.copy-btn-floating {
+    position: absolute;
+    top: 0.7rem;
+    right: 0.7rem;
+}
+
 .citation-card pre {
     margin-top: 1rem;
     padding: 1rem 1.1rem;
@@ -1184,6 +1239,10 @@ main {
     .gallery-grid,
     .questionnaire-grid,
     .principles-list {
+        grid-template-columns: 1fr;
+    }
+
+    .resource-actions-featured {
         grid-template-columns: 1fr;
     }
 
