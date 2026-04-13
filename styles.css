@@ -845,6 +845,11 @@ main {
     height: auto;
 }
 
+.figure-shell img.figure-image-inset {
+    width: min(70%, 1100px);
+    margin-inline: auto;
+}
+
 .process-figure figcaption,
 .figure-card figcaption {
     padding: 1rem 0.35rem 0.2rem;
@@ -1282,6 +1287,14 @@ main {
         --surface-blur: 0px;
     }
 
+    .site-header {
+        padding-bottom: 1.9rem;
+    }
+
+    .hero-shell {
+        gap: 1.05rem;
+    }
+
     .hero-metrics--stats {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
@@ -1318,7 +1331,17 @@ main {
     .nav-inner {
         position: relative;
         flex-wrap: wrap;
-        border-radius: 28px;
+        gap: 0.75rem;
+        padding: 0.82rem 0.95rem;
+        border-radius: 24px;
+    }
+
+    .nav-brand {
+        font-size: 0.94rem;
+    }
+
+    .nav-list {
+        gap: 0.35rem;
     }
 
     .nav-toggle {
@@ -1351,6 +1374,8 @@ main {
     .nav-list a {
         width: 100%;
         justify-content: center;
+        min-height: 2.6rem;
+        font-size: 0.92rem;
     }
 
     .nav-list .nav-cta-wrap {
@@ -1370,7 +1395,7 @@ main {
 
 @media (max-width: 760px) {
     .site-header {
-        padding-top: 1rem;
+        padding: 0.95rem 0 1.45rem;
     }
 
     .hero-copy,
@@ -1384,6 +1409,14 @@ main {
         padding-right: 1.1rem;
     }
 
+    .hero-shell {
+        gap: 1rem;
+    }
+
+    .hero-copy {
+        padding-top: 0.35rem;
+    }
+
     .hero-copy h1 {
         max-width: 100%;
         font-size: clamp(2.6rem, 13vw, 4rem);
@@ -1393,8 +1426,27 @@ main {
         margin-top: 0.8rem;
     }
 
+    .paper-label {
+        font-size: 0.92rem;
+    }
+
+    .hero-summary {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .hero-meta {
+        margin-top: 1rem;
+    }
+
+    .authors,
+    .affiliations {
+        font-size: 0.94rem;
+    }
+
     .hero-band {
-        padding: 1rem 1.05rem;
+        margin-top: 1rem;
+        padding: 0.95rem 1rem;
     }
 
     .hero-metrics,
@@ -1407,12 +1459,95 @@ main {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
+    .metric-tile {
+        padding: 0.9rem 1rem;
+    }
+
+    .metric-value {
+        font-size: 1.8rem;
+    }
+
+    .metric-label {
+        font-size: 0.88rem;
+    }
+
+    .section,
+    .signal-card,
+    .mini-dashboard,
+    .resource-card,
+    .citation-card,
+    .question-card {
+        padding-top: 1.25rem;
+        padding-bottom: 1.25rem;
+    }
+
+    .section-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .section-header p:last-child {
+        font-size: 0.98rem;
+    }
+
     .stage-card {
         grid-template-columns: 1fr;
+        padding: 1.1rem;
+    }
+
+    .friction-card,
+    .results-card,
+    .figure-card,
+    .process-figure {
+        padding: 1.05rem;
+    }
+
+    .modal-content {
+        padding: 1.65rem 1.25rem 1.4rem;
+    }
+
+    .modal-content h3 {
+        font-size: 1.7rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .eyebrow {
+        gap: 0.55rem;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.72rem;
+    }
+
+    .hero-copy h1 {
+        font-size: clamp(2.25rem, 12vw, 3.35rem);
+    }
+
+    .hero-metrics--stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .hero-metrics--stats .metric-tile:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .friction-number,
+    .stage-number {
+        width: 2.7rem;
+        height: 2.7rem;
+        min-width: 2.7rem;
+        min-height: 2.7rem;
+        font-size: 1.12rem;
     }
 }
 
 @media (max-width: 480px) {
+    .site-header {
+        padding-bottom: 1.2rem;
+    }
+
+    .hero-band {
+        padding: 0.9rem;
+    }
+
     .hero-metrics--stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -1421,6 +1556,7 @@ main {
 @media (max-width: 560px) {
     .hero-shell,
     .nav-inner,
+    .hero-band,
     .section,
     .site-footer {
         width: min(100% - 1rem, 100%);
@@ -1428,6 +1564,7 @@ main {
 
     .btn {
         width: 100%;
+        min-height: 3.15rem;
     }
 
     .principles-list {
@@ -1437,5 +1574,16 @@ main {
     .hero-actions,
     .resource-actions {
         flex-direction: column;
+    }
+
+    .modal-badge {
+        width: 3.4rem;
+        height: 3.4rem;
+        font-size: 1.2rem;
+    }
+
+    .modal-close {
+        top: 0.75rem;
+        right: 0.75rem;
     }
 }

@@ -249,6 +249,7 @@
             .pdf-modal-panel {
                 width: min(100vw - 1rem, 100%);
                 padding: 0.75rem;
+                border-radius: 22px;
             }
             .pdf-modal-header {
                 align-items: flex-start;
@@ -256,9 +257,26 @@
                 gap: 0.45rem;
                 padding-right: 2.8rem;
             }
+            .pdf-modal-header a {
+                font-size: 0.86rem;
+            }
+            .pdf-viewer-status {
+                padding: 1rem;
+                font-size: 0.9rem;
+            }
+            .pdf-page canvas {
+                border-radius: 8px;
+                box-shadow: 0 12px 26px rgba(20, 35, 49, 0.12);
+            }
             .pdf-viewer-modal {
                 --pdf-stage-height: min(76vh, 760px);
                 padding: 0.55rem;
+            }
+            .lightbox-close {
+                top: 0.8rem;
+                right: 0.8rem;
+                width: 2.5rem;
+                height: 2.5rem;
             }
         }
 
@@ -464,9 +482,9 @@
         <div class="section-header reveal">
             <p class="section-kicker">Results</p>
             <h2>Incentive guarantees and simulation evidence</h2>
-            <p>
+            <!--<p>
                 Mechanism-design guarantees combined with simulations grounded in data from 103 U.S. statistics departments.
-            </p>
+            </p>-->
         </div>
 
         <div class="results-top">
@@ -509,7 +527,7 @@
                 </div>
                 <figcaption>
                     <span class="figure-tag">Participation effects</span>
-                    Candidate outcomes by participation status. <em>Left:</em> Mean welfare. <em>Right:</em> Matching rate.
+                    Candidate outcomes by participation status. <em><u>Left:</u></em> Mean welfare. <em><u>Right:</u></em> Matching rate.
                 </figcaption>
             </figure>
 
@@ -520,7 +538,7 @@
                 </div>
                 <figcaption>
                     <span class="figure-tag">Candidate-side gains</span>
-                    Mean candidate welfare by &rho;. <em>Left:</em> Aggregate. <em>Right:</em> By quality tier: gains persist across all tiers.
+                    Mean candidate welfare by &rho;. <em><u>Left:</u></em> Total candidate pool. <em><u>Right:</u></em> By quality tier: gains persist across all tiers.
                 </figcaption>
             </figure>
 
@@ -531,7 +549,7 @@
                 </div>
                 <figcaption>
                     <span class="figure-tag">Distributional effects</span>
-                    Outcomes by tier and &rho;. <em>Left:</em> Mean candidate utility among matched, by quality tier. <em>Right:</em> Department welfare per position, by prestige tier.
+                    Outcomes by tier and &rho;. <em><u>Left:</u></em> Mean candidate utility among matched, by quality tier. <em><u>Right:</u></em> Department welfare per position, by prestige tier.
                 </figcaption>
             </figure>
 
@@ -542,7 +560,7 @@
                 </div>
                 <figcaption>
                     <span class="figure-tag">Allocation shift</span>
-                    <em>Left:</em> Interview and <em>Right:</em> hiring allocations rebalance under structured signaling. 
+                    <em><u>Left:</u></em> Interview and <em><u>Right:</u></em> hiring allocations rebalance under structured signaling. 
                 </figcaption>
             </figure>
 
@@ -553,7 +571,7 @@
                 </div>
                 <figcaption>
                     <span class="figure-tag">Outcome composition</span>
-                    <em>Left:</em> Department position outcomes: initial-offer fills, scramble fills, and unfilled positions. <em>Right:</em> Candidate hire outcomes: matched vs. unmatched. Both panels compare baseline (&rho;&nbsp;=&nbsp;0%) with full participation (&rho;&nbsp;=&nbsp;100%).
+                    <em><u>Left:</u></em> Department position outcomes: initial-offer fills, scramble fills, and unfilled positions. <em><u>Right:</u></em> Candidate hire outcomes: matched vs. unmatched. Both panels compare baseline (&rho;&nbsp;=&nbsp;0%) with full participation (&rho;&nbsp;=&nbsp;100%).
                 </figcaption>
             </figure>
 
@@ -564,6 +582,17 @@
                 <figcaption>
                     <span class="figure-tag">Stability</span>
                     Blocking pair rate by &rho;.
+                </figcaption>
+            </figure>
+
+            <figure class="figure-card figure-card-wide reveal">
+                <p class="card-kicker" style="margin-bottom: 1rem;">Proposed Pilot Implementation</p>
+
+                <div class="figure-shell">
+                    <img class="figure-image-inset" src="fig/pilot_design.png" alt="Pilot design overview for the proposed questionnaire-based preference signaling mechanism." loading="lazy" decoding="async" data-lightbox-caption="Pilot design overview.">
+                </div>
+                <figcaption style="text-align: center;">
+                    <span class="figure-tag">Pilot design</span>
                 </figcaption>
             </figure>
         </div>
