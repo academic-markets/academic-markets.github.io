@@ -556,16 +556,6 @@ main {
     overflow: hidden;
 }
 
-.section::before {
-    content: "";
-    position: absolute;
-    inset: 0 auto auto 0;
-    width: 8rem;
-    height: 0.28rem;
-    background: var(--teal);
-    border-radius: 999px;
-}
-
 .section-header {
     position: relative;
     z-index: 1;
