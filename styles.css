@@ -510,16 +510,37 @@ iframe:focus-visible,
     align-items: center;
     color: #fff;
     font-family: "Lora", serif;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 500;
     text-decoration: none;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.0em;
     line-height: 1.1;
     white-space: nowrap;
-    -webkit-text-stroke: 0.4px rgba(116, 186, 178, 0.78);
+    -webkit-text-stroke: 0.4px rgba(231, 247, 245, 0.78);
     text-shadow: 0 0 4px rgba(116, 186, 178, 0.78);
 }
 
+.nav-brand-two-line {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.08rem;
+    line-height: 1;
+    text-align: center;
+    white-space: normal;
+    letter-spacing: 0;
+}
+
+.nav-brand-title,
+.nav-brand-subtitle {
+    display: block;
+}
+
+.nav-brand-subtitle {
+    font-size: 1.0em;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+}
 
 .nav-toggle {
     display: none;
@@ -1402,6 +1423,16 @@ main {
         letter-spacing: 0.09em;
         min-height: 2.3rem;
         align-self: center;
+    }
+
+    .nav-brand-two-line {
+        min-height: 2.6rem;
+        letter-spacing: 0;
+    }
+
+    .nav-brand-subtitle {
+        font-size: 0.62em;
+        letter-spacing: 0.12em;
     }
 
     .nav-list {
