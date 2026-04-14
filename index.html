@@ -719,6 +719,7 @@
     const navList = document.getElementById("nav-list");
     const navbar = document.getElementById("navbar");
     const navLinks = Array.from(document.querySelectorAll(".nav-list a[href^='#']"));
+    const brandLink = document.querySelector(".nav-brand[href^='#']");
     const sections = Array.from(document.querySelectorAll("main section[id]"));
     const modal = document.getElementById("coming-soon-modal");
     const modalClose = document.getElementById("modal-close");
@@ -768,6 +769,32 @@
     };
     const copyBibtexButton = document.getElementById("copy-bibtex");
     const bibtexContent = document.getElementById("bibtex-content");
+    const pendingScrollTargetKey = "landing_scroll_target";
+
+    function isModifiedNavigation(event) {
+        return event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+    }
+
+    function clearHashFromUrl() {
+        if (!window.location.hash || !window.history || typeof window.history.replaceState !== "function") return;
+        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+    }
+
+    function scrollToSectionTarget(target, behavior = prefersReducedMotion ? "auto" : "smooth") {
+        target.scrollIntoView({ behavior, block: "start" });
+        clearHashFromUrl();
+    }
+
+    function getPendingScrollTarget() {
+        try {
+            const targetId = window.sessionStorage.getItem(pendingScrollTargetKey);
+            if (!targetId) return null;
+            window.sessionStorage.removeItem(pendingScrollTargetKey);
+            return targetId;
+        } catch (error) {
+            return null;
+        }
+    }
 
     function setNavState(isOpen) {
         const isMobileNav = !mobileNavBreakpoint.matches;
@@ -799,13 +826,35 @@
 
     navLinks.forEach((link) => {
         link.addEventListener("click", (event) => {
+            if (isModifiedNavigation(event)) return;
             const target = document.querySelector(link.getAttribute("href"));
             if (!target) return;
             event.preventDefault();
-            target.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
+            scrollToSectionTarget(target);
             setNavState(false);
         });
     });
+
+    if (brandLink) {
+        brandLink.addEventListener("click", (event) => {
+            if (isModifiedNavigation(event)) return;
+            const target = document.querySelector(brandLink.getAttribute("href"));
+            if (!target) return;
+            event.preventDefault();
+            scrollToSectionTarget(target);
+            setNavState(false);
+        });
+    }
+
+    const pendingScrollTarget = getPendingScrollTarget() || window.location.hash.slice(1);
+    if (pendingScrollTarget) {
+        const initialTarget = document.getElementById(pendingScrollTarget);
+        if (initialTarget) {
+            requestAnimationFrame(() => {
+                scrollToSectionTarget(initialTarget, "auto");
+            });
+        }
+    }
 
     function showComingSoon(event) {
         if (event) event.preventDefault();

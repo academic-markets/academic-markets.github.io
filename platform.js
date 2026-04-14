@@ -16,6 +16,7 @@
   // ── Constants ──────────────────────────────────────────────────────
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const mobileNavBreakpoint = window.matchMedia("(min-width: 901px)");
+  const pendingScrollTargetKey = "landing_scroll_target";
   const PHD_RATIO_MIN = 0.5;
   const PHD_RATIO_MAX = 5.0;
   const PHD_RATIO_RANGE = PHD_RATIO_MAX - PHD_RATIO_MIN;
@@ -735,6 +736,18 @@
     sessionStorage.removeItem("platform_reported");
   }
 
+  function isModifiedNavigation(event) {
+    return event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+  }
+
+  function queueLandingScrollTarget(targetId) {
+    try {
+      sessionStorage.setItem(pendingScrollTargetKey, targetId);
+    } catch (error) {
+      // Ignore storage failures and fall back to normal navigation.
+    }
+  }
+
   function restoreState() {
     const t = sessionStorage.getItem("platform_true");
     const r = sessionStorage.getItem("platform_reported");
@@ -784,6 +797,7 @@
     const navbar = document.getElementById("navbar");
     const navToggle = document.getElementById("nav-toggle");
     const navList = document.getElementById("nav-list");
+    const homeSectionLinks = Array.from(document.querySelectorAll('.nav-list a[href^="index.html#"]'));
     const form = document.getElementById("questionnaire-form");
 
     navToggle.addEventListener("click", () => {
@@ -794,6 +808,19 @@
       if (!navList.classList.contains("open")) return;
       if (navToggle.contains(event.target) || navList.contains(event.target)) return;
       setPlatformNavState(false);
+    });
+
+    homeSectionLinks.forEach((link) => {
+      link.addEventListener("click", (event) => {
+        if (isModifiedNavigation(event)) return;
+        const href = link.getAttribute("href");
+        const hashIndex = href.indexOf("#");
+        if (hashIndex === -1) return;
+        event.preventDefault();
+        queueLandingScrollTarget(href.slice(hashIndex + 1));
+        setPlatformNavState(false);
+        window.location.href = href.slice(0, hashIndex) || "index.html";
+      });
     });
 
     const handleMobileNavBreakpointChange = (event) => {
