@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Interactive demo: see how truthful preference reporting affects your interview probability in the academic job market.">
     <title>Platform Demo | Academic Job Market Design</title>
+    <script>
+        (function () {
+            const pageTransitionKey = "site_page_transition";
+            const pageTransitionDirectionKey = "site_page_transition_direction";
+            document.documentElement.classList.add("js");
+            try {
+                if (window.sessionStorage.getItem(pageTransitionKey) === "pending") {
+                    const direction = window.sessionStorage.getItem(pageTransitionDirectionKey) || "forward";
+                    document.documentElement.classList.add("page-entering", `page-entering-${direction}`);
+                }
+            } catch (error) {
+                // Ignore storage failures and render normally.
+            }
+        })();
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,8 +28,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="platform.css">
 </head>
-<body id="top">
-<a class="skip-link" href="#platform-content">Skip to content</a>
+<body id="top" class="platform-page">
 <nav id="navbar" class="site-nav">
     <div class="nav-inner">
         <a href="index.html" class="nav-brand nav-brand-two-line" aria-label="Academic Job Market Design">

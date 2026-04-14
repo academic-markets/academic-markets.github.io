@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Research website for a statistical market-design framework that improves academic job-market matching through centralized preference signaling.">
     <title>A Statistical Market-Design Framework for Academic Job Markets</title>
+    <script>
+        (function () {
+            const pageTransitionKey = "site_page_transition";
+            const pageTransitionDirectionKey = "site_page_transition_direction";
+            document.documentElement.classList.add("js");
+            try {
+                if (window.sessionStorage.getItem(pageTransitionKey) === "pending") {
+                    const direction = window.sessionStorage.getItem(pageTransitionDirectionKey) || "forward";
+                    document.documentElement.classList.add("page-entering", `page-entering-${direction}`);
+                }
+            } catch (error) {
+                // Ignore storage failures and render normally.
+            }
+        })();
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -283,7 +298,6 @@
     </style>
 </head>
 <body id="top">
-<a class="skip-link" href="#content">Skip to content</a>
 <header class="site-header">
     <div class="hero-shell">
         <div class="hero-copy reveal">
@@ -364,7 +378,7 @@
             <li><a href="#results">Results</a></li>
             <li><a href="#questionnaire" class="nav-secondary">Questionnaire</a></li>
             <li><a href="#paper" class="nav-secondary">Paper</a></li>
-            <li class="nav-cta-wrap"><a href="platform.html" class="nav-cta">Platform</a></li>
+            <li class="nav-cta-wrap"><a href="#platform-preview" class="nav-cta">Platform</a></li>
         </ul>
     </div>
 </nav>
@@ -675,6 +689,62 @@
             </div>
         </article>
     </section>
+
+    <section id="platform-preview" class="section section-platform-preview">
+        <div class="section-header reveal">
+            <p class="section-kicker">Platform</p>
+            <h2>Interactive demo for truthful reporting</h2>
+            <p>
+                Use the platform to enter a set of true preferences, then adjust the reported version and see how the
+                estimated interview probability changes.
+            </p>
+        </div>
+
+        <div class="compare-board platform-preview-board">
+            <article class="compare-card reveal">
+                <p class="card-kicker">Try the demo</p>
+                <h3>Test truthful and alternative reports side by side</h3>
+                <ul class="feature-list">
+                    <li><i class="fas fa-clipboard-list"></i><span>Complete a sample questionnaire used to create a market-wide comparable signal.</span></li>
+                    <li><i class="fas fa-chart-line"></i><span>See an estimated interview probability based on departments matching your true preferences.</span></li>
+                    <li><i class="fas fa-shuffle"></i><span>Change reported preferences and observe how deviations from truthfulness affect the displayed probability.</span></li>
+                </ul>
+                <div class="resource-actions platform-preview-actions">
+                    <a href="platform.html" class="btn btn-primary btn-accent-fill">
+                        <i class="fas fa-arrow-right"></i> Open Platform Demo
+                    </a>
+                </div>
+            </article>
+
+            <article class="compare-card compare-card-solution reveal">
+                <p class="card-kicker">Inside the demo</p>
+                <h3>A simple three-step walkthrough</h3>
+                <div class="platform-preview-steps">
+                    <div class="platform-preview-step">
+                        <span class="platform-preview-step-number">1</span>
+                        <div>
+                            <strong>Report true preferences</strong>
+                            <p>Fill out the questionnaire using the preferences you would actually want a department to satisfy.</p>
+                        </div>
+                    </div>
+                    <div class="platform-preview-step">
+                        <span class="platform-preview-step-number">2</span>
+                        <div>
+                            <strong>View the baseline probability</strong>
+                            <p>See the estimated interview probability associated with truthful reporting.</p>
+                        </div>
+                    </div>
+                    <div class="platform-preview-step">
+                        <span class="platform-preview-step-number">3</span>
+                        <div>
+                            <strong>Test deviations in real time</strong>
+                            <p>Modify the reported profile and compare the new result against the truthful benchmark.</p>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
 </main>
 
 <footer class="site-footer">
@@ -720,6 +790,7 @@
     const navbar = document.getElementById("navbar");
     const navLinks = Array.from(document.querySelectorAll(".nav-list a[href^='#']"));
     const brandLink = document.querySelector(".nav-brand[href^='#']");
+    const platformLinks = Array.from(document.querySelectorAll('a[href="platform.html"]'));
     const sections = Array.from(document.querySelectorAll("main section[id]"));
     const modal = document.getElementById("coming-soon-modal");
     const modalClose = document.getElementById("modal-close");
@@ -769,11 +840,58 @@
     };
     const copyBibtexButton = document.getElementById("copy-bibtex");
     const bibtexContent = document.getElementById("bibtex-content");
+    const pageTransitionKey = "site_page_transition";
+    const pageTransitionDirectionKey = "site_page_transition_direction";
     const pendingScrollTargetKey = "landing_scroll_target";
 
     function isModifiedNavigation(event) {
         return event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
     }
+
+    function clearPendingPageTransition() {
+        try {
+            window.sessionStorage.removeItem(pageTransitionKey);
+            window.sessionStorage.removeItem(pageTransitionDirectionKey);
+        } catch (error) {
+            // Ignore storage failures.
+        }
+    }
+
+    function finishPageEntryTransition() {
+        const root = document.documentElement;
+        root.classList.remove("page-leaving", "page-leaving-forward", "page-leaving-backward");
+        if (!root.classList.contains("page-entering")) {
+            clearPendingPageTransition();
+            return;
+        }
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                root.classList.remove("page-entering", "page-entering-forward", "page-entering-backward");
+                clearPendingPageTransition();
+            });
+        });
+    }
+
+    function navigateWithPageTransition(url, direction = "forward") {
+        if (!url) return;
+        if (prefersReducedMotion) {
+            window.location.href = url;
+            return;
+        }
+        try {
+            window.sessionStorage.setItem(pageTransitionKey, "pending");
+            window.sessionStorage.setItem(pageTransitionDirectionKey, direction);
+        } catch (error) {
+            // Ignore storage failures and proceed with the animation only.
+        }
+        document.documentElement.classList.add("page-leaving", `page-leaving-${direction}`);
+        window.setTimeout(() => {
+            window.location.href = url;
+        }, 220);
+    }
+
+    finishPageEntryTransition();
+    window.addEventListener("pageshow", finishPageEntryTransition);
 
     function clearHashFromUrl() {
         if (!window.location.hash || !window.history || typeof window.history.replaceState !== "function") return;
@@ -832,6 +950,15 @@
             event.preventDefault();
             scrollToSectionTarget(target);
             setNavState(false);
+        });
+    });
+
+    platformLinks.forEach((link) => {
+        link.addEventListener("click", (event) => {
+            if (isModifiedNavigation(event)) return;
+            event.preventDefault();
+            setNavState(false);
+            navigateWithPageTransition(link.href, "forward");
         });
     });
 

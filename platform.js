@@ -16,6 +16,8 @@
   // ── Constants ──────────────────────────────────────────────────────
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const mobileNavBreakpoint = window.matchMedia("(min-width: 901px)");
+  const pageTransitionKey = "site_page_transition";
+  const pageTransitionDirectionKey = "site_page_transition_direction";
   const pendingScrollTargetKey = "landing_scroll_target";
   const PHD_RATIO_MIN = 0.5;
   const PHD_RATIO_MAX = 5.0;
@@ -67,6 +69,8 @@
   let trueProb = null;
   let gaugeValueAnimationFrame = 0;
   let displayedGaugeProb = 0;
+  let platformViewTransitionToken = 0;
+  let platformViewTransitionTimeout = 0;
 
   // ── Data loading ───────────────────────────────────────────────────
   async function loadData() {
@@ -403,22 +407,102 @@
   }
 
   // ── UI: View switching ─────────────────────────────────────────────
-  function showResults(options = {}) {
-    const { focusHeading: shouldFocusHeading = true } = options;
-    setPlatformNavState(false);
-    document.getElementById("view-questionnaire").classList.remove("platform-view--active");
-    document.getElementById("view-results").classList.add("platform-view--active");
-    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
-    if (shouldFocusHeading) focusHeading("results-title");
-    else clearHeadingFocus("results-title");
+  function clearPlatformViewTransitionClasses(view) {
+    if (!view) return;
+    view.classList.remove(
+      "platform-view--entering",
+      "platform-view--leaving",
+      "platform-view--direction-forward",
+      "platform-view--direction-backward"
+    );
   }
 
-  function showQuestionnaire() {
+  function activatePlatformView(nextView, options = {}) {
+    const { focusHeadingId, focusHeading: shouldFocusHeading = true } = options;
+    document.querySelectorAll(".platform-view").forEach((view) => {
+      clearPlatformViewTransitionClasses(view);
+      view.classList.toggle("platform-view--active", view === nextView);
+    });
+    window.scrollTo({ top: 0, behavior: "auto" });
+    if (!focusHeadingId) return;
+    if (shouldFocusHeading) focusHeading(focusHeadingId);
+    else clearHeadingFocus(focusHeadingId);
+  }
+
+  function switchPlatformView(nextViewId, options = {}) {
+    const {
+      direction = "forward",
+      animated = true,
+      focusHeadingId,
+      focusHeading: shouldFocusHeading = true
+    } = options;
+    const nextView = document.getElementById(nextViewId);
+    const currentView = document.querySelector(".platform-view--active");
+    if (!nextView) return;
+
+    const completeTransition = () => {
+      activatePlatformView(nextView, {
+        focusHeadingId,
+        focusHeading: shouldFocusHeading
+      });
+    };
+
+    window.clearTimeout(platformViewTransitionTimeout);
+    platformViewTransitionToken += 1;
+    const token = platformViewTransitionToken;
+
+    if (!animated || prefersReducedMotion || !currentView || currentView === nextView) {
+      completeTransition();
+      return;
+    }
+
+    const directionClass = `platform-view--direction-${direction}`;
+    document.querySelectorAll(".platform-view").forEach((view) => {
+      if (view !== currentView) clearPlatformViewTransitionClasses(view);
+    });
+
+    currentView.classList.remove("platform-view--active");
+    currentView.classList.add("platform-view--leaving", directionClass);
+
+    platformViewTransitionTimeout = window.setTimeout(() => {
+      if (token !== platformViewTransitionToken) return;
+      clearPlatformViewTransitionClasses(currentView);
+      window.scrollTo({ top: 0, behavior: "auto" });
+      nextView.classList.add("platform-view--active", "platform-view--entering", directionClass);
+
+      platformViewTransitionTimeout = window.setTimeout(() => {
+        if (token !== platformViewTransitionToken) return;
+        completeTransition();
+      }, 340);
+    }, 220);
+  }
+
+  function showResults(options = {}) {
+    const {
+      focusHeading: shouldFocusHeading = true,
+      animated = true
+    } = options;
     setPlatformNavState(false);
-    document.getElementById("view-results").classList.remove("platform-view--active");
-    document.getElementById("view-questionnaire").classList.add("platform-view--active");
-    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
-    focusHeading("questionnaire-title");
+    switchPlatformView("view-results", {
+      direction: "forward",
+      animated,
+      focusHeadingId: "results-title",
+      focusHeading: shouldFocusHeading
+    });
+  }
+
+  function showQuestionnaire(options = {}) {
+    const {
+      focusHeading: shouldFocusHeading = true,
+      animated = true
+    } = options;
+    setPlatformNavState(false);
+    switchPlatformView("view-questionnaire", {
+      direction: "backward",
+      animated,
+      focusHeadingId: "questionnaire-title",
+      focusHeading: shouldFocusHeading
+    });
   }
 
   function focusHeading(id) {
@@ -740,6 +824,48 @@
     return event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
   }
 
+  function clearPendingPageTransition() {
+    try {
+      sessionStorage.removeItem(pageTransitionKey);
+      sessionStorage.removeItem(pageTransitionDirectionKey);
+    } catch (error) {
+      // Ignore storage failures.
+    }
+  }
+
+  function finishPageEntryTransition() {
+    const root = document.documentElement;
+    root.classList.remove("page-leaving", "page-leaving-forward", "page-leaving-backward");
+    if (!root.classList.contains("page-entering")) {
+      clearPendingPageTransition();
+      return;
+    }
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        root.classList.remove("page-entering", "page-entering-forward", "page-entering-backward");
+        clearPendingPageTransition();
+      });
+    });
+  }
+
+  function navigateWithPageTransition(url, direction = "forward") {
+    if (!url) return;
+    if (prefersReducedMotion) {
+      window.location.href = url;
+      return;
+    }
+    try {
+      sessionStorage.setItem(pageTransitionKey, "pending");
+      sessionStorage.setItem(pageTransitionDirectionKey, direction);
+    } catch (error) {
+      // Ignore storage failures and proceed with the animation only.
+    }
+    document.documentElement.classList.add("page-leaving", `page-leaving-${direction}`);
+    window.setTimeout(() => {
+      window.location.href = url;
+    }, 220);
+  }
+
   function queueLandingScrollTarget(targetId) {
     try {
       sessionStorage.setItem(pendingScrollTargetKey, targetId);
@@ -797,8 +923,11 @@
     const navbar = document.getElementById("navbar");
     const navToggle = document.getElementById("nav-toggle");
     const navList = document.getElementById("nav-list");
+    const homePageLinks = Array.from(document.querySelectorAll('a[href="index.html"]'));
     const homeSectionLinks = Array.from(document.querySelectorAll('.nav-list a[href^="index.html#"]'));
     const form = document.getElementById("questionnaire-form");
+
+    finishPageEntryTransition();
 
     navToggle.addEventListener("click", () => {
       setPlatformNavState(!navList.classList.contains("open"));
@@ -819,7 +948,16 @@
         event.preventDefault();
         queueLandingScrollTarget(href.slice(hashIndex + 1));
         setPlatformNavState(false);
-        window.location.href = href.slice(0, hashIndex) || "index.html";
+        navigateWithPageTransition(href.slice(0, hashIndex) || "index.html", "backward");
+      });
+    });
+
+    homePageLinks.forEach((link) => {
+      link.addEventListener("click", (event) => {
+        if (isModifiedNavigation(event)) return;
+        event.preventDefault();
+        setPlatformNavState(false);
+        navigateWithPageTransition(link.href, "backward");
       });
     });
 
@@ -886,7 +1024,7 @@
     if (!loaded) return;
 
     if (restoreState()) {
-      enterResults({ focusHeading: false });
+      enterResults({ focusHeading: false, animated: false });
     }
   }
 
@@ -899,5 +1037,6 @@
     showResults(options);
   }
 
+  window.addEventListener("pageshow", finishPageEntryTransition);
   document.addEventListener("DOMContentLoaded", init);
 })();

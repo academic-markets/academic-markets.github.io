@@ -4,30 +4,96 @@
    ===================================================================== */
 
 /* ── Layout ─────────────────────────────────────────────────────── */
+.platform-page {
+    background:
+        radial-gradient(circle at top left, rgba(14, 124, 134, 0.12), transparent 30%),
+        radial-gradient(circle at top right, rgba(240, 195, 108, 0.18), transparent 26%),
+        linear-gradient(180deg, #f7f5f0 0%, #f6f5f1 24%, #f4f4ef 100%);
+    background-repeat: no-repeat;
+}
+
 .platform-main {
     padding: 1.1rem 0 4rem;
-    background:
-        radial-gradient(circle at top left, rgba(14, 124, 134, 0.1), transparent 28%),
-        radial-gradient(circle at top right, rgba(240, 195, 108, 0.12), transparent 24%);
+    background: transparent;
 }
 
 .platform-view {
     display: none;
 }
 
-.platform-view--active {
+.platform-view--active,
+.platform-view--entering,
+.platform-view--leaving {
     display: block;
-    animation: platformViewIn 0.42s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@keyframes platformViewIn {
+.platform-view--entering,
+.platform-view--leaving {
+    will-change: opacity, transform;
+}
+
+.platform-view--entering,
+.platform-view--leaving {
+    pointer-events: none;
+}
+
+.platform-view--entering.platform-view--direction-forward {
+    animation: platformViewEnterForward 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.platform-view--entering.platform-view--direction-backward {
+    animation: platformViewEnterBackward 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.platform-view--leaving.platform-view--direction-forward {
+    animation: platformViewLeaveForward 0.22s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+.platform-view--leaving.platform-view--direction-backward {
+    animation: platformViewLeaveBackward 0.22s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+@keyframes platformViewEnterForward {
     from {
         opacity: 0;
-        transform: translateY(18px);
+        transform: translate3d(24px, 0, 0);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes platformViewEnterBackward {
+    from {
+        opacity: 0;
+        transform: translate3d(-24px, 0, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes platformViewLeaveForward {
+    from {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        opacity: 0;
+        transform: translate3d(-18px, 0, 0);
+    }
+}
+
+@keyframes platformViewLeaveBackward {
+    from {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        opacity: 0;
+        transform: translate3d(18px, 0, 0);
     }
 }
 
@@ -838,7 +904,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .platform-view--active {
+    .platform-view--entering.platform-view--direction-forward,
+    .platform-view--entering.platform-view--direction-backward,
+    .platform-view--leaving.platform-view--direction-forward,
+    .platform-view--leaving.platform-view--direction-backward {
         animation: none;
     }
 
