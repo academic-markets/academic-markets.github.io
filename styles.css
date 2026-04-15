@@ -310,6 +310,7 @@ iframe:focus-visible,
 
 .btn-accent-outline {
     background: rgba(255, 253, 247, 0.92);
+    border-width: 1.8px;
     border-color: rgba(14, 124, 134, 0.34);
     color: var(--teal-deep);
     box-shadow: none;
