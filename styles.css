@@ -1361,7 +1361,7 @@ main {
 }
 
 .results-summary-card-alt {
-    padding: 1.5rem 1.15rem;
+    padding: clamp(1.15rem, 1rem + 0.7vw, 1.5rem) clamp(0.95rem, 0.85rem + 0.45vw, 1.15rem);
     container-type: inline-size;
     background:
         linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(244, 248, 247, 0.92));
@@ -1382,7 +1382,7 @@ main {
 
 .results-match-strip {
     display: grid;
-    grid-template-columns: minmax(170px, 0.82fr) repeat(2, minmax(0, 1.09fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13.5rem), 1fr));
     gap: 0;
     margin-top: 1rem;
     overflow: hidden;
@@ -1391,15 +1391,28 @@ main {
     background: rgba(255, 255, 255, 0.82);
 }
 
+.results-match-strip.results-match-strip--stacked {
+    grid-template-columns: 1fr;
+}
+
 .results-match-panel {
     min-width: 0;
-    padding: 1rem 1.05rem;
+    padding: clamp(0.9rem, 0.82rem + 0.42vw, 1rem) clamp(0.9rem, 0.8rem + 0.5vw, 1.05rem);
     border-right: 1px solid rgba(20, 35, 49, 0.1);
     background: rgba(255, 255, 255, 0.68);
 }
 
 .results-match-panel:last-child {
     border-right: 0;
+}
+
+.results-match-strip.results-match-strip--stacked .results-match-panel {
+    border-right: 0;
+    border-bottom: 1px solid rgba(20, 35, 49, 0.1);
+}
+
+.results-match-strip.results-match-strip--stacked .results-match-panel:last-child {
+    border-bottom: 0;
 }
 
 .results-match-panel--market {
@@ -1423,7 +1436,7 @@ main {
 .results-match-market-list,
 .results-match-substats {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.75rem), 1fr));
     gap: 0;
     margin-top: 0.75rem;
     overflow: hidden;
@@ -1435,7 +1448,7 @@ main {
 .results-match-panel--market .results-match-market-list {
     align-items: center;
     flex: 1;
-    column-gap: 1.3rem;
+    column-gap: clamp(1rem, 0.7rem + 0.7vw, 1.3rem);
     border: 0;
     border-radius: 0;
     background: transparent;
@@ -1449,8 +1462,8 @@ main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 5rem;
-    padding: 0.8rem 1rem;
+    min-height: clamp(4.3rem, 3.9rem + 1vw, 5rem);
+    padding: clamp(0.72rem, 0.65rem + 0.35vw, 0.8rem) clamp(0.9rem, 0.82rem + 0.35vw, 1rem);
     color: var(--ink-700);
     font-size: 0.88rem;
     line-height: 1.35;
@@ -1460,7 +1473,7 @@ main {
 
 .results-match-substats span {
     min-height: 0;
-    padding: 0.75rem 0.85rem;
+    padding: clamp(0.68rem, 0.62rem + 0.25vw, 0.75rem) clamp(0.78rem, 0.72rem + 0.3vw, 0.85rem);
     font-size: 0.8rem;
     line-height: 1.25;
 }
@@ -1472,7 +1485,7 @@ main {
 
 .results-match-panel--market .results-match-market-list span {
     min-height: auto;
-    padding: 0.25rem 1rem;
+    padding: 0.3rem clamp(0.82rem, 0.74rem + 0.3vw, 1rem);
 }
 
 .results-match-market-list span + span,
@@ -1525,6 +1538,51 @@ main {
     border-top: 1px solid rgba(20, 35, 49, 0.08);
 }
 
+.results-match-panel--market.is-stacked .results-match-market-note {
+    display: none;
+}
+
+.results-match-market-list.is-stacked {
+    grid-template-columns: 1fr;
+    margin-top: 0.75rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.results-match-market-list.is-stacked span {
+    min-height: 4.1rem;
+    padding: 0.65rem 0.9rem;
+}
+
+.results-match-market-list.is-stacked span + span {
+    border-left: 0;
+    position: static;
+}
+
+.results-match-market-list.is-stacked span + span::before {
+    display: none;
+}
+
+.results-match-market-list.is-stacked::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: calc(100% - 1.8rem);
+    height: 1px;
+    background: rgba(20, 35, 49, 0.1);
+    transform: translate(-50%, -50%);
+}
+
+.results-match-substats.is-stacked {
+    grid-template-columns: 1fr;
+}
+
+.results-match-substats.is-stacked span + span {
+    border-left: 0;
+    border-top: 1px solid rgba(20, 35, 49, 0.1);
+}
+
 .results-summary-actions {
     margin-top: auto;
     padding-top: 1.15rem;
@@ -1533,7 +1591,15 @@ main {
 }
 
 .results-summary-actions .btn {
-    width: auto;
+    width: fit-content;
+    max-width: 100%;
+    min-height: clamp(3rem, 11cqi, 3.3rem);
+    padding-inline: clamp(1rem, 4.2cqi, 1.35rem);
+    font-size: clamp(0.9rem, 2.4cqi, 1rem);
+    line-height: 1.18;
+    white-space: normal;
+    text-align: center;
+    text-wrap: balance;
 }
 
 .results-summary-actions .btn.btn-accent-outline,
@@ -1552,69 +1618,6 @@ main {
     background: var(--teal);
     color: #fff;
     border-color: var(--teal);
-}
-
-@container (max-width: 39rem) {
-    .results-match-panel--market .results-match-market-list {
-        grid-template-columns: 1fr;
-        column-gap: 0;
-        row-gap: 0;
-        margin-top: 0.75rem;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .results-match-panel--market .results-match-market-list span {
-        min-height: 4.1rem;
-        padding: 0.65rem 0.9rem;
-    }
-    
-    .results-match-panel--market .results-match-market-list span + span {
-        border-left: 0;
-        border-top: 0;
-        position: static;
-    }
-
-    .results-match-panel--market .results-match-market-list::after {
-        content: "";
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        width: calc(100% - 1.8rem);
-        height: 1px;
-        background: rgba(20, 35, 49, 0.1);
-        transform: translate(-50%, -50%);
-    }
-
-    .results-match-market-note {
-        display: none;
-    }
-}
-
-@container (max-width: 35rem) {
-    .results-match-substats {
-        grid-template-columns: 1fr;
-    }
-
-    .results-match-substats span + span {
-        border-left: 0;
-        border-top: 1px solid rgba(20, 35, 49, 0.1);
-    }
-}
-
-@container (max-width: 30rem) {
-    .results-match-strip {
-        grid-template-columns: 1fr;
-    }
-
-    .results-match-panel {
-        border-right: 0;
-        border-bottom: 1px solid rgba(20, 35, 49, 0.1);
-    }
-
-    .results-match-panel:last-child {
-        border-bottom: 0;
-    }
 }
 
 @media (max-width: 560px) {
@@ -1885,25 +1888,6 @@ main {
     .questionnaire-grid,
     .principles-list {
         grid-template-columns: 1fr;
-    }
-
-    .results-match-market-list,
-    .results-match-substats {
-        grid-template-columns: 1fr;
-    }
-
-    .results-match-market-list span + span,
-    .results-match-substats span + span {
-        border-left: 0;
-        border-top: 1px solid rgba(20, 35, 49, 0.1);
-    }
-
-    .results-match-panel--market .results-match-market-list span + span::before {
-        display: none;
-    }
-
-    .results-match-market-note {
-        display: none;
     }
 
     .resource-actions-featured {
