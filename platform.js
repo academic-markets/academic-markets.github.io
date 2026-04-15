@@ -69,6 +69,8 @@
   let trueProb = null;
   let gaugeValueAnimationFrame = 0;
   let displayedGaugeProb = 0;
+  let reportedPillAnimationFrame = 0;
+  let displayedReportedProb = 0;
   let platformViewTransitionToken = 0;
   let platformViewTransitionTimeout = 0;
 
@@ -609,17 +611,58 @@
     document.getElementById("gauge-value").textContent = Math.round(prob * 100) + "%";
   }
 
+  function setReportedProbabilityPillValue(prob, options = {}) {
+    const pill = document.getElementById("reported-live-prob");
+    const pillValue = document.getElementById("reported-live-prob-value");
+    if (!pill) return;
+
+    const pct = Math.round(prob * 100);
+    if (pillValue) pillValue.textContent = pct + "%";
+    else pill.textContent = "Current probability: " + pct + "%";
+    if (options.announce !== false) {
+      pill.setAttribute("aria-label", "Current probability: " + pct + "%");
+    }
+    displayedReportedProb = prob;
+  }
+
   function updateReportedProbabilityPill(prob) {
     const pill = document.getElementById("reported-live-prob");
     if (!pill) return;
 
-    const pct = Math.round(prob * 100);
-    pill.textContent = "Current probability: " + pct + "%";
     pill.className = "probability-pill";
 
     if (prob >= 0.5) pill.classList.add("probability-pill--high");
     else if (prob >= 0.3) pill.classList.add("probability-pill--mid");
     else pill.classList.add("probability-pill--low");
+  }
+
+  function animateReportedProbabilityPill(prob) {
+    window.cancelAnimationFrame(reportedPillAnimationFrame);
+    updateReportedProbabilityPill(prob);
+
+    if (prefersReducedMotion || Math.abs(prob - displayedReportedProb) < 0.005) {
+      setReportedProbabilityPillValue(prob);
+      return;
+    }
+
+    const startProb = displayedReportedProb;
+    const duration = Math.max(280, Math.min(720, 340 + Math.abs(prob - startProb) * 1200));
+    const startTime = performance.now();
+
+    function step(now) {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setReportedProbabilityPillValue(startProb + (prob - startProb) * eased, { announce: false });
+
+      if (progress < 1) {
+        reportedPillAnimationFrame = window.requestAnimationFrame(step);
+      } else {
+        reportedPillAnimationFrame = 0;
+        setReportedProbabilityPillValue(prob);
+      }
+    }
+
+    reportedPillAnimationFrame = window.requestAnimationFrame(step);
   }
 
   function animateGaugeValue(targetProb) {
@@ -666,7 +709,7 @@
     gaugeFill.style.stroke = color;
     document.getElementById("gauge-value").style.color = color;
     animateGaugeValue(prob);
-    updateReportedProbabilityPill(prob);
+    animateReportedProbabilityPill(prob);
 
     const comp = document.getElementById("gauge-comparison");
     if (trueProb !== null && Math.abs(prob - trueProb) > 0.002) {

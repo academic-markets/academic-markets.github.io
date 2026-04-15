@@ -200,7 +200,10 @@
             <div class="reported-header">
                 <h2>Reported Preferences</h2>
                 <div class="reported-header-meta">
-                    <div class="probability-pill" id="reported-live-prob" aria-live="polite" aria-atomic="true">Current probability: --</div>
+                    <div class="probability-pill" id="reported-live-prob" aria-live="polite" aria-atomic="true" aria-label="Current probability: --">
+                        <span class="probability-pill-label" aria-hidden="true">Current probability:</span>
+                        <span class="probability-pill-value" id="reported-live-prob-value" aria-hidden="true">--</span>
+                    </div>
                     <button type="button" class="btn btn-ghost btn-sm btn-ghost-invert" id="reset-btn"><i class="fas fa-undo"></i> Reset to True</button>
                 </div>
             </div>

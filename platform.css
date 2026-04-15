@@ -591,6 +591,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.35rem;
     min-height: 2.4rem;
     padding: 0.45rem 0.85rem;
     border: 1px solid var(--line);
@@ -604,6 +605,16 @@
     white-space: normal;
     text-wrap: balance;
     max-width: 100%;
+}
+
+.probability-pill-label,
+.probability-pill-value {
+    display: inline-flex;
+    align-items: center;
+}
+
+.probability-pill-value {
+    font-variant-numeric: tabular-nums;
 }
 
 .probability-pill--high {

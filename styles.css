@@ -648,7 +648,7 @@ iframe:focus-visible,
 
 .nav-list a.nav-secondary:hover {
     color: #fff;
-    background: rgba(14, 124, 134, 0.26);
+    background: rgba(160, 247, 255, 0.26);
 }
 
 .nav-list a.nav-secondary.active,
@@ -666,8 +666,8 @@ iframe:focus-visible,
 
 .nav-list .nav-cta:hover {
     color: #fff;
-    background: rgba(14, 124, 134, 0.2);
-    border-color: rgba(255, 255, 255, 0.24);
+    background: rgba(160, 247, 255, 0.26);
+    border-color: rgba(14, 124, 134, 0.6);
 }
 
 .nav-list .nav-cta.active,
