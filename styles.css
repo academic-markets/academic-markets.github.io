@@ -1647,7 +1647,7 @@ main {
 }
 
 .platform-preview-actions .btn.btn-accent-fill {
-    background: linear-gradient(135deg, #1aa7b1 0%, #118892 44%, #084b51 100%);
+    background: linear-gradient(135deg, #e0eaea 0%,#1aa7b1 20%, #118892 44%, #0d5960 80%,#084b51 100%);
     color: #fff;
     border-color: rgba(8, 75, 81, 0.82);
     box-shadow:
