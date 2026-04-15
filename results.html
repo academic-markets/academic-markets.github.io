@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Detailed simulation results and figures for the academic job market questionnaire mechanism.">
+    <title>Detailed Results | Academic Job Market Design</title>
+    <script>
+        (function () {
+            const pageTransitionKey = "site_page_transition";
+            const pageTransitionDirectionKey = "site_page_transition_direction";
+            document.documentElement.classList.add("js");
+            try {
+                if (window.sessionStorage.getItem(pageTransitionKey) === "pending") {
+                    const direction = window.sessionStorage.getItem(pageTransitionDirectionKey) || "forward";
+                    document.documentElement.classList.add("page-entering", `page-entering-${direction}`);
+                }
+            } catch (error) {
+                // Ignore storage failures and render normally.
+            }
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .fig-zoomable { cursor: zoom-in; }
+        .lightbox-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(12, 20, 29, 0.74);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            z-index: 120;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.24s ease, visibility 0s linear 0.24s;
+        }
+        .lightbox-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transition-delay: 0s;
+        }
+        .lightbox-panel {
+            position: relative;
+            max-width: min(92vw, 1100px);
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            align-items: center;
+            transform: translateY(12px) scale(0.985);
+            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .lightbox-overlay.active .lightbox-panel {
+            transform: translateY(0) scale(1);
+        }
+        .lightbox-overlay img {
+            max-width: 100%;
+            max-height: calc(88vh - 5rem);
+            border-radius: 20px;
+            background: #fff;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
+        }
+        .lightbox-caption {
+            max-width: min(92vw, 760px);
+            padding: 0.8rem 1rem;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.12);
+            color: #f5f7f8;
+            text-align: center;
+            line-height: 1.5;
+        }
+        .lightbox-caption[hidden] {
+            display: none;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -0.5rem;
+            right: -0.5rem;
+            width: 2.7rem;
+            height: 2.7rem;
+            border: 0;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.14);
+            color: #fff;
+            font-size: 1.4rem;
+            cursor: pointer;
+        }
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.24);
+        }
+        @media (max-width: 760px) {
+            .lightbox-close {
+                top: 0.8rem;
+                right: 0.8rem;
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body id="top" class="results-page">
+<nav id="navbar" class="site-nav">
+    <div class="nav-inner">
+        <a href="index.html" class="nav-brand nav-brand-two-line" aria-label="Academic Job Market Design">
+            <span class="nav-brand-title">Academic Job Market</span>
+            <span class="nav-brand-subtitle">Design</span>
+        </a>
+        <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-list" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul class="nav-list" id="nav-list" aria-hidden="true">
+            <li><a href="index.html#problem">Market Frictions</a></li>
+            <li><a href="index.html#mechanism">Mechanism</a></li>
+            <li><a href="results.html" class="active" aria-current="page">Results</a></li>
+            <li><a href="index.html#questionnaire" class="nav-secondary">Questionnaire</a></li>
+            <li><a href="index.html#paper" class="nav-secondary">Paper</a></li>
+            <li class="nav-cta-wrap"><a href="index.html#platform-preview" class="nav-cta">Platform</a></li>
+        </ul>
+    </div>
+</nav>
+
+<main class="results-main" id="results-content">
+    <section class="section section-results-detail">
+        <div class="section-header results-intro">
+            <p class="section-kicker">Results</p>
+            <a href="index.html#results" class="btn btn-secondary btn-accent-outline results-intro-back-link">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+
+        <div class="results-summary-stack results-summary-stack--full">
+                <article class="results-card results-summary-card results-summary-card-alt">
+                    <div class="results-summary-card-head">
+                        <p class="card-kicker">Average per year over 10 simulated years</p>
+                    </div>
+                    <h3>Hiring outcomes under baseline and questionnaire cases</h3>
+                    <div class="results-match-strip">
+                        <div class="results-match-panel results-match-panel--market">
+                            <span class="results-match-label">Per simulated year</span>
+                            <div class="results-match-market-list">
+                                <span><strong>63</strong> positions</span>
+                                <span><strong>300</strong> candidates</span>
+                            </div>
+                            <span class="results-match-market-note">Market size held fixed across both scenarios.</span>
+                        </div>
+
+                        <div class="results-match-panel">
+                            <span class="results-match-label">Without questionnaire</span>
+                            <span class="results-match-value">24 matches</span>
+                            <div class="results-match-substats">
+                                <span><strong>39</strong> searches unfilled</span>
+                                <span><strong>276</strong> candidates unmatched</span>
+                            </div>
+                        </div>
+
+                        <div class="results-match-panel results-match-panel--accent">
+                            <span class="results-match-label">With questionnaire</span>
+                            <span class="results-match-value">38 matches</span>
+                            <div class="results-match-substats">
+                                <span><strong>25</strong> searches unfilled</span>
+                                <span><strong>262</strong> candidates unmatched</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+        </div>
+
+        <article class="results-card results-gallery-panel">
+            <div class="results-gallery-panel-header">
+                <p class="card-kicker">Figures</p>
+                <p class="results-figure-context">
+                    The figures below trace outcomes across participation rates &rho;&nbsp;&isin;&nbsp;{0%, 5%, 20%, 50%,
+                    90%, 100%}.
+                </p>
+                <p class="gallery-hint"><i class="fas fa-search-plus"></i> Click any figure to expand</p>
+            </div>
+            <div class="gallery-grid">
+            <figure class="figure-card">
+                <div class="figure-shell">
+                    <img src="fig/fig_candidate_by_participation.png" alt="Candidate welfare and matching rate by participation status." loading="lazy" decoding="async" data-lightbox-caption="Participation effects. Candidate outcomes by participation status. Left: mean welfare. Right: matching rate.">
+                </div>
+                <figcaption>
+                    <span class="figure-tag">Participation effects</span>
+                    Candidate outcomes by participation status. <em><u>Left:</u></em> Mean welfare. <em><u>Right:</u></em> Matching rate.
+                </figcaption>
+            </figure>
+
+            <figure class="figure-card">
+                <div class="paired-figure">
+                    <img src="fig/fig_candidate_welfare.png" alt="Aggregate candidate welfare across participation rates." loading="lazy" decoding="async" data-lightbox-caption="Candidate-side gains. Aggregate mean candidate welfare by participation rate.">
+                    <img src="fig/fig_candidate_welfare_unconditional.png" alt="Candidate welfare by quality tier across participation rates." loading="lazy" decoding="async" data-lightbox-caption="Candidate-side gains. Mean candidate welfare by participation rate, broken out by candidate quality tier.">
+                </div>
+                <figcaption>
+                    <span class="figure-tag">Candidate-side gains</span>
+                    Mean candidate welfare by &rho;. <em><u>Left:</u></em> Total candidate pool. <em><u>Right:</u></em> By quality tier: gains persist across all tiers.
+                </figcaption>
+            </figure>
+
+            <figure class="figure-card">
+                <div class="paired-figure">
+                    <img src="fig/fig_candidate_utility_by_tier.png" alt="Matched candidate utility by quality tier and participation rate." loading="lazy" decoding="async" data-lightbox-caption="Distributional effects. Mean matched candidate utility by quality tier and participation rate.">
+                    <img src="fig/fig_department_welfare.png" alt="Department welfare per hiring position by prestige tier and participation rate." loading="lazy" decoding="async" data-lightbox-caption="Distributional effects. Department welfare per hiring position by prestige tier and participation rate.">
+                </div>
+                <figcaption>
+                    <span class="figure-tag">Distributional effects</span>
+                    Outcomes by tier and &rho;. <em><u>Left:</u></em> Mean candidate utility among matched, by quality tier. <em><u>Right:</u></em> Department welfare per position, by prestige tier.
+                </figcaption>
+            </figure>
+
+            <figure class="figure-card">
+                <div class="paired-figure">
+                    <img src="fig/fig_dept_interview_heatmap.png" alt="Interview allocation heatmap by department and candidate tier." loading="lazy" decoding="async" data-lightbox-caption="Allocation shift. Interview allocations by department tier and candidate tier under structured signaling." style="min-height: 220px; object-fit: contain;">
+                    <img src="fig/fig_dept_hiring_heatmap.png" alt="Hiring distribution heatmap by department and candidate tier." loading="lazy" decoding="async" data-lightbox-caption="Allocation shift. Hiring allocations by department tier and candidate tier under structured signaling." style="min-height: 220px; object-fit: contain;">
+                </div>
+                <figcaption>
+                    <span class="figure-tag">Allocation shift</span>
+                    <em><u>Left:</u></em> Interview and <em><u>Right:</u></em> hiring allocations rebalance under structured signaling.
+                </figcaption>
+            </figure>
+
+            <figure class="figure-card">
+                <div class="paired-figure">
+                    <img src="fig/fig_dept_outcome_pies.png" alt="Department position outcomes under baseline and full participation." loading="lazy" decoding="async" data-lightbox-caption="Outcome composition. Department position outcomes: initial-offer fills, scramble fills, and unfilled positions, comparing baseline with full participation.">
+                    <img src="fig/fig_cand_outcome_pies.png" alt="Candidate hire outcomes under baseline and full participation." loading="lazy" decoding="async" data-lightbox-caption="Outcome composition. Candidate hire outcomes: matched versus unmatched, comparing baseline with full participation.">
+                </div>
+                <figcaption>
+                    <span class="figure-tag">Outcome composition</span>
+                    <em><u>Left:</u></em> Department position outcomes: initial-offer fills, scramble fills, and unfilled positions. <em><u>Right:</u></em> Candidate hire outcomes: matched vs. unmatched. Both panels compare baseline (&rho;&nbsp;=&nbsp;0%) with full participation (&rho;&nbsp;=&nbsp;100%).
+                </figcaption>
+            </figure>
+
+            <figure class="figure-card">
+                <div class="figure-shell figure-shell-narrow">
+                    <img src="fig/fig_blocking_pairs.png" alt="Blocking pair rate by participation rate." loading="lazy" decoding="async" data-lightbox-caption="Stability. Blocking pair rate by participation rate.">
+                </div>
+                <figcaption>
+                    <span class="figure-tag">Stability</span>
+                    Blocking pair rate by &rho;.
+                </figcaption>
+            </figure>
+            </div>
+        </article>
+
+        <div class="resource-actions results-detail-actions">
+            <a href="index.html#results" class="btn btn-secondary btn-accent-outline">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <p>&copy; 2026 Ali Kaazempur-Mofrad, Xiaowu Dai, Xuming He.</p>
+</footer>
+
+<div id="lightbox" class="lightbox-overlay" role="dialog" aria-modal="true" aria-label="Expanded figure" aria-hidden="true">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Close image">&times;</button>
+    <div class="lightbox-panel">
+        <img id="lightbox-img" src="" alt="">
+        <div class="lightbox-caption" id="lightbox-caption" hidden></div>
+    </div>
+</div>
+
+<script>
+    const navbar = document.getElementById("navbar");
+    const navToggle = document.getElementById("nav-toggle");
+    const navList = document.getElementById("nav-list");
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const lightboxClose = document.getElementById("lightbox-close");
+    const lightboxCaption = document.getElementById("lightbox-caption");
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const mobileNavBreakpoint = window.matchMedia("(min-width: 901px)");
+    const pageTransitionKey = "site_page_transition";
+    const pageTransitionDirectionKey = "site_page_transition_direction";
+    const pendingScrollTargetKey = "landing_scroll_target";
+    let lastLightboxTrigger = null;
+
+    function isModifiedNavigation(event) {
+        return event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+    }
+
+    function queueLandingScrollTarget(targetId) {
+        try {
+            window.sessionStorage.setItem(pendingScrollTargetKey, targetId);
+        } catch (error) {
+            // Ignore storage failures and fall back to normal navigation.
+        }
+    }
+
+    function clearPendingPageTransition() {
+        try {
+            window.sessionStorage.removeItem(pageTransitionKey);
+            window.sessionStorage.removeItem(pageTransitionDirectionKey);
+        } catch (error) {
+            // Ignore storage failures.
+        }
+    }
+
+    function finishPageEntryTransition() {
+        const root = document.documentElement;
+        root.classList.remove("page-leaving", "page-leaving-forward", "page-leaving-backward");
+        if (!root.classList.contains("page-entering")) {
+            clearPendingPageTransition();
+            return;
+        }
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                root.classList.remove("page-entering", "page-entering-forward", "page-entering-backward");
+                clearPendingPageTransition();
+            });
+        });
+    }
+
+    function navigateWithPageTransition(url, direction = "forward") {
+        if (!url) return;
+        if (prefersReducedMotion) {
+            window.location.href = url;
+            return;
+        }
+        try {
+            window.sessionStorage.setItem(pageTransitionKey, "pending");
+            window.sessionStorage.setItem(pageTransitionDirectionKey, direction);
+        } catch (error) {
+            // Ignore storage failures and proceed with the animation only.
+        }
+        document.documentElement.classList.add("page-leaving", `page-leaving-${direction}`);
+        window.setTimeout(() => {
+            window.location.href = url;
+        }, 220);
+    }
+
+    function setResultsNavState(isOpen) {
+        const isMobileNav = !mobileNavBreakpoint.matches;
+        navList.classList.toggle("open", isOpen);
+        navToggle.setAttribute("aria-expanded", String(isOpen));
+        navList.setAttribute("aria-hidden", String(isMobileNav ? !isOpen : false));
+        document.body.classList.toggle("nav-open", isMobileNav && isOpen);
+    }
+
+    navToggle.addEventListener("click", () => {
+        setResultsNavState(!navList.classList.contains("open"));
+    });
+
+    document.addEventListener("click", (event) => {
+        if (!navList.classList.contains("open")) return;
+        if (navToggle.contains(event.target) || navList.contains(event.target)) return;
+        setResultsNavState(false);
+    });
+
+    const handleMobileNavBreakpointChange = (event) => {
+        if (event.matches) setResultsNavState(false);
+    };
+
+    if (typeof mobileNavBreakpoint.addEventListener === "function") {
+        mobileNavBreakpoint.addEventListener("change", handleMobileNavBreakpointChange);
+    } else if (typeof mobileNavBreakpoint.addListener === "function") {
+        mobileNavBreakpoint.addListener(handleMobileNavBreakpointChange);
+    }
+
+    finishPageEntryTransition();
+    window.addEventListener("pageshow", finishPageEntryTransition);
+
+    window.addEventListener("scroll", () => {
+        navbar.classList.toggle("sticky", window.scrollY > 24);
+    }, { passive: true });
+    navbar.classList.toggle("sticky", window.scrollY > 24);
+    setResultsNavState(false);
+
+    document.querySelectorAll('a[href^="index.html#"]').forEach((link) => {
+        link.addEventListener("click", (event) => {
+            if (isModifiedNavigation(event)) return;
+            const href = link.getAttribute("href");
+            const hashIndex = href.indexOf("#");
+            if (hashIndex === -1) return;
+            event.preventDefault();
+            queueLandingScrollTarget(href.slice(hashIndex + 1));
+            setResultsNavState(false);
+            navigateWithPageTransition(href.slice(0, hashIndex) || "index.html", "backward");
+        });
+    });
+
+    function openLightbox(src, alt, trigger, caption) {
+        lastLightboxTrigger = trigger || document.activeElement;
+        lightboxImg.src = src;
+        lightboxImg.alt = alt;
+        if (caption) {
+            lightboxCaption.textContent = caption;
+            lightboxCaption.hidden = false;
+        } else {
+            lightboxCaption.textContent = "";
+            lightboxCaption.hidden = true;
+        }
+        lightbox.classList.add("active");
+        lightbox.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+        lightboxClose.focus({ preventScroll: true });
+    }
+
+    function closeLightbox() {
+        lightbox.classList.remove("active");
+        lightbox.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+        lightboxImg.src = "";
+        lightboxImg.alt = "";
+        lightboxCaption.textContent = "";
+        lightboxCaption.hidden = true;
+        if (lastLightboxTrigger) lastLightboxTrigger.focus({ preventScroll: true });
+        lastLightboxTrigger = null;
+    }
+
+    document.querySelectorAll(".figure-shell img, .paired-figure img").forEach((img) => {
+        img.classList.add("fig-zoomable");
+        img.setAttribute("tabindex", "0");
+        img.setAttribute("role", "button");
+        img.setAttribute("aria-label", (img.alt || "Figure") + ". Expand image");
+        const caption = img.dataset.lightboxCaption || img.alt || "";
+        img.addEventListener("click", () => openLightbox(img.src, img.alt, img, caption));
+        img.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                openLightbox(img.src, img.alt, img, caption);
+            }
+        });
+    });
+
+    lightboxClose.addEventListener("click", closeLightbox);
+    lightbox.addEventListener("click", (event) => {
+        if (event.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && lightbox.classList.contains("active")) {
+            closeLightbox();
+        } else if (event.key === "Escape" && navList.classList.contains("open")) {
+            setResultsNavState(false);
+        }
+    });
+</script>
+</body>
+</html>

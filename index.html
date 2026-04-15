@@ -498,15 +498,12 @@
     <section id="results" class="section section-results">
         <div class="section-header reveal">
             <p class="section-kicker">Results</p>
-            <h2>Incentive guarantees and simulation evidence</h2>
-            <!--<p>
-                Mechanism-design guarantees combined with simulations grounded in data from 103 U.S. statistics departments.
-            </p>-->
+            <h2>Theoretical guarantee and simulation summary</h2>
         </div>
 
-        <div class="results-top">
-            <article class="results-card reveal">
-                <p class="card-kicker">Theoretical guarantees</p>
+        <div class="results-content-grid">
+            <article class="results-card results-theory-card reveal">
+                <p class="card-kicker">Theoretical result</p>
                 <h3>Truthful participation is a dominant strategy</h3>
                 <ul class="feature-list">
                     <li><i class="fas fa-check"></i> Universal disclosure dominates for candidates</li>
@@ -516,103 +513,48 @@
                 </ul>
             </article>
 
-            <article class="results-card reveal">
-                <p class="card-kicker">Simulation design</p>
-                <h3>Empirical scaffold from real departments</h3>
-                <p>
-                    Simulations merge 2026 U.S. News rankings with College Scorecard data across 103 departments in four prestige tiers.
-                </p>
-                <p>
-                    300 candidates/year, 10-year horizon, 200 replications. Participation rates
-                    &rho;&nbsp;&isin;&nbsp;{0%, 5%, 20%, 50%, 90%, 100%} tested.
-                </p>
-            </article>
+            <div class="results-summary-stack">
+                <article class="results-card results-summary-card results-summary-card-alt reveal">
+                    <p class="card-kicker">Average per year over 10 simulated years</p>
+                    <h3>Hiring outcomes under baseline and questionnaire cases</h3>
+                    <div class="results-match-strip">
+                        <div class="results-match-panel results-match-panel--market">
+                            <span class="results-match-label">Per simulated year</span>
+                            <div class="results-match-market-list">
+                                <span><strong>63</strong> positions</span>
+                                <span><strong>300</strong> candidates</span>
+                            </div>
+                            <span class="results-match-market-note">Market size held fixed across both scenarios.</span>
+                        </div>
+
+                        <div class="results-match-panel">
+                            <span class="results-match-label">Without questionnaire</span>
+                            <span class="results-match-value">24 matches</span>
+                            <div class="results-match-substats">
+                                <span><strong>39</strong> searches unfilled</span>
+                                <span><strong>276</strong> candidates unmatched</span>
+                            </div>
+                        </div>
+
+                        <div class="results-match-panel results-match-panel--accent">
+                            <span class="results-match-label">With questionnaire</span>
+                            <span class="results-match-value">38 matches</span>
+                            <div class="results-match-substats">
+                                <span><strong>25</strong> searches unfilled</span>
+                                <span><strong>262</strong> candidates unmatched</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="resource-actions results-summary-actions">
+                        <a href="results.html" class="btn btn-secondary btn-accent-outline">
+                            <i class="fas fa-chart-column"></i> View Detailed Results
+                        </a>
+                    </div>
+                </article>
+            </div>
         </div>
 
-        <!--<div class="highlight-band reveal">
-            <span>61% increase in aggregate candidate welfare</span>
-            <span>132 additional matches under full participation</span>
-            <span>Overall fill rates rise from 40.7% to 62.2%</span>
-            <span>Blocking pair rate falls from 80.8% to 69.2%</span>
-        </div>-->
-
-        <p class="gallery-hint reveal"><i class="fas fa-search-plus"></i> Click any figure to expand</p>
-        <div class="gallery-grid">
-            <figure class="figure-card reveal">
-                <div class="figure-shell">
-                    <img src="fig/fig_candidate_by_participation.png" alt="Candidate welfare and matching rate by participation status." loading="lazy" decoding="async" data-lightbox-caption="Participation effects. Candidate outcomes by participation status. Left: mean welfare. Right: matching rate.">
-                </div>
-                <figcaption>
-                    <span class="figure-tag">Participation effects</span>
-                    Candidate outcomes by participation status. <em><u>Left:</u></em> Mean welfare. <em><u>Right:</u></em> Matching rate.
-                </figcaption>
-            </figure>
-
-            <figure class="figure-card reveal">
-                <div class="paired-figure">
-                    <img src="fig/fig_candidate_welfare.png" alt="Aggregate candidate welfare across participation rates." loading="lazy" decoding="async" data-lightbox-caption="Candidate-side gains. Aggregate mean candidate welfare by participation rate.">
-                    <img src="fig/fig_candidate_welfare_unconditional.png" alt="Candidate welfare by quality tier across participation rates." loading="lazy" decoding="async" data-lightbox-caption="Candidate-side gains. Mean candidate welfare by participation rate, broken out by candidate quality tier.">
-                </div>
-                <figcaption>
-                    <span class="figure-tag">Candidate-side gains</span>
-                    Mean candidate welfare by &rho;. <em><u>Left:</u></em> Total candidate pool. <em><u>Right:</u></em> By quality tier: gains persist across all tiers.
-                </figcaption>
-            </figure>
-
-            <figure class="figure-card reveal">
-                <div class="paired-figure">
-                    <img src="fig/fig_candidate_utility_by_tier.png" alt="Matched candidate utility by quality tier and participation rate." loading="lazy" decoding="async" data-lightbox-caption="Distributional effects. Mean matched candidate utility by quality tier and participation rate.">
-                    <img src="fig/fig_department_welfare.png" alt="Department welfare per hiring position by prestige tier and participation rate." loading="lazy" decoding="async" data-lightbox-caption="Distributional effects. Department welfare per hiring position by prestige tier and participation rate.">
-                </div>
-                <figcaption>
-                    <span class="figure-tag">Distributional effects</span>
-                    Outcomes by tier and &rho;. <em><u>Left:</u></em> Mean candidate utility among matched, by quality tier. <em><u>Right:</u></em> Department welfare per position, by prestige tier.
-                </figcaption>
-            </figure>
-
-            <figure class="figure-card reveal">
-                <div class="paired-figure">
-                    <img src="fig/fig_dept_interview_heatmap.png" alt="Interview allocation heatmap by department and candidate tier." loading="lazy" decoding="async" data-lightbox-caption="Allocation shift. Interview allocations by department tier and candidate tier under structured signaling." style="min-height: 220px; object-fit: contain;">
-                    <img src="fig/fig_dept_hiring_heatmap.png" alt="Hiring distribution heatmap by department and candidate tier." loading="lazy" decoding="async" data-lightbox-caption="Allocation shift. Hiring allocations by department tier and candidate tier under structured signaling." style="min-height: 220px; object-fit: contain;">
-                </div>
-                <figcaption>
-                    <span class="figure-tag">Allocation shift</span>
-                    <em><u>Left:</u></em> Interview and <em><u>Right:</u></em> hiring allocations rebalance under structured signaling. 
-                </figcaption>
-            </figure>
-
-            <figure class="figure-card reveal">
-                <div class="paired-figure">
-                    <img src="fig/fig_dept_outcome_pies.png" alt="Department position outcomes under baseline and full participation." loading="lazy" decoding="async" data-lightbox-caption="Outcome composition. Department position outcomes: initial-offer fills, scramble fills, and unfilled positions, comparing baseline with full participation.">
-                    <img src="fig/fig_cand_outcome_pies.png" alt="Candidate hire outcomes under baseline and full participation." loading="lazy" decoding="async" data-lightbox-caption="Outcome composition. Candidate hire outcomes: matched versus unmatched, comparing baseline with full participation.">
-                </div>
-                <figcaption>
-                    <span class="figure-tag">Outcome composition</span>
-                    <em><u>Left:</u></em> Department position outcomes: initial-offer fills, scramble fills, and unfilled positions. <em><u>Right:</u></em> Candidate hire outcomes: matched vs. unmatched. Both panels compare baseline (&rho;&nbsp;=&nbsp;0%) with full participation (&rho;&nbsp;=&nbsp;100%).
-                </figcaption>
-            </figure>
-
-            <figure class="figure-card reveal">
-                <div class="figure-shell figure-shell-narrow">
-                    <img src="fig/fig_blocking_pairs.png" alt="Blocking pair rate by participation rate." loading="lazy" decoding="async" data-lightbox-caption="Stability. Blocking pair rate by participation rate.">
-                </div>
-                <figcaption>
-                    <span class="figure-tag">Stability</span>
-                    Blocking pair rate by &rho;.
-                </figcaption>
-            </figure>
-<!--
-            <figure class="figure-card figure-card-wide reveal">
-                <p class="card-kicker" style="margin-bottom: 1rem;">Proposed Pilot Implementation</p>
-
-                <div class="figure-shell">
-                    <img class="figure-image-inset" src="fig/pilot_design.png" alt="Pilot design overview for the proposed questionnaire-based preference signaling mechanism." loading="lazy" decoding="async" data-lightbox-caption="Pilot design overview.">
-                </div>
-                <figcaption style="text-align: center;">
-                    <span class="figure-tag">Pilot design</span>
-                </figcaption>
-            </figure>-->
-        </div>
     </section>
 
     <section id="questionnaire" class="section section-questionnaire">
@@ -705,12 +647,12 @@
                 <p class="card-kicker">Try the demo</p>
                 <h3>Test truthful and alternative reports side by side</h3>
                 <ul class="feature-list">
-                    <li><i class="fas fa-clipboard-list"></i><span>Complete a sample questionnaire used to create a market-wide comparable signal.</span></li>
+                    <li><i class="fas fa-clipboard-list"></i><span>Complete a sample questionnaire covering preferences like location, teaching, and research environment.</span></li>
                     <li><i class="fas fa-chart-line"></i><span>See an estimated interview probability based on departments matching your true preferences.</span></li>
                     <li><i class="fas fa-shuffle"></i><span>Change reported preferences and observe how deviations from truthfulness affect the displayed probability.</span></li>
                 </ul>
                 <div class="resource-actions platform-preview-actions">
-                    <a href="platform.html" class="btn btn-primary btn-accent-fill">
+                    <a href="platform.html" class="btn btn-accent-fill">
                         <i class="fas fa-arrow-right"></i> Open Platform Demo
                     </a>
                 </div>
@@ -791,6 +733,7 @@
     const navLinks = Array.from(document.querySelectorAll(".nav-list a[href^='#']"));
     const brandLink = document.querySelector(".nav-brand[href^='#']");
     const platformLinks = Array.from(document.querySelectorAll('a[href="platform.html"]'));
+    const resultsLinks = Array.from(document.querySelectorAll('a[href="results.html"]'));
     const sections = Array.from(document.querySelectorAll("main section[id]"));
     const modal = document.getElementById("coming-soon-modal");
     const modalClose = document.getElementById("modal-close");
@@ -954,6 +897,15 @@
     });
 
     platformLinks.forEach((link) => {
+        link.addEventListener("click", (event) => {
+            if (isModifiedNavigation(event)) return;
+            event.preventDefault();
+            setNavState(false);
+            navigateWithPageTransition(link.href, "forward");
+        });
+    });
+
+    resultsLinks.forEach((link) => {
         link.addEventListener("click", (event) => {
             if (isModifiedNavigation(event)) return;
             event.preventDefault();
