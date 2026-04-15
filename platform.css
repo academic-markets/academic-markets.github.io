@@ -19,6 +19,7 @@
 
 .platform-view {
     display: none;
+    container: platform-view / inline-size;
 }
 
 .platform-view--active,
@@ -174,6 +175,9 @@
 
 /* ── Questionnaire cards ────────────────────────────────────────── */
 .questionnaire {
+    container: questionnaire / inline-size;
+    width: min(100%, 980px);
+    min-inline-size: 0;
     max-width: 980px;
     margin: 0 auto;
 }
@@ -189,10 +193,13 @@
 }
 
 .q-card {
+    container: q-card / inline-size;
     position: relative;
+    width: 100%;
+    min-inline-size: 0;
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    padding: 1.55rem 1.6rem;
+    padding: clamp(0.95rem, 0.82rem + 1.05cqi, 1.55rem) clamp(0.9rem, 0.72rem + 1.3cqi, 1.6rem);
     margin-bottom: 1.2rem;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.98));
     backdrop-filter: blur(calc(var(--surface-blur) + 2px));
@@ -269,9 +276,12 @@
 }
 
 .q-label {
+    display: block;
+    max-width: 100%;
+    min-inline-size: 0;
     font-family: "Lora", serif;
     font-weight: 600;
-    font-size: 1.08rem;
+    font-size: clamp(0.98rem, 0.92rem + 0.4cqi, 1.08rem);
     line-height: 1.35;
     color: var(--ink-950);
     margin-bottom: 0.6rem;
@@ -302,7 +312,7 @@
 }
 
 .q-hint {
-    font-size: 0.88rem;
+    font-size: clamp(0.81rem, 0.77rem + 0.28cqi, 0.88rem);
     color: var(--ink-500);
     margin-bottom: 0.7rem;
     font-style: italic;
@@ -312,17 +322,22 @@
     display: flex;
     flex-direction: column;
     gap: 0.45rem;
+    min-inline-size: 0;
 }
 
 .q-option {
-    display: flex;
-    align-items: baseline;
-    gap: 0.55rem;
-    padding: 0.7rem 0.85rem;
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    align-items: start;
+    column-gap: clamp(0.42rem, 0.36rem + 0.45cqi, 0.55rem);
+    row-gap: 0;
+    min-inline-size: 0;
+    padding: clamp(0.54rem, 0.48rem + 0.5cqi, 0.7rem) clamp(0.62rem, 0.54rem + 0.65cqi, 0.85rem);
     border: 1px solid transparent;
     border-radius: var(--radius-sm);
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: clamp(0.88rem, 0.83rem + 0.35cqi, 0.95rem);
+    line-height: 1.42;
     color: var(--ink-900);
     background: transparent;
     transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
@@ -342,12 +357,16 @@
 }
 
 .q-option span {
+    display: inline-block;
     font-weight: 700;
     color: var(--teal-deep);
-    min-width: 2rem;
+    min-width: clamp(1.45rem, 1.2rem + 0.75cqi, 2rem);
 }
 
 .q-actions {
+    container: q-actions / inline-size;
+    width: min(100%, 22rem);
+    margin-inline: auto;
     margin-top: 2rem;
     text-align: center;
 }
@@ -359,13 +378,32 @@
     gap: 0.5rem;
 }
 
+.q-actions .btn,
+.platform-header-actions .btn,
+.reported-header-meta .btn,
+.back-actions .btn {
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+    text-wrap: balance;
+}
+
+.q-actions .btn.btn-lg {
+    width: 100%;
+    min-height: clamp(3rem, 2.7rem + 1.6cqi, 3.6rem);
+    padding-inline: clamp(1rem, 0.85rem + 4.6cqi, 2.2rem);
+    font-size: clamp(0.98rem, 0.93rem + 0.75cqi, 1.1rem);
+    line-height: 1.16;
+}
+
 /* ── Gauge ──────────────────────────────────────────────────────── */
 .gauge-container {
+    container: gauge / inline-size;
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-bottom: 1.6rem;
-    padding: 1.45rem 1.5rem 1.35rem;
+    padding: clamp(1.15rem, 1rem + 0.6vw, 1.45rem) clamp(1rem, 0.9rem + 0.5vw, 1.5rem) clamp(1.05rem, 0.95rem + 0.5vw, 1.35rem);
     border: 1px solid rgba(20, 35, 49, 0.08);
     border-radius: var(--radius-xl);
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(237, 243, 240, 0.92));
@@ -511,8 +549,9 @@
 
 /* ── Reported preferences section ───────────────────────────────── */
 .reported-section {
+    container: reported-section / inline-size;
     margin-bottom: 1.25rem;
-    padding: 1.2rem;
+    padding: clamp(1rem, 0.92rem + 0.4vw, 1.2rem);
     border: 1px solid rgba(20, 35, 49, 0.08);
     border-radius: var(--radius-xl);
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.98));
@@ -562,7 +601,9 @@
     font-weight: 700;
     line-height: 1.1;
     text-align: center;
-    white-space: nowrap;
+    white-space: normal;
+    text-wrap: balance;
+    max-width: 100%;
 }
 
 .probability-pill--high {
@@ -590,14 +631,15 @@
 
 .reported-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
     gap: 1.1rem;
 }
 
 .toggle-card {
+    container: toggle-card / inline-size;
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    padding: 1.2rem 1.25rem;
+    padding: clamp(1rem, 0.92rem + 0.35vw, 1.2rem) clamp(1rem, 0.94rem + 0.3vw, 1.25rem);
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.98));
     backdrop-filter: blur(calc(var(--surface-blur) + 2px));
     -webkit-backdrop-filter: blur(calc(var(--surface-blur) + 2px));
@@ -619,6 +661,9 @@
 }
 
 .toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 0.4rem 0.75rem;
     border: 1px solid var(--line-strong);
     border-radius: 999px;
@@ -626,6 +671,10 @@
     color: var(--ink-700);
     font-size: 0.82rem;
     font-weight: 600;
+    line-height: 1.18;
+    text-align: center;
+    white-space: normal;
+    text-wrap: balance;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -689,6 +738,198 @@
     margin-right: 0.3rem;
     font-size: 0.72rem;
     opacity: 0.7;
+}
+
+@container platform-view (max-width: 52rem) {
+    .platform-header {
+        margin-bottom: 1.6rem;
+        padding-bottom: 1rem;
+    }
+
+    .platform-header-actions {
+        position: static;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+
+    .platform-header h1 {
+        max-width: 100%;
+        font-size: clamp(1.95rem, 7cqi, 2.55rem);
+    }
+
+    .platform-subtitle {
+        font-size: 0.98rem;
+        line-height: 1.62;
+    }
+
+    .platform-subtitle br,
+    .demo-disclaimer br {
+        display: none;
+    }
+
+    .platform-status {
+        display: flex;
+        width: 100%;
+        max-width: none;
+    }
+
+    .true-prefs-banner {
+        padding: 0.95rem 1rem;
+    }
+
+    .true-prefs-chips {
+        gap: 0.35rem;
+    }
+
+    .pref-chip {
+        font-size: 0.76rem;
+        padding: 0.35rem 0.65rem;
+    }
+
+    .method-note {
+        font-size: 0.9rem;
+    }
+}
+
+@container platform-view (max-width: 38rem) {
+    .section-platform {
+        padding: 1.4rem;
+    }
+
+    .q-section-header {
+        margin-top: 1.85rem;
+        font-size: 1.08rem;
+    }
+
+    .platform-header-actions,
+    .reported-header-meta {
+        width: 100%;
+    }
+
+    .platform-header-actions .btn,
+    .reported-header-meta .btn,
+    .back-actions .btn,
+    .q-actions .btn {
+        width: 100%;
+    }
+}
+
+@container questionnaire (max-width: 42rem) {
+    .q-card {
+        margin-bottom: 1rem;
+    }
+
+    .q-actions {
+        margin-top: 1.65rem;
+    }
+}
+
+@container questionnaire (max-width: 30rem) {
+    .q-card {
+        padding: 0.95rem 0.9rem;
+    }
+
+    .q-option {
+        padding: 0.54rem 0.6rem;
+    }
+}
+
+@container q-card (max-width: 28rem) {
+    .q-label {
+        font-size: 1.02rem;
+    }
+
+    .q-option {
+        gap: 0.5rem;
+    }
+
+    .q-option input[type="radio"],
+    .q-option input[type="checkbox"] {
+        margin-top: 0.25rem;
+    }
+
+    .q-option span {
+        min-width: 1.75rem;
+    }
+}
+
+@container q-card (max-width: 22rem) {
+    .q-label {
+        line-height: 1.3;
+    }
+
+    .q-hint {
+        margin-bottom: 0.6rem;
+    }
+
+    .q-option {
+        gap: 0.45rem;
+        padding: 0.56rem 0.62rem;
+        font-size: 0.9rem;
+    }
+
+    .q-option span {
+        min-width: 1.55rem;
+    }
+}
+
+@container q-actions (max-width: 22rem) {
+    .q-actions .btn.btn-lg {
+        width: 100%;
+    }
+}
+
+@container gauge (max-width: 24rem) {
+    .gauge-wrap {
+        width: min(210px, 100%);
+    }
+
+    .gauge-value {
+        font-size: 2rem;
+    }
+
+    .gauge-comparison {
+        width: 100%;
+    }
+
+    .demo-disclaimer {
+        display: block;
+        width: 100%;
+        padding: 0.75rem 0.9rem;
+    }
+}
+
+@container reported-section (max-width: 42rem) {
+    .reported-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        position: static;
+        padding: 0;
+        border-bottom: none;
+        background: transparent;
+    }
+
+    .reported-header-meta {
+        justify-content: center;
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .probability-pill {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@container toggle-card (max-width: 18rem) {
+    .toggle-options {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .toggle-btn {
+        width: 100%;
+    }
 }
 
 /* ── Responsive ─────────────────────────────────────────────────── */
